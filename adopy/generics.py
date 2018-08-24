@@ -46,7 +46,7 @@ class ADOGeneric(object):
         self.dg_memory = []  # [(design, response), ...]
         self.dg_grid_params = []
         self.dg_means = []
-        self.dg_sigmas = []
+        self.dg_covs = []
         self.dg_priors = []
         self.dg_posts = []
 
@@ -234,53 +234,60 @@ class ADOGeneric(object):
 
         self.flag_update_mutual_info = True
 
-    def update_grid(self, kind='bootstrap-r', quantiles=None, n=1e6):
+    def update_grid(self, kind='normal-nr', q=None, z=None, n=1e6):
         """Update the grid space for model parameters (Dynamic Gridding method)."""
-        assert kind in {'bootstrap-r', 'normal-nr'}
-        assert quantiles is None or all([0 <= v <= 1 for v in quantiles])
 
-        if quantiles is None:
-            quantiles = [.15, .3, .4, .5, .6, .7, .85]
+        if z is not None:
+            grids = np.repeat(np.array(z).reshape(-1, 1), self.num_params, axis=1)
+        elif q is not None:
+            assert q is None or all([0 <= v <= 1 for v in q])
+            grids = np.repeat(norm.ppf(np.array(q)).reshape(-1, 1), self.num_params, axis=1)
+        else:
+            raise RuntimeError('Quantiles (q) or z scores (z) should be provided.')
 
         if kind == 'bootstrap-r':
-            counts = np.round(self.post * np.float(n)).astype(np.int)
-            samples = np.repeat(self.grid_param, counts, axis=0)
+            raise NotImplementedError('awef')
+            # jcounts = np.round(self.post * np.float(n)).astype(np.int)
+            # jsamples = np.repeat(self.grid_param, counts, axis=0)
 
-            mean = samples.mean(0)
-            sigma = np.cov(samples.transpose())
+            # jmean = samples.mean(0)
+            # jsigma = np.cov(samples.transpose())
 
-            el, ev = np.linalg.eig(sigma)
+            # jel, ev = np.linalg.eig(sigma)
 
-            rot = np.dot(np.sqrt(np.diag(el)), np.linalg.inv(ev))
-            rot_inv = np.linalg.inv(rot)
+            # rot = np.dot(ev, np.sqrt(np.diag(el)))
+            # rot_inv = np.linalg.inv(rot)
 
-            x_star = np.dot(samples - mean, rot)
-            g_star = np.quantile(x_star, quantiles, axis=0, interpolation='linear')
-            grid_param_star = make_grid_matrix(*[g_star[:, i] for i in range(g_star.shape[-1])])
-            grid_param = np.dot(grid_param_star, rot_inv) + mean
+            # x_star = np.dot(samples - mean, rot)
+            # g_star = np.quantile(x_star, qs, axis=0, interpolation='linear')
+            # grid_param_star = make_grid_matrix(*[g_star[:, i] for i in range(g_star.shape[-1])])
+            # grid_param = np.dot(grid_param_star, rot_inv) + mean
 
-            self.dg_means.append(mean)
-            self.dg_sigmas.append(sigma)
-            self.grid_param = grid_param
-            self.dg_grid_params.append(grid_param)
+            # self.dg_means.append(mean)
+            # self.dg_covs.append(sigma)
+            # self.grid_param = grid_param
+            # self.dg_grid_params.append(grid_param)
 
-            self.dg_priors.append(self.prior)
-            self.dg_posts.append(self.post)
-            self.initialize()
+            # self.dg_priors.append(self.prior)
+            # self.dg_posts.append(self.post)
+            # self.initialize()
 
-            for i, (d, r) in enumerate(self.dg_memory):
-                self.update(d, r, False)
+            # for i, (d, r) in enumerate(self.dg_memory):
+            #     self.update(d, r, False)
 
-        elif kind == 'normal-nr':
+        elif kind == 'normal-r':
             m = self.post_mean
             cov = self.post_cov
-            sd = self.post_sd
 
-            grids = np.stack([norm.ppf(q, loc=m, scale=sd) for q in quantiles]).T  # yapf: disable
-            grid_param = make_grid_matrix(grids[0], grids[1], grids[2])
+            el, ev = np.linalg.eig(cov)
+            rot_inv = np.dot(ev, np.sqrt(np.diag(el)))
+            rot = np.linalg.inv(rot_inv)
+
+            g_star = make_grid_matrix(*[v for v in grids.T])
+            grid_param = np.dot(g_star, rot_inv) + m
 
             self.dg_means.append(m)
-            self.dg_sigmas.append(cov)
+            self.dg_covs.append(cov)
             self.grid_param = grid_param
             self.dg_grid_params.append(grid_param)
 
@@ -290,3 +297,26 @@ class ADOGeneric(object):
 
             self.log_prior = mvnm.pdf(grid_param, mean=m, cov=cov)
             self.log_post = self.log_prior.copy()
+
+        elif kind == 'normal-nr':
+            m = self.post_mean
+            cov = self.post_cov
+            sd = self.post_sd
+
+            g_star = make_grid_matrix(*[v for v in grids.T])
+            grid_param = g_star * sd + m
+
+            self.dg_means.append(m)
+            self.dg_covs.append(cov)
+            self.grid_param = grid_param
+            self.dg_grid_params.append(grid_param)
+
+            self.dg_priors.append(self.prior)
+            self.dg_posts.append(self.post)
+            self.initialize()
+
+            self.log_prior = mvnm.pdf(grid_param, mean=m, cov=cov)
+            self.log_post = self.log_prior.copy()
+
+        else:
+            raise RuntimeError('Given kind argument, {}, is invalid.'.format(kind))
