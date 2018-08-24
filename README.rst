@@ -6,15 +6,20 @@
            width="300px" height="150px">
     </p>
 
-.. image:: https://www.repostatus.org/badges/latest/wip.svg
-   :alt: Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.
-   :target: https://www.repostatus.org/#wip
-
-.. image:: https://travis-ci.com/PluVian/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master
-    :target: https://travis-ci.com/PluVian/adopy
-
-.. image:: https://codecov.io/gh/PluVian/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k
-  :target: https://codecov.io/gh/PluVian/adopy
+.. raw:: html
+    
+    <p align="center">
+      <a href="https://www.repostatus.org/#wip">
+        <img src="https://www.repostatus.org/badges/latest/wip.svg"
+             alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public." />
+      </a>
+      <a href="https://travis-ci.com/PluVian/adopy">
+        <img src="https://travis-ci.com/PluVian/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master" />
+      </a>
+      <a href="https://codecov.io/gh/PluVian/adopy">
+        <img src="https://codecov.io/gh/PluVian/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k" />
+      </a>
+    </p>
 
 A Python package for Adaptive Design Optimization on psychological tasks.
 Currently working in progress.
