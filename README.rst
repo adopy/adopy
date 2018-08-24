@@ -30,8 +30,6 @@ Dependencies
 - Python 2.7 or 3.4+
 - NumPy
 - SciPy
-- Matplotlib
-- Seaborn
 
 Installation
 ------------
