@@ -1,0 +1,648 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choice under risk and ambiguity task &mdash; ADOpy 0.4.2.dev0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=df9cc0fc" />
+      <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=df9cc0fc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=272485b7"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/js/custom.js?v=972e07f4"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Delay discounting task" href="delay_discounting.html" />
+    <link rel="prev" title="Changelogs" href="../changelogs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ADOpy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev-guide.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelogs.html">Changelogs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Choice under risk and ambiguity task</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#1.-Initializion">1. Initializion</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#1)-Task:-Choice-under-risk-and-ambiguity">1) Task: Choice under risk and ambiguity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#2)-Model:-Linear-model">2) Model: Linear model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#3)-Grid-definition">3) Grid definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#4)-Engine-initialization">4) Engine initialization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#2.-Design-comparison">2. Design comparison</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Functions">Functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Simulation">Simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Results">Results</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#References">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="delay_discounting.html">Delay discounting task</a></li>
+<li class="toctree-l1"><a class="reference internal" href="psi.html">Psychometric Function Estimation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/base.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.base</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/tasks/cra.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.cra</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/tasks/dd.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.dd</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/tasks/psi.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.psi</span></code></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ADOpy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Choice under risk and ambiguity task</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Choice-under-risk-and-ambiguity-task">
+<h1>Choice under risk and ambiguity task<a class="headerlink" href="#Choice-under-risk-and-ambiguity-task" title="Link to this heading"></a></h1>
+<p>Levy, I., Snell, J., Nelson, A. J., Rustichini, A., &amp; Glimcher, P. W. (2010). Neural Representation of Subjective Value Under Risk and Ambiguity. <em>Journal of Neurophysiology, 103</em>(2), 1036-1047.</p>
+<center><figure><p><img alt="Overview of the choice under risk and ambiguity task." class="no-scaled-link" src="../_images/cra-thumbnail.png" style="width: 500px;" /></p>
+<figcaption><p>Overview of the choice under risk and ambiguity task.</p>
+</figcaption></figure></center><section id="1.-Initializion">
+<h2>1. Initializion<a class="headerlink" href="#1.-Initializion" title="Link to this heading"></a></h2>
+<section id="1)-Task:-Choice-under-risk-and-ambiguity">
+<h3>1) Task: Choice under risk and ambiguity<a class="headerlink" href="#1)-Task:-Choice-under-risk-and-ambiguity" title="Link to this heading"></a></h3>
+<center><figure><p><img alt="cc62d40bc00c4473892b6a0a0e41fb3e" class="no-scaled-link" src="../_images/cra-design.png" style="width: 320px;" /></p>
+<figcaption><p>Design variables for the choice under risk and ambiguity task.</p>
+</figcaption></figure></center><ul class="simple">
+<li><p><strong>Design variables</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">p_var</span></code> (<span class="math notranslate nohighlight">\(p_V\)</span>): the probability to win the reward of the variable option</p>
+<ul>
+<li><p>Fixed to 0.5 for ambiguous trials</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">a_var</span></code> (<span class="math notranslate nohighlight">\(A_V\)</span>): the level of ambiguity of the variable option</p>
+<ul>
+<li><p>Fixed to 0 for risky trials</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r_var</span></code> (<span class="math notranslate nohighlight">\(R_V\)</span>): the amount of reward of the variable option</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r_fix</span></code> (<span class="math notranslate nohighlight">\(R_F\)</span>): the amount of reward of the fixed option</p></li>
+</ul>
+</li>
+<li><p><strong>Response variable</strong>:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">choice</span></code>: <code class="docutils literal notranslate"><span class="pre">0</span></code> (fixed option), <code class="docutils literal notranslate"><span class="pre">1</span></code> (variable option)</p></li>
+</ul>
+</li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.cra</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskCRA</span>
+
+<span class="n">task</span> <span class="o">=</span> <span class="n">TaskCRA</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;Choice under risk and ambiguity task&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task</span><span class="o">.</span><span class="n">designs</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;p_var&#39;, &#39;a_var&#39;, &#39;r_var&#39;, &#39;r_fix&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">task</span><span class="o">.</span><span class="n">responses</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;choice&#39;]
+</pre></div></div>
+</div>
+</section>
+<section id="2)-Model:-Linear-model">
+<h3>2) Model: Linear model<a class="headerlink" href="#2)-Model:-Linear-model" title="Link to this heading"></a></h3>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+    U_F &amp;= 0.5 \cdot (R_F) ^\alpha \\
+    U_V &amp;= \left[ p_V - \beta \cdot \frac{A_V}{2} \right] \cdot (R_V) ^\alpha \\
+    P(V\, over \, F) &amp;= \frac{1}{1 + \exp [\gamma (U_F - U_V)]}
+\end{aligned}\end{split}\]</div>
+<ul class="simple">
+<li><p><strong>Model parameters</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code> (<span class="math notranslate nohighlight">\(\alpha\)</span>): risk attitude parameter</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">beta</span></code> (<span class="math notranslate nohighlight">\(\beta\)</span>): ambiguity attitude parameter</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gamma</span></code> (<span class="math notranslate nohighlight">\(\gamma\)</span>): inverse temperature</p></li>
+</ul>
+</li>
+</ul>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.cra</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelLinear</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">ModelLinear</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">name</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&#39;Linear model for the CRA task&#39;
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;alpha&#39;, &#39;beta&#39;, &#39;gamma&#39;]
+</pre></div></div>
+</div>
+</section>
+<section id="3)-Grid-definition">
+<h3>3) Grid definition<a class="headerlink" href="#3)-Grid-definition" title="Link to this heading"></a></h3>
+<section id="Grid-for-design-variables">
+<h4>Grid for design variables<a class="headerlink" href="#Grid-for-design-variables" title="Link to this heading"></a></h4>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># Rewards</span>
+<span class="n">r_var</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">26</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">131</span><span class="p">,</span> <span class="mi">181</span><span class="p">,</span> <span class="mi">250</span><span class="p">]</span>
+<span class="n">r_fix</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">48</span><span class="p">,</span> <span class="mi">66</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">125</span><span class="p">]</span>
+
+<span class="n">rewards</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+    <span class="p">[</span><span class="n">rv</span><span class="p">,</span> <span class="n">rf</span><span class="p">]</span> <span class="k">for</span> <span class="n">rv</span> <span class="ow">in</span> <span class="n">r_var</span> <span class="k">for</span> <span class="n">rf</span> <span class="ow">in</span> <span class="n">r_fix</span> <span class="k">if</span> <span class="n">rv</span> <span class="o">&gt;</span> <span class="n">rf</span>
+<span class="p">])</span>
+
+<span class="c1"># Prob &amp; Ambig (Risky trials)</span>
+<span class="n">p_var_risky</span> <span class="o">=</span> <span class="p">[</span><span class="mf">.13</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.38</span><span class="p">]</span>
+<span class="n">pa_risky</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">pr</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">pr</span> <span class="ow">in</span> <span class="n">p_var_risky</span><span class="p">])</span>
+
+<span class="c1"># Prob &amp; Ambig (Ambiguous trials)</span>
+<span class="n">a_var_ambig</span> <span class="o">=</span> <span class="p">[</span><span class="mf">.25</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mf">.75</span><span class="p">]</span>
+<span class="n">pa_ambig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">am</span><span class="p">]</span> <span class="k">for</span> <span class="n">am</span> <span class="ow">in</span> <span class="n">a_var_ambig</span><span class="p">])</span>
+
+<span class="c1"># Prob &amp; Ambig</span>
+<span class="n">pr_am</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">pa_risky</span><span class="p">,</span> <span class="n">pa_ambig</span><span class="p">])</span>
+
+<span class="n">grid_design</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">&#39;p_var&#39;</span><span class="p">,</span> <span class="s1">&#39;a_var&#39;</span><span class="p">):</span> <span class="n">pr_am</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;r_var&#39;</span><span class="p">,</span> <span class="s1">&#39;r_fix&#39;</span><span class="p">):</span> <span class="n">rewards</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Grid-for-model-parameters">
+<h4>Grid for model parameters<a class="headerlink" href="#Grid-for-model-parameters" title="Link to this heading"></a></h4>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grid_param</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">)[</span><span class="mi">1</span><span class="p">:],</span>
+    <span class="s1">&#39;beta&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
+    <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">11</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Grid-for-response-variables">
+<h4>Grid for response variables<a class="headerlink" href="#Grid-for-response-variables" title="Link to this heading"></a></h4>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grid_response</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;choice&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="4)-Engine-initialization">
+<h3>4) Engine initialization<a class="headerlink" href="#4)-Engine-initialization" title="Link to this heading"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Engine</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">grid_design</span><span class="p">,</span> <span class="n">grid_param</span><span class="p">,</span> <span class="n">grid_response</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="2.-Design-comparison">
+<h2>2. Design comparison<a class="headerlink" href="#2.-Design-comparison" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>ADO design</strong></p></li>
+<li><p><strong>Fixed design</strong>, used by Levy et al. (2010)</p></li>
+<li><p><strong>Random design</strong></p></li>
+</ol>
+<center><figure><p><img alt="9fd369fcea5d44b0b0a01d637c6ed3d3" class="no-scaled-link" src="../_images/cra-design-fixed.png" style="width: 500px;" /></p>
+<figcaption><p>Fixed design - design pairs used by Levy et al. (2010).</p>
+</figcaption></figure></center><div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">N_TRIAL</span> <span class="o">=</span> <span class="mi">60</span>
+</pre></div>
+</div>
+</div>
+<section id="Functions">
+<h3>Functions<a class="headerlink" href="#Functions" title="Link to this heading"></a></h3>
+<section id="Simulate-a-response">
+<h4>Simulate a response<a class="headerlink" href="#Simulate-a-response" title="Link to this heading"></a></h4>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># True parameter values to simulate responses</span>
+<span class="n">PARAM_TRUE</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;alpha&#39;</span><span class="p">:</span> <span class="mf">0.67</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span> <span class="mf">0.66</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">bernoulli</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_simulated_response</span><span class="p">(</span><span class="n">design</span><span class="p">):</span>
+    <span class="c1"># Calculate the probability to choose a variable option</span>
+    <span class="n">p_var</span><span class="p">,</span> <span class="n">a_var</span><span class="p">,</span> <span class="n">r_var</span><span class="p">,</span> <span class="n">r_fix</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">design</span><span class="p">[</span><span class="s1">&#39;p_var&#39;</span><span class="p">],</span> <span class="n">design</span><span class="p">[</span><span class="s1">&#39;a_var&#39;</span><span class="p">],</span> <span class="n">design</span><span class="p">[</span><span class="s1">&#39;r_var&#39;</span><span class="p">],</span> <span class="n">design</span><span class="p">[</span><span class="s1">&#39;r_fix&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="n">PARAM_TRUE</span><span class="p">[</span><span class="s1">&#39;alpha&#39;</span><span class="p">],</span> <span class="n">PARAM_TRUE</span><span class="p">[</span><span class="s1">&#39;beta&#39;</span><span class="p">],</span> <span class="n">PARAM_TRUE</span><span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">]</span>
+
+    <span class="n">u_fix</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">r_fix</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+    <span class="n">u_var</span> <span class="o">=</span> <span class="p">(</span><span class="n">p_var</span> <span class="o">-</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">a_var</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">r_var</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+
+    <span class="n">p_obs</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="n">u_var</span> <span class="o">-</span> <span class="n">u_fix</span><span class="p">)))</span>
+
+    <span class="c1"># Randomly sample a binary choice response from Bernoulli distribution</span>
+    <span class="k">return</span> <span class="n">bernoulli</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">p_obs</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Generate-design-pairs-for-the-fixed-design-(Levy-et-al.,-2010)">
+<h4>Generate design pairs for the fixed design (Levy et al., 2010)<a class="headerlink" href="#Generate-design-pairs-for-the-fixed-design-(Levy-et-al.,-2010)" title="Link to this heading"></a></h4>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_fixed_designs</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate design pairs used by Levy et al. (2010)&quot;&quot;&quot;</span>
+    <span class="c1"># Prob &amp; Ambig</span>
+    <span class="n">pa_risky</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">.5</span><span class="p">,</span> <span class="n">a_var</span><span class="p">)</span> <span class="k">for</span> <span class="n">a_var</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">.13</span><span class="p">,</span> <span class="mf">.25</span><span class="p">,</span> <span class="mf">.38</span><span class="p">]]</span>  <span class="c1"># for risky conditions</span>
+    <span class="n">pa_ambig</span> <span class="o">=</span> <span class="p">[(</span><span class="n">p_var</span><span class="p">,</span> <span class="mf">.0</span><span class="p">)</span> <span class="k">for</span> <span class="n">p_var</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">.25</span><span class="p">,</span> <span class="mf">.50</span><span class="p">,</span> <span class="mf">.75</span><span class="p">]]</span>  <span class="c1"># for ambiguous conditions</span>
+    <span class="n">pa_var</span> <span class="o">=</span> <span class="n">pa_risky</span> <span class="o">+</span> <span class="n">pa_ambig</span>
+
+    <span class="c1"># Rewards</span>
+    <span class="n">rewards</span> <span class="o">=</span> <span class="p">[(</span><span class="n">r_var</span><span class="p">,</span> <span class="n">r_fix</span><span class="p">)</span> <span class="k">for</span> <span class="n">r_var</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">65</span><span class="p">]</span>
+                              <span class="k">for</span> <span class="n">r_fix</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">5</span><span class="p">]]</span>
+
+    <span class="c1"># Make unique design pairs in a 2d matrix</span>
+    <span class="n">designs</span> <span class="o">=</span> <span class="p">[[</span><span class="n">p_var</span><span class="p">,</span> <span class="n">a_var</span><span class="p">,</span> <span class="n">r_var</span><span class="p">,</span> <span class="n">r_fix</span><span class="p">]</span> <span class="k">for</span> <span class="p">(</span><span class="n">p_var</span><span class="p">,</span> <span class="n">a_var</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pa_var</span>
+                                            <span class="k">for</span> <span class="p">(</span><span class="n">r_var</span><span class="p">,</span> <span class="n">r_fix</span><span class="p">)</span> <span class="ow">in</span> <span class="n">rewards</span><span class="p">]</span>
+
+    <span class="n">designs</span> <span class="o">=</span> <span class="n">designs</span> <span class="o">+</span> <span class="n">designs</span>  <span class="c1"># Double the design pairs</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">designs</span><span class="p">)</span>  <span class="c1"># Shuffle the pairs</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">designs</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;p_var&#39;</span><span class="p">,</span> <span class="s1">&#39;a_var&#39;</span><span class="p">,</span> <span class="s1">&#39;r_var&#39;</span><span class="p">,</span> <span class="s1">&#39;r_fix&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">designs_fixed</span> <span class="o">=</span> <span class="n">generate_fixed_designs</span><span class="p">()</span>
+<span class="n">designs_fixed</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>p_var</th>
+      <th>a_var</th>
+      <th>r_var</th>
+      <th>r_fix</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0.5</td>
+      <td>0.25</td>
+      <td>18.0</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.5</td>
+      <td>0.13</td>
+      <td>9.5</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.5</td>
+      <td>0.25</td>
+      <td>9.5</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.5</td>
+      <td>0.25</td>
+      <td>65.0</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.5</td>
+      <td>0.00</td>
+      <td>5.0</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+</section>
+<section id="Simulation">
+<h3>Simulation<a class="headerlink" href="#Simulation" title="Link to this heading"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make an empty DataFrame to store data</span>
+<span class="n">df_simul</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="kc">None</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;design_type&#39;</span><span class="p">,</span> <span class="s1">&#39;trial&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;mean_alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;mean_beta&#39;</span><span class="p">,</span> <span class="s1">&#39;mean_gamma&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;sd_alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;sd_beta&#39;</span><span class="p">,</span> <span class="s1">&#39;sd_gamma&#39;</span><span class="p">])</span>
+
+<span class="c1"># Run simulations for three designs</span>
+<span class="k">for</span> <span class="n">design_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;optimal&#39;</span><span class="p">,</span> <span class="s1">&#39;staircase&#39;</span><span class="p">,</span> <span class="s1">&#39;random&#39;</span><span class="p">]:</span>
+    <span class="c1"># Reset the engine as an initial state</span>
+    <span class="n">engine</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_TRIAL</span><span class="p">):</span>
+        <span class="c1"># Design selection / optimization</span>
+        <span class="k">if</span> <span class="n">design_type</span> <span class="o">==</span> <span class="s1">&#39;optimal&#39;</span><span class="p">:</span>
+            <span class="n">design</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_design</span><span class="p">(</span><span class="s1">&#39;optimal&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">design_type</span> <span class="o">==</span> <span class="s1">&#39;staircase&#39;</span><span class="p">:</span>
+            <span class="n">design</span> <span class="o">=</span> <span class="n">designs_fixed</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># design_type == &#39;random&#39;</span>
+            <span class="n">design</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_design</span><span class="p">(</span><span class="s1">&#39;random&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Experiment</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">get_simulated_response</span><span class="p">(</span><span class="n">design</span><span class="p">)</span>
+
+        <span class="c1"># Bayesian updating</span>
+        <span class="n">engine</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+
+        <span class="c1"># Save the information for updated posteriors</span>
+        <span class="n">df_simul</span> <span class="o">=</span> <span class="n">df_simul</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;design_type&#39;</span><span class="p">:</span> <span class="n">design_type</span><span class="p">,</span>
+            <span class="s1">&#39;trial&#39;</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;mean_alpha&#39;</span><span class="p">:</span> <span class="n">engine</span><span class="o">.</span><span class="n">post_mean</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s1">&#39;mean_beta&#39;</span><span class="p">:</span> <span class="n">engine</span><span class="o">.</span><span class="n">post_mean</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s1">&#39;mean_gamma&#39;</span><span class="p">:</span> <span class="n">engine</span><span class="o">.</span><span class="n">post_mean</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+            <span class="s1">&#39;sd_alpha&#39;</span><span class="p">:</span> <span class="n">engine</span><span class="o">.</span><span class="n">post_sd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s1">&#39;sd_beta&#39;</span><span class="p">:</span> <span class="n">engine</span><span class="o">.</span><span class="n">post_sd</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+            <span class="s1">&#39;sd_gamma&#39;</span><span class="p">:</span> <span class="n">engine</span><span class="o">.</span><span class="n">post_sd</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="p">},</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Results">
+<h3>Results<a class="headerlink" href="#Results" title="Link to this heading"></a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="k">config</span> InlineBackend.figure_format = &#39;retina&#39;
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+
+<span class="c1"># Draw black dotted lines for true parameters</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="s1">&#39;gamma&#39;</span><span class="p">]):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="n">PARAM_TRUE</span><span class="p">[</span><span class="n">param</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">design_type</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s1">&#39;optimal&#39;</span><span class="p">,</span> <span class="s1">&#39;staircase&#39;</span><span class="p">,</span> <span class="s1">&#39;random&#39;</span><span class="p">]):</span>
+    <span class="n">df_cond</span> <span class="o">=</span> <span class="n">df_simul</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_simul</span><span class="p">[</span><span class="s1">&#39;design_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">design_type</span><span class="p">]</span>
+    <span class="n">line_color</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="s1">&#39;red&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">df_cond</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;trial&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mean_alpha&#39;</span><span class="p">,</span> <span class="s1">&#39;mean_beta&#39;</span><span class="p">,</span> <span class="s1">&#39;mean_gamma&#39;</span><span class="p">],</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+                      <span class="n">subplots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">line_color</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">)</span>
+
+<span class="c1"># Set titles and limits on y axes.</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">alpha$ (Risk attitude)&#39;</span><span class="p">);</span>        <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">beta$ (Ambiguity attitude)&#39;</span><span class="p">);</span>    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">gamma$ (Inverse temperature)&#39;</span><span class="p">);</span>  <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;True value&#39;</span><span class="p">,</span> <span class="s1">&#39;ADO&#39;</span><span class="p">,</span> <span class="s1">&#39;Fixed&#39;</span><span class="p">,</span> <span class="s1">&#39;Random&#39;</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;True value&#39;</span><span class="p">,</span> <span class="s1">&#39;ADO&#39;</span><span class="p">,</span> <span class="s1">&#39;Fixed&#39;</span><span class="p">,</span> <span class="s1">&#39;Random&#39;</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;True value&#39;</span><span class="p">,</span> <span class="s1">&#39;ADO&#39;</span><span class="p">,</span> <span class="s1">&#39;Fixed&#39;</span><span class="p">,</span> <span class="s1">&#39;Random&#39;</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_choice_under_risk_and_ambiguity_31_0.png" class="no-scaled-link" src="../_images/examples_choice_under_risk_and_ambiguity_31_0.png" style="width: 880px; height: 278px;" />
+</div>
+</div>
+</section>
+</section>
+<section id="References">
+<h2>References<a class="headerlink" href="#References" title="Link to this heading"></a></h2>
+<p>Levy, I., Snell, J., Nelson, A. J., Rustichini, A., &amp; Glimcher, P. W. (2010). Neural Representation of Subjective Value Under Risk and Ambiguity. Journal of Neurophysiology, 103 (2), 1036-1047.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../changelogs.html" class="btn btn-neutral float-left" title="Changelogs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="delay_discounting.html" class="btn btn-neutral float-right" title="Delay discounting task" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, ADOpy developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-71789812-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-71789812-2', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

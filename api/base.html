@@ -1,0 +1,580 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>adopy.base &mdash; ADOpy 0.4.2.dev0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=df9cc0fc" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=df9cc0fc" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=272485b7"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/js/custom.js?v=972e07f4"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="adopy.tasks.cra" href="tasks/cra.html" />
+    <link rel="prev" title="Psychometric Function Estimation" href="../examples/psi.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            ADOpy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dev-guide.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changelogs.html">Changelogs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../examples/choice_under_risk_and_ambiguity.html">Choice under risk and ambiguity task</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/delay_discounting.html">Delay discounting task</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/psi.html">Psychometric Function Estimation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.base</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#task">Task</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.base.Task"><code class="docutils literal notranslate"><span class="pre">Task</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#model">Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.base.Model"><code class="docutils literal notranslate"><span class="pre">Model</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#engine">Engine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.base.Engine"><code class="docutils literal notranslate"><span class="pre">Engine</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tasks/cra.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.cra</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tasks/dd.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.dd</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tasks/psi.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.psi</span></code></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ADOpy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.base</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-adopy.base">
+<span id="adopy-base"></span><h1><a class="reference internal" href="#module-adopy.base" title="adopy.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.base</span></code></a><a class="headerlink" href="#module-adopy.base" title="Link to this heading"></a></h1>
+<p>This module contains three basic classes of ADOpy: <cite>Task</cite>, <cite>Model</cite>, and <cite>Engine</cite>.
+These classes provide built-in functions for the Adaptive Design Optimization.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Three basic classes are defined in the <a class="reference internal" href="#module-adopy.base" title="adopy.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.base</span></code></a> (i.e.,
+<a class="reference internal" href="#adopy.base.Task" title="adopy.base.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.base.Task</span></code></a>, <a class="reference internal" href="#adopy.base.Model" title="adopy.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.base.Model</span></code></a>, and
+<a class="reference internal" href="#adopy.base.Engine" title="adopy.base.Engine"><code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.base.Engine</span></code></a>). However, for convinience, users can import them
+directly as <code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.Task</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.Model</span></code>, and
+<code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.Engine</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Engine</span>
+<span class="c1"># works the same as</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">adopy.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Task</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Engine</span>
+</pre></div>
+</div>
+</div>
+<section id="task">
+<h2>Task<a class="headerlink" href="#task" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.base.Task">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.base.</span></span><span class="sig-name descname"><span class="pre">Task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">designs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">responses</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.base.Task" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A task object stores information for a specific experimental task,
+including labels of design variables (<code class="code docutils literal notranslate"><span class="pre">designs</span></code>), labels of possible
+responses (<code class="code docutils literal notranslate"><span class="pre">responses</span></code>), and the task name (<code class="code docutils literal notranslate"><span class="pre">name</span></code>).</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>The <code class="code docutils literal notranslate"><span class="pre">response</span></code> argument is changed to the labels of response
+variables, instead of possible values of a response variable.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>designs</strong> – Labels of design variables in the task.</p></li>
+<li><p><strong>responses</strong> – Labels of response variables in the task (e.g., choice, rt).</p></li>
+<li><p><strong>name</strong> – Name of the task.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Task A&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="n">designs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;d1&#39;</span><span class="p">,</span> <span class="s1">&#39;d2&#39;</span><span class="p">],</span>
+<span class="gp">... </span>            <span class="n">responses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;choice&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span>
+<span class="go">Task(&#39;Task A&#39;, designs=[&#39;d1&#39;, &#39;d2&#39;], responses=[&#39;choice&#39;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;Task A&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span><span class="o">.</span><span class="n">designs</span>
+<span class="go">[&#39;d1&#39;, &#39;d2&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span><span class="o">.</span><span class="n">responses</span>
+<span class="go">[&#39;choice&#39;]</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Task.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#adopy.base.Task.name" title="Link to this definition"></a></dt>
+<dd><p>Name of the task. If it has no name, returns <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Task.designs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">designs</span></span><a class="headerlink" href="#adopy.base.Task.designs" title="Link to this definition"></a></dt>
+<dd><p>Labels for design variables of the task.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Task.responses">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">responses</span></span><a class="headerlink" href="#adopy.base.Task.responses" title="Link to this definition"></a></dt>
+<dd><p>Labels of response variables in the task.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.base.Task.extract_responses">
+<span class="sig-name descname"><span class="pre">extract_responses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.base.Task.extract_responses" title="Link to this definition"></a></dt>
+<dd><p>Extract response grids from the given data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – A data object that contains key-value pairs or columns
+corresponding to design variables.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>ret</em> – An ordered dictionary of grids for response variables.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="model">
+<h2>Model<a class="headerlink" href="#model" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.base.Model">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.base.</span></span><span class="sig-name descname"><span class="pre">Model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.base.Model" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A base class for a model in the ADOpy package.</p>
+<p>Its initialization requires up to 4 arguments: <code class="code docutils literal notranslate"><span class="pre">task</span></code>,
+<code class="code docutils literal notranslate"><span class="pre">params</span></code>, <code class="code docutils literal notranslate"><span class="pre">func</span></code> (optional), and <code class="code docutils literal notranslate"><span class="pre">name</span></code> (optional).</p>
+<p><code class="code docutils literal notranslate"><span class="pre">task</span></code> is an instance of a <a class="reference internal" href="#adopy.base.Task" title="adopy.base.Task"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.base.Task</span></code></a> class that this
+model is for. <code class="code docutils literal notranslate"><span class="pre">params</span></code> is a list of model parameters, given as a
+list of their labels, e.g., <code class="code docutils literal notranslate"><span class="pre">['alpha',</span> <span class="pre">'beta']</span></code>. <code class="code docutils literal notranslate"><span class="pre">name</span></code> is the
+name of this model, which is optional for its functioning.</p>
+<p>The most important argument is <code class="code docutils literal notranslate"><span class="pre">func</span></code>, which calculates the log
+likelihood given with design values, parameter values, and response values
+as its input. The arguments of the function should include design variables
+and response variables (defined in the <code class="code docutils literal notranslate"><span class="pre">task</span></code>: instance) and model
+parameters (given as <code class="code docutils literal notranslate"><span class="pre">params</span></code>). The order of arguments does not
+matter. If <code class="code docutils literal notranslate"><span class="pre">func</span></code> is not given, the model provides the log likelihood
+of a random noise. An simple example is given as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">compute_log_lik</span><span class="p">(</span><span class="n">design1</span><span class="p">,</span> <span class="n">design2</span><span class="p">,</span>
+                    <span class="n">param1</span><span class="p">,</span> <span class="n">param2</span><span class="p">,</span> <span class="n">param3</span><span class="p">,</span>
+                    <span class="n">response1</span><span class="p">,</span> <span class="n">response2</span><span class="p">):</span>
+    <span class="c1"># ... calculating the log likelihood ...</span>
+    <span class="k">return</span> <span class="n">log_lik</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, the <code class="code docutils literal notranslate"><span class="pre">func</span></code> argument should be defined to
+compute the log likelihood, instead of the probability of a binary
+response variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the previous
+versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>The <code class="code docutils literal notranslate"><span class="pre">func</span></code> argument is changed to the log likelihood function,
+instead of the probability function of a single binary response.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task</strong> (<em>Task</em>) – Task object that this model object is for.</p></li>
+<li><p><strong>params</strong> – Labels of model parameters in the model.</p></li>
+<li><p><strong>func</strong> (<em>function, optional</em>) – A function to compute the log likelihood given a model, denoted as
+<span class="math notranslate nohighlight">\(L(\mathbf{x} | \mathbf{d}, \mathbf{\theta})\)</span>,
+where <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> is a response vector,
+<span class="math notranslate nohighlight">\(\mathbf{d}\)</span> is a design vector, and
+<span class="math notranslate nohighlight">\(\mathbf{\theta}\)</span> is a parameter vector.
+Note that the function arguments should include all design, parameter,
+and response variables.</p></li>
+<li><p><strong>name</strong> (<em>Optional[str]</em>) – Name of the task.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Task A&#39;</span><span class="p">,</span> <span class="n">designs</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">],</span> <span class="n">responses</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">calculate_log_lik</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">b0</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">... </span>    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">bernoulli</span>
+<span class="gp">... </span>    <span class="n">logit</span> <span class="o">=</span> <span class="n">b0</span> <span class="o">+</span> <span class="n">b1</span> <span class="o">*</span> <span class="n">x1</span> <span class="o">+</span> <span class="n">b2</span> <span class="o">*</span> <span class="n">x2</span>
+<span class="gp">... </span>    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">logit</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">bernoulli</span><span class="o">.</span><span class="n">logpmf</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;Model X&#39;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;b0&#39;</span><span class="p">,</span> <span class="s1">&#39;b1&#39;</span><span class="p">,</span> <span class="s1">&#39;b2&#39;</span><span class="p">],</span>
+<span class="gp">... </span>              <span class="n">func</span><span class="o">=</span><span class="n">calculate_log_lik</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">name</span>
+<span class="go">&#39;Model X&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">task</span>
+<span class="go">Task(&#39;Task A&#39;, designs=[&#39;x1&#39;, &#39;x2&#39;], responses=[&#39;y&#39;])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+<span class="go">[&#39;b0&#39;, &#39;b1&#39;, &#39;b2&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">compute</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">x2</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">b0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b1</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">b2</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="go">-0.251929081345373</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">compute_log_lik</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">x1</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">x2</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">b0</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b1</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">b2</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="go">-0.251929081345373</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Model.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#adopy.base.Model.name" title="Link to this definition"></a></dt>
+<dd><p>Name of the model. If it has no name, returns <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Model.task">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">task</span></span><a class="headerlink" href="#adopy.base.Model.task" title="Link to this definition"></a></dt>
+<dd><p>Task instance for the model.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Model.params">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">params</span></span><a class="headerlink" href="#adopy.base.Model.params" title="Link to this definition"></a></dt>
+<dd><p>Labels for model parameters of the model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.base.Model.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.base.Model.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute log likelihood of obtaining responses with given designs and
+model parameters. The function provide the same result as the argument
+<code class="code docutils literal notranslate"><span class="pre">func</span></code> given in the initialization. If the likelihood function is
+not given for the model, it returns the log probability of a random
+noise.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, <code class="code docutils literal notranslate"><span class="pre">compute()</span></code> function should compute
+the log likelihood, instead of the probability of a binary response
+variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the
+previous versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>Provide the log likelihood instead of the probability of a binary
+response.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="engine">
+<h2>Engine<a class="headerlink" href="#engine" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.base.Engine">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.base.</span></span><span class="sig-name descname"><span class="pre">Engine</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_ratio=1e-07</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'numpy.float32'&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.base.Engine" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A base class for an ADO engine to compute optimal designs.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.task">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">task</span></span><a class="headerlink" href="#adopy.base.Engine.task" title="Link to this definition"></a></dt>
+<dd><p>Task instance for the engine.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#adopy.base.Engine.model" title="Link to this definition"></a></dt>
+<dd><p>Model instance for the engine.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.grid_design">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">grid_design</span></span><a class="headerlink" href="#adopy.base.Engine.grid_design" title="Link to this definition"></a></dt>
+<dd><p>Grid space for design variables, generated from the grid definition,
+given as <code class="code docutils literal notranslate"><span class="pre">grid_design</span></code> with initialization.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.grid_param">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">grid_param</span></span><a class="headerlink" href="#adopy.base.Engine.grid_param" title="Link to this definition"></a></dt>
+<dd><p>Grid space for model parameters, generated from the grid definition,
+given as <code class="code docutils literal notranslate"><span class="pre">grid_param</span></code> with initialization.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.grid_response">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">grid_response</span></span><a class="headerlink" href="#adopy.base.Engine.grid_response" title="Link to this definition"></a></dt>
+<dd><p>Grid space for response variables, generated from the grid definition,
+given as <code class="code docutils literal notranslate"><span class="pre">grid_response</span></code> with initialization.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.log_prior">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_prior</span></span><a class="headerlink" href="#adopy.base.Engine.log_prior" title="Link to this definition"></a></dt>
+<dd><p>Log prior probabilities on the grid space of model parameters, <span class="math notranslate nohighlight">\(\log p_0(\theta)\)</span>.
+This log probabilities correspond to grid points defined in <code class="code docutils literal notranslate"><span class="pre">grid_param</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.log_post">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_post</span></span><a class="headerlink" href="#adopy.base.Engine.log_post" title="Link to this definition"></a></dt>
+<dd><p>Log posterior probabilities on the grid space of model parameters, <span class="math notranslate nohighlight">\(\log p(\theta)\)</span>.
+This log probabilities correspond to grid points defined in <code class="code docutils literal notranslate"><span class="pre">grid_param</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.prior">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prior</span></span><a class="headerlink" href="#adopy.base.Engine.prior" title="Link to this definition"></a></dt>
+<dd><p>Prior probabilities on the grid space of model parameters, <span class="math notranslate nohighlight">\(p_0(\theta)\)</span>.
+This probabilities correspond to grid points defined in <code class="code docutils literal notranslate"><span class="pre">grid_param</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.post">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">post</span></span><a class="headerlink" href="#adopy.base.Engine.post" title="Link to this definition"></a></dt>
+<dd><p>Posterior probabilities on the grid space of model parameters, <span class="math notranslate nohighlight">\(p(\theta)\)</span>.
+This probabilities correspond to grid points defined in <code class="code docutils literal notranslate"><span class="pre">grid_param</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.marg_post">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">marg_post</span></span><a class="headerlink" href="#adopy.base.Engine.marg_post" title="Link to this definition"></a></dt>
+<dd><p>Marginal posterior distributions for each parameter</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.log_lik">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">log_lik</span></span><a class="headerlink" href="#adopy.base.Engine.log_lik" title="Link to this definition"></a></dt>
+<dd><p>Log likelihood <span class="math notranslate nohighlight">\(p(y | d, \theta)\)</span> for all discretized values of
+<span class="math notranslate nohighlight">\(y\)</span>, <span class="math notranslate nohighlight">\(d\)</span>, and <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.marg_log_lik">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">marg_log_lik</span></span><a class="headerlink" href="#adopy.base.Engine.marg_log_lik" title="Link to this definition"></a></dt>
+<dd><p>Marginal log likelihood <span class="math notranslate nohighlight">\(\log p(y | d)\)</span> for all discretized values
+for <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(d\)</span>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.ent">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ent</span></span><a class="headerlink" href="#adopy.base.Engine.ent" title="Link to this definition"></a></dt>
+<dd><p>Entropy <span class="math notranslate nohighlight">\(H(Y(d) | \theta) = -\sum_y p(y | d, \theta) \log p(y | d, \theta)\)</span>
+for all discretized values for <span class="math notranslate nohighlight">\(d\)</span> and <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.ent_marg">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ent_marg</span></span><a class="headerlink" href="#adopy.base.Engine.ent_marg" title="Link to this definition"></a></dt>
+<dd><p>Marginal entropy <span class="math notranslate nohighlight">\(H(Y(d)) = -\sum_y p(y | d) \log p(y | d)\)</span>
+for all discretized values for <span class="math notranslate nohighlight">\(d\)</span>,
+where <span class="math notranslate nohighlight">\(p(y | d)\)</span> indicates the marginal likelihood.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.ent_cond">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ent_cond</span></span><a class="headerlink" href="#adopy.base.Engine.ent_cond" title="Link to this definition"></a></dt>
+<dd><p>Conditional entropy <span class="math notranslate nohighlight">\(H(Y(d) | \Theta) = \sum_\theta p(\theta) H(Y(d) | \theta)\)</span>
+for all discretized values for <span class="math notranslate nohighlight">\(d\)</span>,
+where <span class="math notranslate nohighlight">\(p(\theta)\)</span> indicates the posterior distribution for model parameters.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.mutual_info">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mutual_info</span></span><a class="headerlink" href="#adopy.base.Engine.mutual_info" title="Link to this definition"></a></dt>
+<dd><p>Mutual information <span class="math notranslate nohighlight">\(I(Y(d); \Theta) = H(Y(d)) - H(Y(d) | \Theta)\)</span>,
+where <span class="math notranslate nohighlight">\(H(Y(d))\)</span> indicates the marginal entropy
+and <span class="math notranslate nohighlight">\(H(Y(d) | \Theta)\)</span> indicates the conditional entropy.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.post_mean">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">post_mean</span></span><a class="headerlink" href="#adopy.base.Engine.post_mean" title="Link to this definition"></a></dt>
+<dd><p>A vector of estimated means for the posterior distribution.
+Its length is <code class="docutils literal notranslate"><span class="pre">num_params</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.post_cov">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">post_cov</span></span><a class="headerlink" href="#adopy.base.Engine.post_cov" title="Link to this definition"></a></dt>
+<dd><p>An estimated covariance matrix for the posterior distribution.
+Its shape is <code class="docutils literal notranslate"><span class="pre">(num_grids,</span> <span class="pre">num_params)</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.post_sd">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">post_sd</span></span><a class="headerlink" href="#adopy.base.Engine.post_sd" title="Link to this definition"></a></dt>
+<dd><p>A vector of estimated standard deviations for the posterior
+distribution. Its length is <code class="docutils literal notranslate"><span class="pre">num_params</span></code>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.base.Engine.dtype">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#adopy.base.Engine.dtype" title="Link to this definition"></a></dt>
+<dd><p>The desired data-type for the internal vectors and matrixes, e.g.,
+<code class="code docutils literal notranslate"><span class="pre">numpy.float64</span></code>. Default is <code class="code docutils literal notranslate"><span class="pre">numpy.float32</span></code>.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 0.4.0.</span></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.base.Engine.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#adopy.base.Engine.reset" title="Link to this definition"></a></dt>
+<dd><p>Reset the engine as in the initial state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.base.Engine.get_design">
+<span class="sig-name descname"><span class="pre">get_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'optimal'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.base.Engine.get_design" title="Link to this definition"></a></dt>
+<dd><p>Choose a design with given one of following types:</p>
+<ul class="simple">
+<li><p><code class="code docutils literal notranslate"><span class="pre">'optimal'</span></code> (default): an optimal design <span class="math notranslate nohighlight">\(d^*\)</span> that maximizes the mutual
+information.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">'random'</span></code>: a design randomly chosen.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kind</strong> (<em>{‘optimal’, ‘random’}, optional</em>) – Type of a design to choose. Default is <code class="code docutils literal notranslate"><span class="pre">'optimal'</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>design</strong> (<em>Dict[str, any] or None</em>) – A chosen design vector to use for the next trial.
+Returns <cite>None</cite> if there is no design available.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.base.Engine.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.base.Engine.update" title="Link to this definition"></a></dt>
+<dd><p>Update the posterior probabilities <span class="math notranslate nohighlight">\(p(\theta | y, d^*)\)</span> for
+all discretized values of <span class="math notranslate nohighlight">\(\theta\)</span>.</p>
+<div class="math notranslate nohighlight">
+\[p(\theta | y, d^*) \sim
+    p( y | \theta, d^*) p(\theta)\]</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Given design and resposne as `design` and `response`,</span>
+<span class="c1"># the engine can update probability with the following line:</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Also, it can takes multiple observations for updating posterior
+probabilities. Multiple pairs of design and response should be
+given as a list of designs and a list of responses, into
+<code class="code docutils literal notranslate"><span class="pre">design</span></code> and <code class="code docutils literal notranslate"><span class="pre">response</span></code> argument, respectively.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+p\big(\theta | y_1, \ldots, y_n, d_1^*, \ldots, d_n^*\big)
+&amp;\sim p\big( y_1, \ldots, y_n | \theta, d_1^*, \ldots, d_n^* \big) p(\theta) \\
+&amp;= p(y_1 | \theta, d_1^*) \cdot \ldots \cdot p(y_n | \theta, d_n^*) p(\theta)
+\end{aligned}\end{split}\]</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Given a list of designs and corresponding responses as below:</span>
+<span class="n">designs</span> <span class="o">=</span> <span class="p">[</span><span class="n">design1</span><span class="p">,</span> <span class="n">design2</span><span class="p">,</span> <span class="n">design3</span><span class="p">]</span>
+<span class="n">responses</span> <span class="o">=</span> <span class="p">[</span><span class="n">response1</span><span class="p">,</span> <span class="n">response2</span><span class="p">,</span> <span class="n">response3</span><span class="p">]</span>
+
+<span class="c1"># the engine can update with multiple observations:</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">designs</span><span class="p">,</span> <span class="n">responses</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design</strong> (dict or <code class="code docutils literal notranslate"><span class="pre">pandas.Series</span></code> or list of designs) – Design vector for given response</p></li>
+<li><p><strong>response</strong> (dict or <code class="code docutils literal notranslate"><span class="pre">pandas.Series</span></code> or list of responses) – Any kinds of observed response</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../examples/psi.html" class="btn btn-neutral float-left" title="Psychometric Function Estimation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="tasks/cra.html" class="btn btn-neutral float-right" title="adopy.tasks.cra" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, ADOpy developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-71789812-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-71789812-2', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

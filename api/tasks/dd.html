@@ -1,0 +1,564 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>adopy.tasks.dd &mdash; ADOpy 0.4.2.dev0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=df9cc0fc" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=df9cc0fc" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=272485b7"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/js/custom.js?v=972e07f4"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="adopy.tasks.psi" href="psi.html" />
+    <link rel="prev" title="adopy.tasks.cra" href="cra.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ADOpy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev-guide.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelogs.html">Changelogs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/choice_under_risk_and_ambiguity.html">Choice under risk and ambiguity task</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/delay_discounting.html">Delay discounting task</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/psi.html">Psychometric Function Estimation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../base.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.base</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cra.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.cra</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.dd</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#task">Task</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.dd.TaskDD"><code class="docutils literal notranslate"><span class="pre">TaskDD</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#model">Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.dd.ModelExp"><code class="docutils literal notranslate"><span class="pre">ModelExp</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.dd.ModelHyp"><code class="docutils literal notranslate"><span class="pre">ModelHyp</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.dd.ModelHPB"><code class="docutils literal notranslate"><span class="pre">ModelHPB</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.dd.ModelCOS"><code class="docutils literal notranslate"><span class="pre">ModelCOS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.dd.ModelQH"><code class="docutils literal notranslate"><span class="pre">ModelQH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.dd.ModelDE"><code class="docutils literal notranslate"><span class="pre">ModelDE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#engine">Engine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.dd.EngineDD"><code class="docutils literal notranslate"><span class="pre">EngineDD</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="psi.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.psi</span></code></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ADOpy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.dd</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="adopy-tasks-dd">
+<h1><a class="reference internal" href="#module-adopy.tasks.dd" title="adopy.tasks.dd"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.dd</span></code></a><a class="headerlink" href="#adopy-tasks-dd" title="Link to this heading"></a></h1>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../../_images/delay-discounting-task.png"><img alt="../../_images/delay-discounting-task.png" src="../../_images/delay-discounting-task.png" style="width: 100%;" />
+</a>
+</figure>
+<p id="module-adopy.tasks.dd"><strong>Delay discounting</strong> refers to the well-established finding that humans
+tend to discount the value of a future reward such that the discount
+progressively increases as a function of the receipt delay (Green &amp; Myerson,
+2004; Vincent, 2016).
+In a typical <strong>delay discounting (DD) task</strong>, the participant is asked to
+indicate his/her preference between two delayed options:
+a smaller-sooner (SS) option (e.g., 8 dollars now) and
+a larger-longer (LL) option (e.g., 50 dollars in 1 month).</p>
+<p class="rubric">References</p>
+<p>Green, L. and Myerson, J. (2004). A discounting framework for choice with
+delayed and probabilistic rewards. <em>Psychological Bulletin, 130</em>, 769–792.</p>
+<p>Vincent, B. T. (2016). Hierarchical Bayesian estimation and hypothesis
+testing for delay discounting tasks. <em>Behavior Research Methods, 48</em>,
+1608–1620.</p>
+<section id="task">
+<h2>Task<a class="headerlink" href="#task" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.dd.TaskDD">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.dd.</span></span><span class="sig-name descname"><span class="pre">TaskDD</span></span><a class="headerlink" href="#adopy.tasks.dd.TaskDD" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Task" title="adopy.base._task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a></p>
+<p>The Task class for the delay discounting task.</p>
+<dl class="simple">
+<dt>Design variables</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">t_ss</span></code> (<span class="math notranslate nohighlight">\(t_{SS}\)</span>) - delay of a SS option</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">t_ll</span></code> (<span class="math notranslate nohighlight">\(t_{LL}\)</span>) - delay of a LL option</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r_ss</span></code> (<span class="math notranslate nohighlight">\(R_{SS}\)</span>) - amount of reward of a SS option</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r_ll</span></code> (<span class="math notranslate nohighlight">\(R_{LL}\)</span>) - amount of reward of a LL option</p></li>
+</ul>
+</dd>
+<dt>Responses</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">choice</span></code> - 0 (choosing a SS option) or 1 (choosing a LL option)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.ddt</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskDD</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span> <span class="o">=</span> <span class="n">TaskDD</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span><span class="o">.</span><span class="n">designs</span>
+<span class="go">[&#39;t_ss&#39;, &#39;t_ll&#39;, &#39;r_ss&#39;, &#39;r_ll&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span><span class="o">.</span><span class="n">responses</span>
+<span class="go">[&#39;choice&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="model">
+<h2>Model<a class="headerlink" href="#model" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.dd.ModelExp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.dd.</span></span><span class="sig-name descname"><span class="pre">ModelExp</span></span><a class="headerlink" href="#adopy.tasks.dd.ModelExp" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Model" title="adopy.base._model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p>The exponential model for the delay discounting task (Samuelson, 1937).</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    D(t) &amp;= e^{-rt} \\
+    V_{LL} &amp;= R_{LL} \cdot D(t_{LL}) \\
+    V_{SS} &amp;= R_{SS} \cdot D(t_{SS}) \\
+    P(LL\, over \, SS) &amp;= \frac{1}{1 + \exp [-\tau (V_{LL} - V_{SS})]}
+\end{align}\end{split}\]</div>
+<dl class="simple">
+<dt>Model parameters</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">r</span></code> (<span class="math notranslate nohighlight">\(r\)</span>) - discounting parameter (<span class="math notranslate nohighlight">\(r &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tau</span></code> (<span class="math notranslate nohighlight">\(\tau\)</span>) - inverse temperature (<span class="math notranslate nohighlight">\(\tau &gt; 0\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Samuelson, P. A. (1937). A note on measurement of utility.
+<em>The review of economic studies, 4</em> (2), 155–161.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.ddt</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelExp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelExp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">task</span>
+<span class="go">Task(&#39;DDT&#39;, designs=[&#39;t_ss&#39;, &#39;t_ll&#39;, &#39;r_ss&#39;, &#39;r_ll&#39;], responses=[0, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+<span class="go">[&#39;r&#39;, &#39;tau&#39;]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.tasks.dd.ModelExp.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_ll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.dd.ModelExp.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute log likelihood of obtaining responses with given designs and
+model parameters. The function provide the same result as the argument
+<code class="code docutils literal notranslate"><span class="pre">func</span></code> given in the initialization. If the likelihood function is
+not given for the model, it returns the log probability of a random
+noise.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, <code class="code docutils literal notranslate"><span class="pre">compute()</span></code> function should compute
+the log likelihood, instead of the probability of a binary response
+variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the
+previous versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>Provide the log likelihood instead of the probability of a binary
+response.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.dd.ModelHyp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.dd.</span></span><span class="sig-name descname"><span class="pre">ModelHyp</span></span><a class="headerlink" href="#adopy.tasks.dd.ModelHyp" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Model" title="adopy.base._model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p>The hyperbolic model for the delay discounting task (Mazur, 1987).</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    D(t) &amp;= \frac{1}{1 + kt} \\
+    V_{LL} &amp;= R_{LL} \cdot D(t_{LL}) \\
+    V_{SS} &amp;= R_{SS} \cdot D(t_{SS}) \\
+    P(LL\, over \, SS) &amp;= \frac{1}{1 + \exp [-\tau (V_{LL} - V_{SS})]}
+\end{align}\end{split}\]</div>
+<dl class="simple">
+<dt>Model parameters</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">k</span></code> (<span class="math notranslate nohighlight">\(k\)</span>) - discounting parameter (<span class="math notranslate nohighlight">\(k &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tau</span></code> (<span class="math notranslate nohighlight">\(\tau\)</span>) - inverse temperature (<span class="math notranslate nohighlight">\(\tau &gt; 0\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Mazur, J. E. (1987). An adjusting procedure for studying delayed reinforcement.
+<em>Commons, ML.;Mazur, JE.; Nevin, JA</em>, 55–73.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.ddt</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelHyp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelHyp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">task</span>
+<span class="go">Task(&#39;DDT&#39;, designs=[&#39;t_ss&#39;, &#39;t_ll&#39;, &#39;r_ss&#39;, &#39;r_ll&#39;], responses=[0, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+<span class="go">[&#39;k&#39;, &#39;tau&#39;]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.tasks.dd.ModelHyp.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_ll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.dd.ModelHyp.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute log likelihood of obtaining responses with given designs and
+model parameters. The function provide the same result as the argument
+<code class="code docutils literal notranslate"><span class="pre">func</span></code> given in the initialization. If the likelihood function is
+not given for the model, it returns the log probability of a random
+noise.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, <code class="code docutils literal notranslate"><span class="pre">compute()</span></code> function should compute
+the log likelihood, instead of the probability of a binary response
+variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the
+previous versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>Provide the log likelihood instead of the probability of a binary
+response.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.dd.ModelHPB">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.dd.</span></span><span class="sig-name descname"><span class="pre">ModelHPB</span></span><a class="headerlink" href="#adopy.tasks.dd.ModelHPB" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Model" title="adopy.base._model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p>The hyperboloid model for the delay discounting task (Green &amp; Myerson, 2004).</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    D(t) &amp;= \frac{1}{(1 + kt)^s} \\
+    V_{LL} &amp;= R_{LL} \cdot D(t_{LL}) \\
+    V_{SS} &amp;= R_{SS} \cdot D(t_{SS}) \\
+    P(LL\, over \, SS) &amp;= \frac{1}{1 + \exp [-\tau (V_{LL} - V_{SS})]}
+\end{align}\end{split}\]</div>
+<dl class="simple">
+<dt>Model parameters</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">k</span></code> (<span class="math notranslate nohighlight">\(k\)</span>) - discounting parameter (<span class="math notranslate nohighlight">\(k &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s</span></code> (<span class="math notranslate nohighlight">\(s\)</span>) - scale parameter (<span class="math notranslate nohighlight">\(s &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tau</span></code> (<span class="math notranslate nohighlight">\(\tau\)</span>) - inverse temperature (<span class="math notranslate nohighlight">\(\tau &gt; 0\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Green, L. and Myerson, J. (2004). A discounting framework for choice with
+delayed and probabilistic rewards.
+<em>Psychological Bulletin, 130</em>, 769–792.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.ddt</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelHPB</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelHPB</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">task</span>
+<span class="go">Task(&#39;DDT&#39;, designs=[&#39;t_ss&#39;, &#39;t_ll&#39;, &#39;r_ss&#39;, &#39;r_ll&#39;], responses=[0, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+<span class="go">[&#39;k&#39;, &#39;s&#39;, &#39;tau&#39;]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.tasks.dd.ModelHPB.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_ll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.dd.ModelHPB.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute log likelihood of obtaining responses with given designs and
+model parameters. The function provide the same result as the argument
+<code class="code docutils literal notranslate"><span class="pre">func</span></code> given in the initialization. If the likelihood function is
+not given for the model, it returns the log probability of a random
+noise.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, <code class="code docutils literal notranslate"><span class="pre">compute()</span></code> function should compute
+the log likelihood, instead of the probability of a binary response
+variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the
+previous versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>Provide the log likelihood instead of the probability of a binary
+response.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.dd.ModelCOS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.dd.</span></span><span class="sig-name descname"><span class="pre">ModelCOS</span></span><a class="headerlink" href="#adopy.tasks.dd.ModelCOS" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Model" title="adopy.base._model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p>The constant sensitivity model for the delay discounting task
+(Ebert &amp; Prelec, 2007).</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    D(t) &amp;= \exp[-(rt)^s] \\
+    V_{LL} &amp;= R_{LL} \cdot D(t_{LL}) \\
+    V_{SS} &amp;= R_{SS} \cdot D(t_{SS}) \\
+    P(LL\, over \, SS) &amp;= \frac{1}{1 + \exp [-\tau (V_{LL} - V_{SS})]}
+\end{align}\end{split}\]</div>
+<dl class="simple">
+<dt>Model parameters</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">r</span></code> (<span class="math notranslate nohighlight">\(r\)</span>) - discounting parameter (<span class="math notranslate nohighlight">\(r &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s</span></code> (<span class="math notranslate nohighlight">\(s\)</span>) - scale parameter (<span class="math notranslate nohighlight">\(s &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tau</span></code> (<span class="math notranslate nohighlight">\(\tau\)</span>) - inverse temperature (<span class="math notranslate nohighlight">\(\tau &gt; 0\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Ebert, J. E. and Prelec, D. (2007). The fragility of time: Time-insensitivity
+and valuation of thenear and far future. <em>Management science, 53</em> (9), 1423–1438.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.ddt</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelCOS</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelCOS</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">task</span>
+<span class="go">Task(&#39;DDT&#39;, designs=[&#39;t_ss&#39;, &#39;t_ll&#39;, &#39;r_ss&#39;, &#39;r_ll&#39;], responses=[0, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+<span class="go">[&#39;r&#39;, &#39;s&#39;, &#39;tau&#39;]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.tasks.dd.ModelCOS.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_ll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.dd.ModelCOS.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute log likelihood of obtaining responses with given designs and
+model parameters. The function provide the same result as the argument
+<code class="code docutils literal notranslate"><span class="pre">func</span></code> given in the initialization. If the likelihood function is
+not given for the model, it returns the log probability of a random
+noise.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, <code class="code docutils literal notranslate"><span class="pre">compute()</span></code> function should compute
+the log likelihood, instead of the probability of a binary response
+variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the
+previous versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>Provide the log likelihood instead of the probability of a binary
+response.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.dd.ModelQH">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.dd.</span></span><span class="sig-name descname"><span class="pre">ModelQH</span></span><a class="headerlink" href="#adopy.tasks.dd.ModelQH" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Model" title="adopy.base._model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p>The quasi-hyperbolic model (or Beta-Delta model) for the delay discounting task
+(Laibson, 1997).</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    D(t) &amp;= \begin{cases}
+        1 &amp; \text{if } t = 0 \\
+        \beta \delta ^ t &amp; \text{if } t &gt; 0
+    \end{cases} \\
+    V_{LL} &amp;= R_{LL} \cdot D(t_{LL}) \\
+    V_{SS} &amp;= R_{SS} \cdot D(t_{SS}) \\
+    P(LL\, over \, SS) &amp;= \frac{1}{1 + \exp [-\tau (V_{LL} - V_{SS})]}
+\end{align}\end{split}\]</div>
+<dl class="simple">
+<dt>Model parameters</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">beta</span></code> (<span class="math notranslate nohighlight">\(\beta\)</span>) - constant rate (<span class="math notranslate nohighlight">\(0 &lt; \beta &lt; 1\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">delta</span></code> (<span class="math notranslate nohighlight">\(\delta\)</span>) - constant rate (<span class="math notranslate nohighlight">\(0 &lt; \delta &lt; 1\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tau</span></code> (<span class="math notranslate nohighlight">\(\tau\)</span>) - inverse temperature (<span class="math notranslate nohighlight">\(\tau &gt; 0\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Laibson, D. (1997). Golden eggs and hyperbolic discounting.
+<em>The Quarterly Journal of Economics</em>, 443–477</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.ddt</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelQH</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelQH</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">task</span>
+<span class="go">Task(&#39;DDT&#39;, designs=[&#39;t_ss&#39;, &#39;t_ll&#39;, &#39;r_ss&#39;, &#39;r_ll&#39;], responses=[0, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+<span class="go">[&#39;beta&#39;, &#39;delta&#39;, &#39;tau&#39;]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.tasks.dd.ModelQH.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_ll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.dd.ModelQH.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute log likelihood of obtaining responses with given designs and
+model parameters. The function provide the same result as the argument
+<code class="code docutils literal notranslate"><span class="pre">func</span></code> given in the initialization. If the likelihood function is
+not given for the model, it returns the log probability of a random
+noise.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, <code class="code docutils literal notranslate"><span class="pre">compute()</span></code> function should compute
+the log likelihood, instead of the probability of a binary response
+variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the
+previous versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>Provide the log likelihood instead of the probability of a binary
+response.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.dd.ModelDE">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.dd.</span></span><span class="sig-name descname"><span class="pre">ModelDE</span></span><a class="headerlink" href="#adopy.tasks.dd.ModelDE" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Model" title="adopy.base._model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p>The double exponential model for the delay discounting task (McClure et al., 2007).</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    D(t) &amp;= \omega e^{-rt} + (1 - \omega) e^{-st} \\
+    V_{LL} &amp;= R_{LL} \cdot D(t_{LL}) \\
+    V_{SS} &amp;= R_{SS} \cdot D(t_{SS}) \\
+    P(LL\, over \, SS) &amp;= \frac{1}{1 + \exp [-\tau (V_{LL} - V_{SS})]}
+\end{align}\end{split}\]</div>
+<dl class="simple">
+<dt>Model parameters</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">omega</span></code> (<span class="math notranslate nohighlight">\(r\)</span>) - weight parameter (<span class="math notranslate nohighlight">\(0 &lt; \omega &lt; 1\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r</span></code> (<span class="math notranslate nohighlight">\(r\)</span>) - discounting rate (<span class="math notranslate nohighlight">\(r &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">s</span></code> (<span class="math notranslate nohighlight">\(s\)</span>) - discounting rate (<span class="math notranslate nohighlight">\(s &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tau</span></code> (<span class="math notranslate nohighlight">\(\tau\)</span>) - inverse temperature (<span class="math notranslate nohighlight">\(\tau &gt; 0\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>McClure, S. M., Ericson, K. M., Laibson, D. I., Loewenstein, G., and Cohen, J. D.
+(2007). Time discounting for primary rewards. <em>Journal of neuroscience, 27</em> (21),
+5796–5804.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.ddt</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelDE</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelDE</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">task</span>
+<span class="go">Task(&#39;DDT&#39;, designs=[&#39;t_ss&#39;, &#39;t_ll&#39;, &#39;r_ss&#39;, &#39;r_ll&#39;], responses=[0, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+<span class="go">[&#39;omega&#39;, &#39;r&#39;, &#39;s&#39;, &#39;tau&#39;]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.tasks.dd.ModelDE.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_ll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_ll</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omega</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.dd.ModelDE.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute log likelihood of obtaining responses with given designs and
+model parameters. The function provide the same result as the argument
+<code class="code docutils literal notranslate"><span class="pre">func</span></code> given in the initialization. If the likelihood function is
+not given for the model, it returns the log probability of a random
+noise.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, <code class="code docutils literal notranslate"><span class="pre">compute()</span></code> function should compute
+the log likelihood, instead of the probability of a binary response
+variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the
+previous versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>Provide the log likelihood instead of the probability of a binary
+response.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="engine">
+<h2>Engine<a class="headerlink" href="#engine" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.dd.EngineDD">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.dd.</span></span><span class="sig-name descname"><span class="pre">EngineDD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_param</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.dd.EngineDD" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Engine" title="adopy.base._engine.Engine"><code class="xref py py-class docutils literal notranslate"><span class="pre">Engine</span></code></a></p>
+<p>The Engine class for the delay discounting task.
+It can be only used for <a class="reference internal" href="#adopy.tasks.dd.TaskDD" title="adopy.tasks.dd.TaskDD"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskDD</span></code></a>.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cra.html" class="btn btn-neutral float-left" title="adopy.tasks.cra" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="psi.html" class="btn btn-neutral float-right" title="adopy.tasks.psi" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, ADOpy developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-71789812-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-71789812-2', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

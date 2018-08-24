@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>adopy.tasks.psi &mdash; ADOpy 0.4.2.dev0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=df9cc0fc" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=df9cc0fc" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=272485b7"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/js/custom.js?v=972e07f4"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="adopy.tasks.dd" href="dd.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ADOpy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev-guide.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelogs.html">Changelogs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/choice_under_risk_and_ambiguity.html">Choice under risk and ambiguity task</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/delay_discounting.html">Delay discounting task</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/psi.html">Psychometric Function Estimation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../base.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.base</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cra.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.cra</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="dd.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.dd</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.psi</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#task">Task</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.psi.Task2AFC"><code class="docutils literal notranslate"><span class="pre">Task2AFC</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#model">Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.psi.ModelLogistic"><code class="docutils literal notranslate"><span class="pre">ModelLogistic</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.psi.ModelWeibull"><code class="docutils literal notranslate"><span class="pre">ModelWeibull</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.psi.ModelProbit"><code class="docutils literal notranslate"><span class="pre">ModelProbit</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#engine">Engine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.psi.EnginePsi"><code class="docutils literal notranslate"><span class="pre">EnginePsi</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ADOpy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.psi</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="adopy-tasks-psi">
+<h1><a class="reference internal" href="#module-adopy.tasks.psi" title="adopy.tasks.psi"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.psi</span></code></a><a class="headerlink" href="#adopy-tasks-psi" title="Link to this heading"></a></h1>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../../_images/Psychometricfn.svg"><img alt="../../_images/Psychometricfn.svg" src="../../_images/Psychometricfn.svg" style="width: 50%;" />
+</a>
+</figure>
+<p id="module-adopy.tasks.psi"><strong>Psychometric function</strong> is to figure out whether a subject can perceive a
+signal with varying levels of magnitude. The function has one design variable
+for the <em>intensity</em> of a stimulus, <span class="math notranslate nohighlight">\(x\)</span>; the model has four model
+parameters: <em>guess rate</em> <span class="math notranslate nohighlight">\(\gamma\)</span>, <em>lapse rate</em> <span class="math notranslate nohighlight">\(\delta\)</span>,
+<em>threshold</em> <span class="math notranslate nohighlight">\(\alpha\)</span>, and <em>slope</em> <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
+<section id="task">
+<h2>Task<a class="headerlink" href="#task" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.psi.Task2AFC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.psi.</span></span><span class="sig-name descname"><span class="pre">Task2AFC</span></span><a class="headerlink" href="#adopy.tasks.psi.Task2AFC" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Task" title="adopy.base._task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a></p>
+<p>The Task class for a simple 2-Alternative Forced Choice (2AFC) task
+with a single design variable, the magnitude of a stimulus.</p>
+<dl class="simple">
+<dt>Design variables</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">stimulus</span></code> (<span class="math notranslate nohighlight">\(x\)</span>) - magnitude of a stimulus</p></li>
+</ul>
+</dd>
+<dt>Responses</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">choice</span></code> (<span class="math notranslate nohighlight">\(y\)</span>) - index of the chosen option</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.psi</span><span class="w"> </span><span class="kn">import</span> <span class="n">Task2AFC</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span> <span class="o">=</span> <span class="n">Task2AFC</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span><span class="o">.</span><span class="n">designs</span>
+<span class="go">[&#39;stimulus&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span><span class="o">.</span><span class="n">responses</span>
+<span class="go">[0, 1]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="model">
+<h2>Model<a class="headerlink" href="#model" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.psi.ModelLogistic">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.psi.</span></span><span class="sig-name descname"><span class="pre">ModelLogistic</span></span><a class="headerlink" href="#adopy.tasks.psi.ModelLogistic" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ModelPsi</span></code></p>
+<p>The psychometric function using logistic function.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    F(x; \alpha, \beta) &amp;= \frac{1}{1 + \exp\left(-\beta (x - \mu) \right)} \\
+    \Psi \left( x \mid \alpha, \beta, \gamma, \delta \right)
+        &amp;= \gamma + (1 - \gamma - \delta) \cdot F(x; \alpha, \beta)
+\end{align}\end{split}\]</div>
+<dl class="simple">
+<dt>Model parameters</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code> (<span class="math notranslate nohighlight">\(\alpha\)</span>) - indifference point where the probability
+of a positive response equals to 0.5.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">slope</span></code> (<span class="math notranslate nohighlight">\(\beta\)</span>) - slope of a tangent line on the threshold point
+(<span class="math notranslate nohighlight">\(\beta &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">guess_rate</span></code> (<span class="math notranslate nohighlight">\(\gamma\)</span>) - leftward asymptote of the psychometric
+function (<span class="math notranslate nohighlight">\(0 &lt; \gamma &lt; 1\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lapse_rate</span></code> (<span class="math notranslate nohighlight">\(\delta\)</span>) - rightward asymptote of the psychometric
+function(<span class="math notranslate nohighlight">\(0 &lt; \delta &lt; 1\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.psi</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelLogistic</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelLogistic</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">task</span>
+<span class="go">Task(&#39;2AFC&#39;, designs=[&#39;stimulus&#39;], responses=[0, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+<span class="go">[&#39;threshold&#39;, &#39;slope&#39;, &#39;guess_rate&#39;, &#39;lapse_rate&#39;]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.tasks.psi.ModelLogistic.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stimulus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lapse_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.psi.ModelLogistic.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute log likelihood of obtaining responses with given designs and
+model parameters. The function provide the same result as the argument
+<code class="code docutils literal notranslate"><span class="pre">func</span></code> given in the initialization. If the likelihood function is
+not given for the model, it returns the log probability of a random
+noise.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, <code class="code docutils literal notranslate"><span class="pre">compute()</span></code> function should compute
+the log likelihood, instead of the probability of a binary response
+variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the
+previous versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>Provide the log likelihood instead of the probability of a binary
+response.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.psi.ModelWeibull">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.psi.</span></span><span class="sig-name descname"><span class="pre">ModelWeibull</span></span><a class="headerlink" href="#adopy.tasks.psi.ModelWeibull" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ModelPsi</span></code></p>
+<p>The psychometric function using log Weibull (Gumbel) cumulative distribution function.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    F(x; \mu, \beta) &amp;= CDF_\text{Gumbel_l}
+        \left( \beta (x - \mu) \right) \\
+    \Psi \left( x \mid \alpha, \beta, \gamma, \delta \right)
+        &amp;= \gamma + (1 - \gamma - \delta) \cdot F(x; \alpha, \beta)
+\end{align}\end{split}\]</div>
+<dl class="simple">
+<dt>Model parameters</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code> (<span class="math notranslate nohighlight">\(\alpha\)</span>) - indifference point where the probability
+of a positive response equals to 0.5.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">slope</span></code> (<span class="math notranslate nohighlight">\(\beta\)</span>) - slope of a tangent line on the threshold point
+(<span class="math notranslate nohighlight">\(\beta &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">guess_rate</span></code> (<span class="math notranslate nohighlight">\(\gamma\)</span>) - leftward asymptote of the psychometric
+function (<span class="math notranslate nohighlight">\(0 &lt; \gamma &lt; 1\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lapse_rate</span></code> (<span class="math notranslate nohighlight">\(\delta\)</span>) - rightward asymptote of the psychometric
+function(<span class="math notranslate nohighlight">\(0 &lt; \delta &lt; 1\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.psi</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelLogistic</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelLogistic</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">task</span>
+<span class="go">Task(&#39;2AFC&#39;, designs=[&#39;stimulus&#39;], responses=[0, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+<span class="go">[&#39;threshold&#39;, &#39;slope&#39;, &#39;guess_rate&#39;, &#39;lapse_rate&#39;]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.tasks.psi.ModelWeibull.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stimulus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lapse_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.psi.ModelWeibull.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute log likelihood of obtaining responses with given designs and
+model parameters. The function provide the same result as the argument
+<code class="code docutils literal notranslate"><span class="pre">func</span></code> given in the initialization. If the likelihood function is
+not given for the model, it returns the log probability of a random
+noise.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, <code class="code docutils literal notranslate"><span class="pre">compute()</span></code> function should compute
+the log likelihood, instead of the probability of a binary response
+variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the
+previous versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>Provide the log likelihood instead of the probability of a binary
+response.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.psi.ModelProbit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.psi.</span></span><span class="sig-name descname"><span class="pre">ModelProbit</span></span><a class="headerlink" href="#adopy.tasks.psi.ModelProbit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ModelPsi</span></code></p>
+<p>The psychometric function using Probit function
+(Normal cumulative distribution function).</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    F(x; \mu, \beta) &amp;= CDF_\text{Normal}
+        \left( \beta (x - \mu) \right) \\
+    \Psi \left( x \mid \alpha, \beta, \gamma, \delta \right)
+        &amp;= \gamma + (1 - \gamma - \delta) \cdot F(x; \alpha, \beta)
+\end{align}\end{split}\]</div>
+<dl class="simple">
+<dt>Model parameters</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code> (<span class="math notranslate nohighlight">\(\alpha\)</span>) - indifference point where the probability
+of a positive response equals to 0.5.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">slope</span></code> (<span class="math notranslate nohighlight">\(\beta\)</span>) - slope of a tangent line on the threshold point
+(<span class="math notranslate nohighlight">\(\beta &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">guess_rate</span></code> (<span class="math notranslate nohighlight">\(\gamma\)</span>) - leftward asymptote of the psychometric
+function (<span class="math notranslate nohighlight">\(0 &lt; \gamma &lt; 1\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lapse_rate</span></code> (<span class="math notranslate nohighlight">\(\delta\)</span>) - rightward asymptote of the psychometric
+function(<span class="math notranslate nohighlight">\(0 &lt; \delta &lt; 1\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.psi</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelProbit</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelProbit</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">task</span>
+<span class="go">Task(&#39;2AFC&#39;, designs=[&#39;stimulus&#39;], responses=[0, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+<span class="go">[&#39;threshold&#39;, &#39;slope&#39;, &#39;guess_rate&#39;, &#39;lapse_rate&#39;]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.tasks.psi.ModelProbit.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stimulus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lapse_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.psi.ModelProbit.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute log likelihood of obtaining responses with given designs and
+model parameters. The function provide the same result as the argument
+<code class="code docutils literal notranslate"><span class="pre">func</span></code> given in the initialization. If the likelihood function is
+not given for the model, it returns the log probability of a random
+noise.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, <code class="code docutils literal notranslate"><span class="pre">compute()</span></code> function should compute
+the log likelihood, instead of the probability of a binary response
+variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the
+previous versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>Provide the log likelihood instead of the probability of a binary
+response.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="engine">
+<h2>Engine<a class="headerlink" href="#engine" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.psi.EnginePsi">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.psi.</span></span><span class="sig-name descname"><span class="pre">EnginePsi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d_step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.psi.EnginePsi" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Engine" title="adopy.base._engine.Engine"><code class="xref py py-class docutils literal notranslate"><span class="pre">Engine</span></code></a></p>
+<p>The Engine class for the psychometric function estimation.
+It can be only used for <a class="reference internal" href="#adopy.tasks.psi.Task2AFC" title="adopy.tasks.psi.Task2AFC"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task2AFC</span></code></a>.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="adopy.tasks.psi.EnginePsi.d_step">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">d_step</span></span><a class="headerlink" href="#adopy.tasks.psi.EnginePsi.d_step" title="Link to this definition"></a></dt>
+<dd><p>Step size on index to compute <span class="math notranslate nohighlight">\(\Delta\)</span> for the staircase method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.tasks.psi.EnginePsi.get_design">
+<span class="sig-name descname"><span class="pre">get_design</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'optimal'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.psi.EnginePsi.get_design" title="Link to this definition"></a></dt>
+<dd><p>Choose a design with a given type.</p>
+<ul>
+<li><p><code class="code docutils literal notranslate"><span class="pre">optimal</span></code>: an optimal design <span class="math notranslate nohighlight">\(d^*\)</span> that maximizes
+the information for fitting model parameters.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">staircase</span></code>: Choose the stimulus <span class="math notranslate nohighlight">\(s\)</span> as below:</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\begin{split}x_t = \begin{cases}
+    x_{t-1} - \Delta &amp; \text{if } y_{t-1} = 1 \\
+    x_{t-1} + 2 \Delta &amp; \text{if } y_{t-1} = 0
+\end{cases}\end{split}\]</div>
+</div></blockquote>
+<p>where <span class="math notranslate nohighlight">\(\Delta\)</span> is determined by <code class="docutils literal notranslate"><span class="pre">d_step</span></code> which is the
+step-size change on the grid index.</p>
+</li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">random</span></code>: a design randomly chosen.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>kind</strong> (<em>{‘optimal’, ‘staircase’, ‘random’}, optional</em>) – Type of a design to choose</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>design</em> – A chosen design vector</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dd.html" class="btn btn-neutral float-left" title="adopy.tasks.dd" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, ADOpy developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-71789812-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-71789812-2', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; ADOpy 0.4.2.dev0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=df9cc0fc" />
+      <link rel="stylesheet" type="text/css" href="_static/css/custom.css?v=df9cc0fc" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=272485b7"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/js/custom.js?v=972e07f4"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer’s Guide" href="dev-guide.html" />
+    <link rel="prev" title="Home" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            ADOpy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quick-start-guide">Quick-start guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#step-1-define-a-task-using-adopy-task">Step 1. Define a task using <code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.Task</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-2-define-a-model-using-adopy-model">Step 2. Define a model using <code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.Model</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-3-define-grids-for-design-variables-model-parameters-and-response-variables">Step 3. Define grids for design variables, model parameters, and response variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-4-initialize-an-engine-using-adopy-engine">Step 4. Initialize an engine using <code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.Engine</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-5-compute-a-design-using-the-engine">Step 5. Compute a design using the engine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-6-collect-an-observation-in-your-experiment">Step 6. Collect an observation in your experiment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-7-update-the-engine-with-the-observation">Step 7. Update the engine with the observation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#step-8-repeat-step-5-through-step-7-until-the-experiment-is-over">Step 8. Repeat Step 5 through Step 7 until the experiment is over</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dev-guide.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelogs.html">Changelogs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/choice_under_risk_and_ambiguity.html">Choice under risk and ambiguity task</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/delay_discounting.html">Delay discounting task</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/psi.html">Psychometric Function Estimation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/base.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.base</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/tasks/cra.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.cra</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/tasks/dd.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.dd</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/tasks/psi.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.psi</span></code></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">ADOpy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h2>
+<p>Using pip, you can install adopy from PyPI.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>adopy
+</pre></div>
+</div>
+<p>Instead, you can install the developmental version in the GitHub repository.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/adopy/adopy.git@develop
+</pre></div>
+</div>
+</section>
+<section id="quick-start-guide">
+<h2>Quick-start guide<a class="headerlink" href="#quick-start-guide" title="Link to this heading"></a></h2>
+<p>Here, we present how to use ADOpy to compute optimal designs for an experiment.
+Assuming an arbitrary task and a model, this section shows how users can apply
+the Adaptive Design Optimization procedure into their own tasks and models
+from the start.</p>
+<figure class="align-center" id="id1">
+<a class="reference internal image-reference" href="_images/ado-figure.png"><img alt="_images/ado-figure.png" src="_images/ado-figure.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text">A simple diagram for the Adaptive Design Optimization.</span><a class="headerlink" href="#id1" title="Link to this image"></a></p>
+</figcaption>
+</figure>
+<section id="step-1-define-a-task-using-adopy-task">
+<h3>Step 1. Define a task using <code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.Task</span></code><a class="headerlink" href="#step-1-define-a-task-using-adopy-task" title="Link to this heading"></a></h3>
+<p>Assume that a user want to use ADOpy for an <em>arbitrary</em> task with two design
+variables (<code class="docutils literal notranslate"><span class="pre">x1</span></code> and <code class="docutils literal notranslate"><span class="pre">x2</span></code>) where participants can make a binary choice
+(<code class="docutils literal notranslate"><span class="pre">choice</span></code>) on each trial. Then, the task can be defined with
+<code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.Task</span></code> as described below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Task</span>
+
+<span class="n">task</span> <span class="o">=</span> <span class="n">Task</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;My New Experiment&#39;</span><span class="p">,</span>  <span class="c1"># Name of the task (optional)</span>
+            <span class="n">designs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">],</span>    <span class="c1"># Labels of design variables</span>
+            <span class="n">responses</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;choice&#39;</span><span class="p">])</span>    <span class="c1"># Labels of response variables</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-define-a-model-using-adopy-model">
+<h3>Step 2. Define a model using <code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.Model</span></code><a class="headerlink" href="#step-2-define-a-model-using-adopy-model" title="Link to this heading"></a></h3>
+<p>To predict partipants’ choices, here we assume a logistic regression model
+that calculates the probability to make a positive response using three model
+parameters (<code class="docutils literal notranslate"><span class="pre">b0</span></code>, <code class="docutils literal notranslate"><span class="pre">b1</span></code>, and <code class="docutils literal notranslate"><span class="pre">b2</span></code>):</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}p = \frac{1}{1 + \exp\left[ - (b_0 + b_1 x_1 + b_2 x_2) \right]} \\
+\text{choice} \sim \text{Bernoulli}(p)\end{split}\]</div>
+<p>Then, users should define a function to compute the log
+likelihood of a certain choice based on design variables and model parameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">bernoulli</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_loglik</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">b0</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">,</span> <span class="n">choice</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A function to compute the probability of a positive response.&quot;&quot;&quot;</span>
+    <span class="n">logit</span> <span class="o">=</span> <span class="n">b0</span> <span class="o">+</span> <span class="n">x1</span> <span class="o">*</span> <span class="n">b1</span> <span class="o">+</span> <span class="n">x1</span> <span class="o">*</span> <span class="n">b2</span>
+    <span class="n">p_obs</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">logit</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">bernoulli</span><span class="o">.</span><span class="n">logpmf</span><span class="p">(</span><span class="n">choice</span><span class="p">,</span> <span class="n">p_obs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using the information and the function, the model can be defined with
+<code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.Model</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;My Logistic Model&#39;</span><span class="p">,</span>   <span class="c1"># Name of the model (optional)</span>
+              <span class="n">params</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;b0&#39;</span><span class="p">,</span> <span class="s1">&#39;b1&#39;</span><span class="p">,</span> <span class="s1">&#39;b2&#39;</span><span class="p">],</span>  <span class="c1"># Labels of model parameters</span>
+              <span class="n">func</span><span class="o">=</span><span class="n">calculate_loglik</span><span class="p">)</span>      <span class="c1"># A log likelihood function</span>
+</pre></div>
+</div>
+</section>
+<section id="step-3-define-grids-for-design-variables-model-parameters-and-response-variables">
+<h3>Step 3. Define grids for design variables, model parameters, and response variables<a class="headerlink" href="#step-3-define-grids-for-design-variables-model-parameters-and-response-variables" title="Link to this heading"></a></h3>
+<p>Since ADOpy uses grid search to search the design space and parameter space,
+you must define a grid for design variables, model parameters, and response
+variables. The grid object can be defined as a Python dictionary.
+Labels used on the Task and Model class above should be set as its keys, and
+the corresponding grid points should be set as its values.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">grid_designs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>    <span class="c1"># 100 grid points within [0, 50]</span>
+    <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>  <span class="c1"># 100 grid points within [-20, 30]</span>
+<span class="p">}</span>
+
+<span class="n">grid_param</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;b0&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>  <span class="c1"># 100 grid points within [-5, 5]</span>
+    <span class="s1">&#39;b1&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>  <span class="c1"># 100 grid points within [-5, 5]</span>
+    <span class="s1">&#39;b2&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>  <span class="c1"># 100 grid points within [-5, 5]</span>
+<span class="p">}</span>
+
+<span class="n">grid_response</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;choice&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># Binary choice</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="step-4-initialize-an-engine-using-adopy-engine">
+<h3>Step 4. Initialize an engine using <code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.Engine</span></code><a class="headerlink" href="#step-4-initialize-an-engine-using-adopy-engine" title="Link to this heading"></a></h3>
+<p>Using the objects created so far, an engine should be initialized using
+<code class="xref py py-class docutils literal notranslate"><span class="pre">adopy.Engine</span></code>. It contains built-in functions to compute an
+optimal design using ADO.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">Engine</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">Engine</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>                  <span class="c1"># Model object</span>
+                <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span>                    <span class="c1"># Task object</span>
+                <span class="n">grid_design</span><span class="o">=</span><span class="n">grid_design</span><span class="p">,</span>      <span class="c1"># grid for design variables</span>
+                <span class="n">grid_param</span><span class="o">=</span><span class="n">grid_param</span><span class="p">,</span>        <span class="c1"># grid for model parameters</span>
+                <span class="n">grid_response</span><span class="o">=</span><span class="n">grid_response</span><span class="p">)</span>  <span class="c1"># grid for response variables</span>
+</pre></div>
+</div>
+</section>
+<section id="step-5-compute-a-design-using-the-engine">
+<h3>Step 5. Compute a design using the engine<a class="headerlink" href="#step-5-compute-a-design-using-the-engine" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Compute an optimal design based on the ADO</span>
+<span class="n">design</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_design</span><span class="p">()</span>
+<span class="n">design</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_design</span><span class="p">(</span><span class="s1">&#39;optimal&#39;</span><span class="p">)</span>
+
+<span class="c1"># Compute a randomly chosen design, as is typically done in non-ADO experiments</span>
+<span class="n">design</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_design</span><span class="p">(</span><span class="s1">&#39;random&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="step-6-collect-an-observation-in-your-experiment">
+<h3>Step 6. Collect an observation in your experiment<a class="headerlink" href="#step-6-collect-an-observation-in-your-experiment" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a response from a participant using your own code</span>
+<span class="n">response</span> <span class="o">=</span> <span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="step-7-update-the-engine-with-the-observation">
+<h3>Step 7. Update the engine with the observation<a class="headerlink" href="#step-7-update-the-engine-with-the-observation" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Update the engine with the design and the corresponding response</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="step-8-repeat-step-5-through-step-7-until-the-experiment-is-over">
+<h3>Step 8. Repeat Step 5 through Step 7 until the experiment is over<a class="headerlink" href="#step-8-repeat-step-5-through-step-7-until-the-experiment-is-over" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">NUM_TRIAL</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># number of trials</span>
+
+<span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">NUM_TRIAL</span><span class="p">):</span>
+    <span class="c1"># Compute an optimal design for the current trial</span>
+    <span class="n">design</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">get_design</span><span class="p">(</span><span class="s1">&#39;optimal&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Get a response using the optimal design</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="o">...</span>  <span class="c1"># Using users&#39; own codes</span>
+
+    <span class="c1"># Update the engine</span>
+    <span class="n">engine</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">design</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Home" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dev-guide.html" class="btn btn-neutral float-right" title="Developer’s Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, ADOpy developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-71789812-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-71789812-2', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

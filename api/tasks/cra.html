@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>adopy.tasks.cra &mdash; ADOpy 0.4.2.dev0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=df9cc0fc" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=df9cc0fc" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=272485b7"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/js/custom.js?v=972e07f4"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="adopy.tasks.dd" href="dd.html" />
+    <link rel="prev" title="adopy.base" href="../base.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            ADOpy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dev-guide.html">Developer’s Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelogs.html">Changelogs</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/choice_under_risk_and_ambiguity.html">Choice under risk and ambiguity task</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/delay_discounting.html">Delay discounting task</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/psi.html">Psychometric Function Estimation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../base.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.base</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.cra</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#task">Task</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.cra.TaskCRA"><code class="docutils literal notranslate"><span class="pre">TaskCRA</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#model">Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.cra.ModelLinear"><code class="docutils literal notranslate"><span class="pre">ModelLinear</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.cra.ModelExp"><code class="docutils literal notranslate"><span class="pre">ModelExp</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#engine">Engine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adopy.tasks.cra.EngineCRA"><code class="docutils literal notranslate"><span class="pre">EngineCRA</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dd.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.dd</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="psi.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.psi</span></code></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ADOpy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.cra</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="adopy-tasks-cra">
+<h1><a class="reference internal" href="#module-adopy.tasks.cra" title="adopy.tasks.cra"><code class="xref py py-mod docutils literal notranslate"><span class="pre">adopy.tasks.cra</span></code></a><a class="headerlink" href="#adopy-tasks-cra" title="Link to this heading"></a></h1>
+<figure class="align-center">
+<a class="reference internal image-reference" href="../../_images/choice-under-risk-and-ambiguity-task.png"><img alt="../../_images/choice-under-risk-and-ambiguity-task.png" src="../../_images/choice-under-risk-and-ambiguity-task.png" style="width: 80%;" />
+</a>
+</figure>
+<p id="module-adopy.tasks.cra"><strong>The choice under risk and ambiguity task</strong> (CRA; Levy et al., 2010) involves
+preferential choice decisions in which the participant is asked to indicated
+his/her preference between two options:</p>
+<ol class="arabic simple">
+<li><p><strong>A fixed (or reference) option</strong> of either winning a fixed amount of reward
+(<span class="math notranslate nohighlight">\(R_F\)</span>, <code class="docutils literal notranslate"><span class="pre">r_fix</span></code>) with a fixed probability of 0.5 or
+winning none otherwise; and</p></li>
+<li><p><strong>A variable option</strong> of either winning a varying amount of reward
+(<span class="math notranslate nohighlight">\(R_V\)</span>, <code class="docutils literal notranslate"><span class="pre">r_var</span></code>) with a varying probability (<span class="math notranslate nohighlight">\(p_V\)</span>, <code class="docutils literal notranslate"><span class="pre">p_var</span></code>)
+and a varying level of ambiguity (<span class="math notranslate nohighlight">\(A_V\)</span>, <code class="docutils literal notranslate"><span class="pre">a_var</span></code>) or
+winning none otherwise.</p></li>
+</ol>
+<p>Further, the variable option comes in two types:</p>
+<ol class="loweralpha simple">
+<li><p><em>risky</em> type in which the winning probabilities are fully known to the
+participant; and</p></li>
+<li><p><em>ambiguous</em> type in which the winning probabilities are only partially
+known to the participant.</p></li>
+</ol>
+<p>The level of ambiguity (<span class="math notranslate nohighlight">\(A_V\)</span>) is varied between 0 (no ambiguity and thus
+fully known) and 1 (total ambiguity and thus fully unknown).</p>
+<p class="rubric">References</p>
+<p>Levy, I., Snell, J., Nelson, A. J., Rustichini, A., &amp; Glimcher, P. W. (2010).
+Neural Representation of Subjective Value Under Risk and Ambiguity.
+<em>Journal of Neurophysiology, 103</em> (2), 1036-1047.</p>
+<section id="task">
+<h2>Task<a class="headerlink" href="#task" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.cra.TaskCRA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.cra.</span></span><span class="sig-name descname"><span class="pre">TaskCRA</span></span><a class="headerlink" href="#adopy.tasks.cra.TaskCRA" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Task" title="adopy.base._task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a></p>
+<p>The Task class for the choice under risk and ambiguity task (Levy et al.,
+2010).</p>
+<dl class="simple">
+<dt>Design variables</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">p_var</span></code> (<span class="math notranslate nohighlight">\(p_V\)</span>) - probability to win of a variable option</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">a_var</span></code> (<span class="math notranslate nohighlight">\(A_V\)</span>) - level of ambiguity of a variable option</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r_var</span></code> (<span class="math notranslate nohighlight">\(R_V\)</span>) - amount of reward of a variable option</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">r_fix</span></code> (<span class="math notranslate nohighlight">\(R_F\)</span>) - amount of reward of a fixed option</p></li>
+</ul>
+</dd>
+<dt>Responses</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">choice</span></code> - 0 (choosing a fixed option) or
+1 (choosing a variable option)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.cra</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskCRA</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span> <span class="o">=</span> <span class="n">TaskCRA</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span><span class="o">.</span><span class="n">designs</span>
+<span class="go">[&#39;p_var&#39;, &#39;a_var&#39;, &#39;r_var&#39;, &#39;r_fix&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">task</span><span class="o">.</span><span class="n">responses</span>
+<span class="go">[&#39;choice&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="model">
+<h2>Model<a class="headerlink" href="#model" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.cra.ModelLinear">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.cra.</span></span><span class="sig-name descname"><span class="pre">ModelLinear</span></span><a class="headerlink" href="#adopy.tasks.cra.ModelLinear" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Model" title="adopy.base._model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p>The linear model for the CRA task (Levy et al., 2010).</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    U_F &amp;= 0.5 \cdot (R_F)^\alpha \\
+    U_V &amp;= \left[ p_V - \beta \cdot \frac{A_V}{2} \right] \cdot (R_V)^\alpha \\
+    P(V\, over \, F) &amp;= \frac{1}{1 + \exp [-\gamma (U_V - U_F)]}
+\end{align}\end{split}\]</div>
+<dl class="simple">
+<dt>Model parameters</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code> (<span class="math notranslate nohighlight">\(\alpha\)</span>) - risk attitude parameter (<span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">beta</span></code> (<span class="math notranslate nohighlight">\(\beta\)</span>) - ambiguity attitude parameter</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gamma</span></code> (<span class="math notranslate nohighlight">\(\gamma\)</span>) - inverse temperature (<span class="math notranslate nohighlight">\(\gamma &gt; 0\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Levy, I., Snell, J., Nelson, A. J., Rustichini, A., &amp; Glimcher,
+P. W. (2010). Neural Representation of Subjective Value Under
+Risk and Ambiguity. <em>Journal of Neurophysiology, 103</em> (2), 1036-1047.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.cra</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelExp</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelExp</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">task</span>
+<span class="go">Task(&#39;CRA&#39;, designs=[&#39;p_var&#39;, &#39;a_var&#39;, &#39;r_var&#39;, &#39;r_fix&#39;], responses=[0, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+<span class="go">[&#39;alpha&#39;, &#39;beta&#39;, &#39;gamma&#39;]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.tasks.cra.ModelLinear.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_fix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.cra.ModelLinear.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute log likelihood of obtaining responses with given designs and
+model parameters. The function provide the same result as the argument
+<code class="code docutils literal notranslate"><span class="pre">func</span></code> given in the initialization. If the likelihood function is
+not given for the model, it returns the log probability of a random
+noise.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, <code class="code docutils literal notranslate"><span class="pre">compute()</span></code> function should compute
+the log likelihood, instead of the probability of a binary response
+variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the
+previous versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>Provide the log likelihood instead of the probability of a binary
+response.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.cra.ModelExp">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.cra.</span></span><span class="sig-name descname"><span class="pre">ModelExp</span></span><a class="headerlink" href="#adopy.tasks.cra.ModelExp" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Model" title="adopy.base._model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
+<p>The exponential model for the CRA task (Hsu et al., 2005).</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+    U_F &amp;= 0.5 \cdot (R_F)^\alpha \\
+    U_V &amp;= (p_V) ^ {(1 + \beta \cdot A_V)} \cdot (R_V)^\alpha \\
+    P(V\, over \, F) &amp;= \frac{1}{1 + \exp [-\gamma (U_V - U_F)]}
+\end{align}\end{split}\]</div>
+<dl class="simple">
+<dt>Model parameters</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">alpha</span></code> (<span class="math notranslate nohighlight">\(\alpha\)</span>) - risk attitude parameter (<span class="math notranslate nohighlight">\(\alpha &gt; 0\)</span>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">beta</span></code> (<span class="math notranslate nohighlight">\(\beta\)</span>) - ambiguity attitude parameter</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gamma</span></code> (<span class="math notranslate nohighlight">\(\gamma\)</span>) - inverse temperature (<span class="math notranslate nohighlight">\(\gamma &gt; 0\)</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Hsu, Y.-F., Falmagne, J.-C., and Regenwetter, M. (2005).
+The tuning in-and-out model: a randomwalk and its application to
+presidential election surveys.
+<em>Journal of Mathematical Psychology, 49</em>, 276–289.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">adopy.tasks.cra</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelLinear</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ModelLinear</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">task</span>
+<span class="go">Task(&#39;CRA&#39;, designs=[&#39;p_var&#39;, &#39;a_var&#39;, &#39;r_var&#39;, &#39;r_fix&#39;], responses=[0, 1])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span><span class="o">.</span><span class="n">params</span>
+<span class="go">[&#39;alpha&#39;, &#39;beta&#39;, &#39;gamma&#39;]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="adopy.tasks.cra.ModelExp.compute">
+<span class="sig-name descname"><span class="pre">compute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">choice</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r_fix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.cra.ModelExp.compute" title="Link to this definition"></a></dt>
+<dd><p>Compute log likelihood of obtaining responses with given designs and
+model parameters. The function provide the same result as the argument
+<code class="code docutils literal notranslate"><span class="pre">func</span></code> given in the initialization. If the likelihood function is
+not given for the model, it returns the log probability of a random
+noise.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Since the version 0.4.0, <code class="code docutils literal notranslate"><span class="pre">compute()</span></code> function should compute
+the log likelihood, instead of the probability of a binary response
+variable. Also, it should include the response variables as
+arguments. These changes might break existing codes using the
+previous versions of ADOpy.</p>
+</div>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 0.4.0: </span>Provide the log likelihood instead of the probability of a binary
+response.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="engine">
+<h2>Engine<a class="headerlink" href="#engine" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="adopy.tasks.cra.EngineCRA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">adopy.tasks.cra.</span></span><span class="sig-name descname"><span class="pre">EngineCRA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_design</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_param</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#adopy.tasks.cra.EngineCRA" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../base.html#adopy.base.Engine" title="adopy.base._engine.Engine"><code class="xref py py-class docutils literal notranslate"><span class="pre">Engine</span></code></a></p>
+<p>The Engine class for the CRA task. It can be only used for <a class="reference internal" href="#adopy.tasks.cra.TaskCRA" title="adopy.tasks.cra.TaskCRA"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskCRA</span></code></a>.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../base.html" class="btn btn-neutral float-left" title="adopy.base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="dd.html" class="btn btn-neutral float-right" title="adopy.tasks.dd" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, ADOpy developers.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-71789812-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-71789812-2', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>
