@@ -24,6 +24,7 @@ setup(name='adopy',
       zip_safe=False,
       install_requires=[
           'numpy',
+          'pandas',
           'scipy',
       ],
       extras_require={

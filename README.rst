@@ -7,7 +7,7 @@
     </p>
 
 .. raw:: html
-    
+
     <p align="center">
       <a href="https://www.repostatus.org/#wip">
         <img src="https://www.repostatus.org/badges/latest/wip.svg"
@@ -29,6 +29,7 @@ Dependencies
 
 - Python 2.7 or 3.4+
 - NumPy
+- Pandas
 - SciPy
 
 Installation
