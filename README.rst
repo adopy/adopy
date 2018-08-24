@@ -1,0 +1,43 @@
+.. raw:: html
+
+    <p align="center">
+      <img src="https://user-images.githubusercontent.com/11037140/44476928-3b9e1d80-a607-11e8-8fe9-b2e4758e92ec.png"
+           alt="ADOpy: Adaptive Design Optimization for Psychological Tasks"
+           width="300px" height="150px">
+    </p>
+
+.. image:: https://www.repostatus.org/badges/latest/wip.svg
+   :alt: Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.
+   :target: https://www.repostatus.org/#wip
+
+.. image:: https://travis-ci.com/PluVian/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master
+    :target: https://travis-ci.com/PluVian/adopy
+
+.. image:: https://codecov.io/gh/PluVian/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k
+  :target: https://codecov.io/gh/PluVian/adopy
+
+A Python package for Adaptive Design Optimization on psychological tasks.
+Currently working in progress.
+
+Dependencies
+------------
+
+- Python 2.7 or 3.4+
+- NumPy
+- SciPy
+- Matplotlib
+- Seaborn
+
+Installation
+------------
+
+.. code-block:: bash
+
+    # Clone the repository from Github.
+    git clone <repo-url>
+
+    # Install the package with pip.
+    pip install .
+
+    # Or you can install it linked to sources for developmental purpose.
+    pip install -e .
