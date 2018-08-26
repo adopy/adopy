@@ -39,7 +39,7 @@ class Psi(ADOGeneric):
 
         self.idx_opt = get_random_design_index(self.grid_design)
         self.y_obs_prev = 1
-        self.d_step = 2
+        self.d_step = 1
 
         self.initialize()
 
@@ -165,9 +165,9 @@ class Psi(ADOGeneric):
 
         def get_design_staircase():
             if self.y_obs_prev == 1:
-                idx = max(min(self.stimulus), np.array(self.idx_opt) - self.d_step * .5)
+                idx = max(0, np.array(self.idx_opt)[0] - self.d_step)
             else:
-                idx = min(max(self.stimulus), np.array(self.idx_opt) + self.d_step)
+                idx = min(len(self.stimulus) - 1, np.array(self.idx_opt)[0] + self.d_step * 2)
 
             return self.grid_design[np.int(idx)]
 
