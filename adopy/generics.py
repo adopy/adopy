@@ -191,8 +191,6 @@ class ADOGeneric(object):
         """
         assert kind in {'optimal', 'random'}
 
-        self._update_mutual_info()
-
         def get_design_optimal():
             return self.grid_design[np.argmax(self.mutual_info)]
 
@@ -200,6 +198,7 @@ class ADOGeneric(object):
             return self.grid_design[get_random_design_index(self.grid_design)]
 
         if kind == 'optimal':
+            self._update_mutual_info()
             return get_design_optimal()
         elif kind == 'random':
             return get_design_random()
@@ -222,6 +221,8 @@ class ADOGeneric(object):
             Design vector for given response
         response
             Any kinds of observed response
+        store : bool
+            Whether to store observations of (design, response).
         """
         if store:
             self.dg_memory.append((design, response))
