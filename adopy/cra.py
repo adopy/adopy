@@ -36,6 +36,9 @@ class CRA(ADOGeneric):
         self.designs = [self.pr_am, self.rewards]
         self.params = [self.alpha, self.beta, self.gamma]
 
+        self.label_design = ['prob', 'ambig', 'r_var', 'r_fix']
+        self.label_param = ['alpha', 'beta', 'gamma']
+
         self.grid_design = make_grid_matrix(*self.designs)
         self.grid_param = make_grid_matrix(*self.params)
         self.grid_response = make_grid_matrix(self.y_obs)

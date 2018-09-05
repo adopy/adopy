@@ -40,6 +40,9 @@ class ADOGeneric(object):
         self.designs = []
         self.params = []
 
+        self.label_design = []
+        self.label_param = []
+
         self.grid_design = None
         self.grid_param = None
         self.grid_response = None
@@ -236,11 +239,15 @@ class ADOGeneric(object):
 
         self.flag_update_mutual_info = True
 
-    def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal'):
+    def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal', cond=None):
         """Update the grid space for model parameters (Dynamic Gridding method)."""
         assert rotation in {'eig', 'svd', 'none', None}
         assert grid_type in {'q', 'z'}
         assert prior in {'recalc', 'normal', None}
+        assert cond is None or \
+               (isinstance(cond, dict) and
+                all([k in self.label_param for k in cond.keys()]) and
+                all([isinstance(v, function) for v in cond.values()]))
 
         m = self.post_mean
         cov = self.post_cov
