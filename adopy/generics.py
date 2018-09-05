@@ -239,7 +239,7 @@ class ADOGeneric(object):
         """Update the grid space for model parameters (Dynamic Gridding method)."""
         assert rotation in {'eig', 'svd', 'none', None}
         assert grid_type in {'q', 'z'}
-        assert prior in {'recalc', 'norm', None}
+        assert prior in {'recalc', 'normal', None}
 
         m = self.post_mean
         cov = self.post_cov
