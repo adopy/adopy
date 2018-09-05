@@ -3,6 +3,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
+from numpy.linalg import LinAlgError
 from scipy.stats import norm
 from scipy.stats import multivariate_normal as mvnm
 from scipy.special import logsumexp
@@ -247,10 +248,18 @@ class ADOGeneric(object):
 
         R_inv = None
         if rotation == 'eig':
-            el, ev = np.linalg.eig(cov)
+            try:
+                el, ev = np.linalg.eig(cov)
+            except LinAlgError:
+                print('Cannot update grid no more.')
+                return
             R_inv = np.dot(np.sqrt(np.diag(el)), np.linalg.inv(ev))
         elif rotation == 'svd':
-            _, sg, sv = np.linalg.svd(cov)
+            try:
+                _, sg, sv = np.linalg.svd(cov)
+            except LinAlgError:
+                print('Cannot update grid no more.')
+                return
             R_inv = np.dot(np.sqrt(np.diag(sg)), sv)
         elif rotation == 'none' or rotation is None:
             R_inv = np.linalg.inv(np.diag(sd))
