@@ -249,7 +249,7 @@ class ADOGeneric(object):
         assert self.cond_param is None or \
                (isinstance(self.cond_param, dict) and
                 all([k in self.label_param for k in self.cond_param.keys()]) and
-                all([isinstance(v, function) for v in self.cond_param.values()]))
+                all([hasattr(v, '__call__') for v in self.cond_param.values()]))
 
         m = self.post_mean
         cov = self.post_cov
