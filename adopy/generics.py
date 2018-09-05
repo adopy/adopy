@@ -235,89 +235,49 @@ class ADOGeneric(object):
 
         self.flag_update_mutual_info = True
 
-    def update_grid(self, kind='normal-nr', q=None, z=None, n=1e6):
+    def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal'):
         """Update the grid space for model parameters (Dynamic Gridding method)."""
+        assert rotation in {'eig', 'svd', 'none', None}
+        assert grid_type in {'q', 'z'}
+        assert prior in {'recalc', 'norm', None}
 
-        if z is not None:
-            grids = np.repeat(np.array(z).reshape(-1, 1), self.num_params, axis=1)
-        elif q is not None:
-            assert q is None or all([0 <= v <= 1 for v in q])
-            grids = np.repeat(norm.ppf(np.array(q)).reshape(-1, 1), self.num_params, axis=1)
-        else:
-            raise RuntimeError('Quantiles (q) or z scores (z) should be provided.')
+        m = self.post_mean
+        cov = self.post_cov
+        sd = self.post_sd
 
-        if kind == 'bootstrap-r':
-            raise NotImplementedError('awef')
-            # jcounts = np.round(self.post * np.float(n)).astype(np.int)
-            # jsamples = np.repeat(self.grid_param, counts, axis=0)
-
-            # jmean = samples.mean(0)
-            # jsigma = np.cov(samples.transpose())
-
-            # jel, ev = np.linalg.eig(sigma)
-
-            # rot = np.dot(ev, np.sqrt(np.diag(el)))
-            # rot_inv = np.linalg.inv(rot)
-
-            # x_star = np.dot(samples - mean, rot)
-            # g_star = np.quantile(x_star, qs, axis=0, interpolation='linear')
-            # grid_param_star = make_grid_matrix(*[g_star[:, i] for i in range(g_star.shape[-1])])
-            # grid_param = np.dot(grid_param_star, rot_inv) + mean
-
-            # self.dg_means.append(mean)
-            # self.dg_covs.append(sigma)
-            # self.grid_param = grid_param
-            # self.dg_grid_params.append(grid_param)
-
-            # self.dg_priors.append(self.prior)
-            # self.dg_posts.append(self.post)
-            # self.initialize()
-
-            # for i, (d, r) in enumerate(self.dg_memory):
-            #     self.update(d, r, False)
-
-        elif kind == 'normal-r':
-            m = self.post_mean
-            cov = self.post_cov
-
+        R_inv = None
+        if rotation == 'eig':
             el, ev = np.linalg.eig(cov)
-            rot_inv = np.dot(ev, np.sqrt(np.diag(el)))
-            rot = np.linalg.inv(rot_inv)
+            R_inv = np.dot(np.sqrt(np.diag(el)), np.linalg.inv(ev))
+        elif rotation == 'svd':
+            _, sg, sv = np.linalg.svd(cov)
+            R_inv = np.dot(np.sqrt(np.diag(sg)), sv)
+        elif rotation == 'none' or rotation is None:
+            R_inv = np.linalg.inv(np.diag(sd))
 
-            g_star = make_grid_matrix(*[v for v in grids.T])
-            grid_param = np.dot(g_star, rot_inv) + m
+        G_axes = None
+        if grid_type == 'q':
+            assert all([0 <= v <= 1 for v in grid])
+            G_axes = np.repeat(norm.ppf(np.array(grid)).reshape(-1, 1), self.num_params, axis=1)
+        elif grid_type == 'z':
+            G_axes = np.repeat(np.array(grid).reshape(-1, 1), self.num_params, axis=1)
+        G_star = make_grid_matrix(*[v for v in G_axes.T])
+        grid_new = np.dot(G_star, R_inv) + m
 
-            self.dg_means.append(m)
-            self.dg_covs.append(cov)
-            self.grid_param = grid_param
-            self.dg_grid_params.append(grid_param)
+        self.dg_means.append(m)
+        self.dg_covs.append(cov)
+        self.grid_param = grid_new
+        self.dg_grid_params.append(grid_new)
 
-            self.dg_priors.append(self.prior)
-            self.dg_posts.append(self.post)
-            self.initialize()
+        self.dg_priors.append(self.prior)
+        self.dg_posts.append(self.post)
+        self.initialize()
 
-            self.log_prior = mvnm.pdf(grid_param, mean=m, cov=cov)
+        if prior == 'recalc':
+            for d, y in self.dg_memory:
+                self.update(d, y, False)
+        elif prior == 'normal':
+            self.log_prior = mvnm.pdf(grid_new, mean=m, cov=cov)
             self.log_post = self.log_prior.copy()
-
-        elif kind == 'normal-nr':
-            m = self.post_mean
-            cov = self.post_cov
-            sd = self.post_sd
-
-            g_star = make_grid_matrix(*[v for v in grids.T])
-            grid_param = g_star * sd + m
-
-            self.dg_means.append(m)
-            self.dg_covs.append(cov)
-            self.grid_param = grid_param
-            self.dg_grid_params.append(grid_param)
-
-            self.dg_priors.append(self.prior)
-            self.dg_posts.append(self.post)
-            self.initialize()
-
-            self.log_prior = mvnm.pdf(grid_param, mean=m, cov=cov)
-            self.log_post = self.log_prior.copy()
-
-        else:
-            raise RuntimeError('Given kind argument, {}, is invalid.'.format(kind))
+        elif prior is None:
+            pass
