@@ -287,7 +287,7 @@ class ADOGeneric(object):
         grid_new = np.dot(G_star, R_inv) + m
 
         # Remove improper points not in the parameter space
-        for k, f in self.cond_param:
+        for k, f in self.cond_param.items():
             idx = self.label_param.index(k)
             grid_new = grid_new[list(map(f, grid_new[:, idx]))]
 
