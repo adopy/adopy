@@ -43,6 +43,8 @@ class ADOGeneric(object):
         self.label_design = []
         self.label_param = []
 
+        self.cond_param = {}
+
         self.grid_design = None
         self.grid_param = None
         self.grid_response = None
@@ -239,20 +241,21 @@ class ADOGeneric(object):
 
         self.flag_update_mutual_info = True
 
-    def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal', cond=None):
+    def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal'):
         """Update the grid space for model parameters (Dynamic Gridding method)."""
         assert rotation in {'eig', 'svd', 'none', None}
         assert grid_type in {'q', 'z'}
         assert prior in {'recalc', 'normal', None}
-        assert cond is None or \
-               (isinstance(cond, dict) and
-                all([k in self.label_param for k in cond.keys()]) and
-                all([isinstance(v, function) for v in cond.values()]))
+        assert self.cond_param is None or \
+               (isinstance(self.cond_param, dict) and
+                all([k in self.label_param for k in self.cond_param.keys()]) and
+                all([isinstance(v, function) for v in self.cond_param.values()]))
 
         m = self.post_mean
         cov = self.post_cov
         sd = self.post_sd
 
+        # Calculate a rotation matrix
         R_inv = None
         if rotation == 'eig':
             try:
@@ -271,14 +274,22 @@ class ADOGeneric(object):
         elif rotation == 'none' or rotation is None:
             R_inv = np.linalg.inv(np.diag(sd))
 
+        # Find grid points from the rotated space
         G_axes = None
         if grid_type == 'q':
             assert all([0 <= v <= 1 for v in grid])
             G_axes = np.repeat(norm.ppf(np.array(grid)).reshape(-1, 1), self.num_params, axis=1)
         elif grid_type == 'z':
             G_axes = np.repeat(np.array(grid).reshape(-1, 1), self.num_params, axis=1)
+
+        # Compute new grid on the initial space.
         G_star = make_grid_matrix(*[v for v in G_axes.T])
         grid_new = np.dot(G_star, R_inv) + m
+
+        # Remove improper points not in the parameter space
+        for k, f in self.cond_param:
+            idx = self.label_param.index(k)
+            grid_new = grid_new[list(map(f, grid_new[:, idx]))]
 
         self.dg_means.append(m)
         self.dg_covs.append(cov)
@@ -289,6 +300,7 @@ class ADOGeneric(object):
         self.dg_posts.append(self.post)
         self.initialize()
 
+        # Assign priors on new grid
         if prior == 'recalc':
             for d, y in self.dg_memory:
                 self.update(d, y, False)

@@ -36,6 +36,13 @@ class Psi(ADOGeneric):
         self.label_design = ['stimulus']
         self.label_param = ['guess_rate', 'lapse_rate', 'threshold', 'slope']
 
+        self.cond_param = {
+            'guess_rate': lambda x: 0 <= x <= 1,
+            'lapse_rate': lambda x: 0 <= x <= 1,
+            'threshold': lambda x: x >= 0,
+            'slope': lambda x: x >= 0
+        }
+
         self.grid_design = make_grid_matrix(*self.designs)
         self.grid_param = make_grid_matrix(*self.params)
         self.grid_response = make_grid_matrix(self.y_obs)
