@@ -241,7 +241,7 @@ class ADOGeneric(object):
 
         self.flag_update_mutual_info = True
 
-    def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal'):
+    def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal', append=False):
         """Update the grid space for model parameters (Dynamic Gridding method)."""
         assert rotation in {'eig', 'svd', 'none', None}
         assert grid_type in {'q', 'z'}
@@ -293,11 +293,16 @@ class ADOGeneric(object):
 
         self.dg_means.append(m)
         self.dg_covs.append(cov)
-        self.grid_param = grid_new
         self.dg_grid_params.append(grid_new)
+        if append:
+            self.grid_param = np.stack([self.grid_param, grid_new])
+        else:
+            self.grid_param = grid_new
 
         self.dg_priors.append(self.prior)
         self.dg_posts.append(self.post)
+        if append:
+            log_post_prev = self.log_post.copy()
         self.initialize()
 
         # Assign priors on new grid
@@ -305,7 +310,12 @@ class ADOGeneric(object):
             for d, y in self.dg_memory:
                 self.update(d, y, False)
         elif prior == 'normal':
-            self.log_prior = mvnm.pdf(grid_new, mean=m, cov=cov)
-            self.log_post = self.log_prior.copy()
+            if append:
+                mvnm_prior = mvnm.pdf(grid_new, mean=m, cov=cov)
+                self.log_prior = np.stack([log_post_prev, mvnm_prior])
+                self.log_post = np.stack([log_post_prev, mvnm_prior.copy()])
+            else:
+                self.log_prior = mvnm.pdf(grid_new, mean=m, cov=cov)
+                self.log_post = self.log_prior.copy()
         elif prior is None:
             pass
