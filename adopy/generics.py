@@ -295,7 +295,7 @@ class ADOGeneric(object):
         self.dg_covs.append(cov)
         self.dg_grid_params.append(grid_new)
         if append:
-            self.grid_param = np.stack([self.grid_param, grid_new])
+            self.grid_param = np.concatenate([self.grid_param, grid_new])
         else:
             self.grid_param = grid_new
 
@@ -303,6 +303,7 @@ class ADOGeneric(object):
         self.dg_posts.append(self.post)
         if append:
             log_post_prev = self.log_post.copy()
+
         self.initialize()
 
         # Assign priors on new grid
@@ -312,8 +313,8 @@ class ADOGeneric(object):
         elif prior == 'normal':
             if append:
                 mvnm_prior = mvnm.pdf(grid_new, mean=m, cov=cov)
-                self.log_prior = np.stack([log_post_prev, mvnm_prior])
-                self.log_post = np.stack([log_post_prev, mvnm_prior.copy()])
+                self.log_prior = np.concatenate([log_post_prev, mvnm_prior])
+                self.log_post = np.concatenate([log_post_prev, mvnm_prior.copy()])
             else:
                 self.log_prior = mvnm.pdf(grid_new, mean=m, cov=cov)
                 self.log_post = self.log_prior.copy()
