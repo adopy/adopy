@@ -13,11 +13,11 @@
         <img src="https://www.repostatus.org/badges/latest/wip.svg"
              alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public." />
       </a>
-      <a href="https://travis-ci.com/PluVian/adopy">
-        <img src="https://travis-ci.com/PluVian/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master" />
+      <a href="https://travis-ci.com/JaeyeongYang/adopy">
+        <img src="https://travis-ci.com/JaeyeongYang/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master" />
       </a>
-      <a href="https://codecov.io/gh/PluVian/adopy">
-        <img src="https://codecov.io/gh/PluVian/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k" />
+      <a href="https://codecov.io/gh/JaeyeongYang/adopy">
+        <img src="https://codecov.io/gh/JaeyeongYang/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k" />
       </a>
     </p>
 
