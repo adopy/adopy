@@ -2,9 +2,9 @@ from __future__ import absolute_import, division, print_function
 
 import numpy as np
 
-from ..generics import ADOGeneric
-from ..functions import inv_logit, log_lik_bern
-from ..functions import make_vector_shape, make_grid_matrix
+from adopy.generic import ADOGeneric
+from adopy.functions import inv_logit, log_lik_bern
+from adopy.functions import make_vector_shape, make_grid_matrix
 
 FUNC_POW = {'p', 'pow', 'power'}
 FUNC_EXP = {'e', 'exp', 'exponential'}
