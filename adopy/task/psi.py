@@ -4,9 +4,9 @@ import numpy as np
 from scipy.stats import norm, gumbel_l
 from scipy.special import logsumexp
 
-from .generics import ADOGeneric
-from .functions import inv_logit, log_lik_bern
-from .functions import get_random_design_index, get_nearest_grid_index, make_vector_shape, make_grid_matrix
+from adopy.generic import ADOGeneric
+from adopy.functions import inv_logit, log_lik_bern
+from adopy.functions import get_random_design_index, get_nearest_grid_index, make_vector_shape, make_grid_matrix
 
 FUNC_LOGISTIC = {'l', 'logistic'}
 FUNC_WEIBULL = {'w', 'g', 'weibull', 'gumbel'}

@@ -1,18 +1,11 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+from __future__ import absolute_import, division, print_function
 
 import numpy as np
-from numpy.linalg import LinAlgError
-from scipy.stats import norm
-from scipy.stats import multivariate_normal as mvnm
+from scipy.stats import norm, multivariate_normal as mvnm
 from scipy.special import logsumexp
 
-from .functions import expand_multiple_dims
-from .functions import get_nearest_grid_index
-from .functions import get_random_design_index
-from .functions import make_grid_matrix
-from .functions import marginalize
+from adopy.functions import expand_multiple_dims, get_nearest_grid_index, get_random_design_index, make_grid_matrix, \
+    marginalize
 
 
 class ADOGeneric(object):
@@ -72,9 +65,9 @@ class ADOGeneric(object):
 
         self.flag_update_mutual_info = True
 
-    ###########################################################################
+    ##################################################################################################################
     # Properties
-    ###########################################################################
+    ##################################################################################################################
 
     @property
     def num_designs(self):
@@ -116,9 +109,9 @@ class ADOGeneric(object):
     def post_sd(self):
         return np.sqrt(np.diag(self.post_cov))
 
-    ###########################################################################
+    ##################################################################################################################
     # Methods
-    ###########################################################################
+    ##################################################################################################################
 
     def initialize(self):
         self.p_obs = self._compute_p_obs()
