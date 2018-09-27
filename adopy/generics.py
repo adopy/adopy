@@ -255,36 +255,32 @@ class ADOGeneric(object):
         cov = self.post_cov
         sd = self.post_sd
 
+        if np.linalg.det(cov) == 0:
+            print('Cannot update grid no more.')
+            return
+
         # Calculate a rotation matrix
-        R_inv = None
+        r_inv = None
         if rotation == 'eig':
-            try:
-                el, ev = np.linalg.eig(cov)
-            except LinAlgError:
-                print('Cannot update grid no more.')
-                return
-            R_inv = np.dot(np.sqrt(np.diag(el)), np.linalg.inv(ev))
+            el, ev = np.linalg.eig(cov)
+            r_inv = np.dot(np.sqrt(np.diag(el)), np.linalg.inv(ev))
         elif rotation == 'svd':
-            try:
-                _, sg, sv = np.linalg.svd(cov)
-            except LinAlgError:
-                print('Cannot update grid no more.')
-                return
-            R_inv = np.dot(np.sqrt(np.diag(sg)), sv)
+            _, sg, sv = np.linalg.svd(cov)
+            r_inv = np.dot(np.sqrt(np.diag(sg)), sv)
         elif rotation == 'none' or rotation is None:
-            R_inv = np.linalg.inv(np.diag(sd))
+            r_inv = np.diag(sd)
 
         # Find grid points from the rotated space
-        G_axes = None
+        g_axes = None
         if grid_type == 'q':
             assert all([0 <= v <= 1 for v in grid])
-            G_axes = np.repeat(norm.ppf(np.array(grid)).reshape(-1, 1), self.num_params, axis=1)
+            g_axes = np.repeat(norm.ppf(np.array(grid)).reshape(-1, 1), self.num_params, axis=1)
         elif grid_type == 'z':
-            G_axes = np.repeat(np.array(grid).reshape(-1, 1), self.num_params, axis=1)
+            g_axes = np.repeat(np.array(grid).reshape(-1, 1), self.num_params, axis=1)
 
         # Compute new grid on the initial space.
-        G_star = make_grid_matrix(*[v for v in G_axes.T])
-        grid_new = np.dot(G_star, R_inv) + m
+        g_star = make_grid_matrix(*[v for v in g_axes.T])
+        grid_new = np.dot(g_star, r_inv) + m
 
         # Remove improper points not in the parameter space
         for k, f in self.cond_param.items():
@@ -314,7 +310,7 @@ class ADOGeneric(object):
             if append:
                 mvnm_prior = mvnm.pdf(grid_new, mean=m, cov=cov)
                 self.log_prior = np.concatenate([log_post_prev, mvnm_prior])
-                self.log_post = np.concatenate([log_post_prev, mvnm_prior.copy()])
+                self.log_post = self.log_prior.copy()
             else:
                 self.log_prior = mvnm.pdf(grid_new, mean=m, cov=cov)
                 self.log_post = self.log_prior.copy()
