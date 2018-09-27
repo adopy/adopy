@@ -28,6 +28,10 @@ setup(name='adopy',
           'scipy',
       ],
       extras_require={
-          'test': ['pytest'],
+          'test': [
+              'codecov',
+              'pytest',
+              'pytest-cov'
+          ],
       }
       )
