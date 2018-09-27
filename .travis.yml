@@ -1,14 +1,21 @@
 language: python
 sudo: false
 cache: pip
+
+branches:
+  only:
+  - master
+  - develop
+
 python:
   - "2.7"
   - "3.4"
   - "3.5"
   - "3.6"
+
 install:
   - pip install .[test]
-  - pip install codecov pytest-cov
+
 script:
   - pytest --cov=adopy
   - codecov --token $CODECOV_TOKEN
