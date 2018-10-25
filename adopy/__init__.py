@@ -9,10 +9,10 @@ from __future__ import absolute_import, division, print_function
 
 from . import functions
 from . import generic
-from . import task
+from . import tasks
 
 __all__ = [
     'generic',
     'functions',
-    'task'
+    'tasks'
 ]
