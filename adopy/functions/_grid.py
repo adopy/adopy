@@ -1,29 +1,19 @@
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+from typing import Any
+from typing import Dict
+from typing import Iterable
 
 import numpy as np
 
-EPS = np.finfo(np.float).eps
+from ._utils import make_vector_shape
 
-
-def inv_logit(x):
-    """Calculate the inverse logit value of given number.
-
-    Parameters
-    ----------
-    x : float or array_like
-        Value as a logit
-
-    Returns
-    -------
-    float or array_like
-        Inverse logit of the given value.
-
-    """
-    return np.divide(1, 1 + np.exp(-x))
-
-
-def log_lik_bern(y, p):
-    return y * np.log(p + EPS) + (1 - y) * np.log(1 - p + EPS)
+__all__ = [
+    'marginalize', 'get_nearest_grid_index', 'get_random_design_index',
+    'make_grid', 'make_grid_matrix'
+]
 
 
 def marginalize(post, grid_param, axis):
@@ -32,22 +22,6 @@ def marginalize(post, grid_param, axis):
         k = value if np.isscalar(value) else tuple(value)
         mp[k] = mp.get(k, 0) + p
     return mp
-
-
-def sample_from_prob_dict(mp, n):
-    points = list(mp.keys())
-    counts = np.array(list(mp.values())) * n
-    counts = np.round(counts).astype(np.int)
-    return np.repeat(points, counts, axis=0)
-
-
-def expand_multiple_dims(x, pre, post):
-    ret = x
-    for _ in range(pre):
-        ret = np.expand_dims(ret, 0)
-    for _ in range(post):
-        ret = np.expand_dims(ret, -1)
-    return ret
 
 
 def get_nearest_grid_index(design, designs):
@@ -65,10 +39,9 @@ def get_random_design_index(designs):
     return np.unravel_index(idx, dims_designs)
 
 
-def make_vector_shape(n, axis=0):
-    ret = np.ones(n)
-    ret[axis] = -1
-    return ret.astype(np.int)
+def make_grid(designs, params, obs):
+    # type: (Dict[str, Iterable[Any]], Dict[str, Iterable[Any]], Dict[str, Iterable[Any]]) -> np.ndarray
+    pass
 
 
 def make_grid_matrix(*args):
@@ -86,7 +59,9 @@ def make_grid_matrix(*args):
         dim_grid = np.append(make_vector_shape(n_dims, i), n_d_total)
 
         g_2d = g.reshape(-1, 1) if n_d_each[i] == 1 else g
-        grid = np.pad(g_2d, [(0, 0), (n_d_prev[i], n_d_total - n_d_prev[i] - n_d_each[i])],
+        grid = np.pad(g_2d,
+                      [(0, 0),
+                       (n_d_prev[i], n_d_total - n_d_prev[i] - n_d_each[i])],
                       str('constant')).reshape(dim_grid)
         grids.append(grid)
 
