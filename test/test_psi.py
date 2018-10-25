@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 import pytest
 
-from adopy.task.psi import Psi
+from adopy.tasks import Psi
 from adopy.functions import make_vector_shape
 
 
