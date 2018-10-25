@@ -4,8 +4,6 @@ Base
 
 Base classes for ADOpy.
 """
-from ._generic import ADOGeneric
+from ._meta import *
+from ._generic import *
 
-__all__ = [
-    'ADOGeneric',
-]

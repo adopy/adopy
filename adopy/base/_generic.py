@@ -1,17 +1,25 @@
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 import abc
 
 import numpy as np
-from scipy.stats import norm, multivariate_normal as mvnm
+from scipy.stats import norm
+from scipy.stats import multivariate_normal as mvnm
 from scipy.special import logsumexp
 
-from adopy.functions import (expand_multiple_dims, get_nearest_grid_index, get_random_design_index, make_grid_matrix,
-                             marginalize)
+from adopy.functions import expand_multiple_dims
+from adopy.functions import get_nearest_grid_index
+from adopy.functions import get_random_design_index
+from adopy.functions import make_grid_matrix
+from adopy.functions import marginalize
+
+__all__ = ['ADOGeneric']
 
 
 class ADOGeneric(object):
-    """Base class for ADOpy classes.
+    """Generic class for ADOpy classes.
 
     Examples
     --------
@@ -95,7 +103,10 @@ class ADOGeneric(object):
     @property
     def marg_post(self):
         """Marginal posterior distributions for each parameter"""
-        return [marginalize(self.post, self.grid_param, i) for i in range(self.num_params)]
+        return [
+            marginalize(self.post, self.grid_param, i)
+            for i in range(self.num_params)
+        ]
 
     @property
     def post_mean(self):
@@ -132,17 +143,20 @@ class ADOGeneric(object):
     @abc.abstractmethod
     def compute_p_obs(cls):
         """Compute the probability of an observed response."""
-        raise NotImplementedError('The class method compute_p_obs should be implemented.')
+        raise NotImplementedError(
+            'The class method compute_p_obs should be implemented.')
 
     @abc.abstractmethod
     def _compute_p_obs(self):
         """Compute the probability of getting observed response."""
-        raise NotImplementedError('The method _compute_p_obs should be implemented.')
+        raise NotImplementedError(
+            'The method _compute_p_obs should be implemented.')
 
     @abc.abstractmethod
     def _compute_log_lik(self):
         """Compute the log likelihood."""
-        raise NotImplementedError('The method _compute_log_lik should be implemented.')
+        raise NotImplementedError(
+            'The method _compute_log_lik should be implemented.')
 
     def _update_mutual_info(self):
         """Update mutual information using posterior distributions.
@@ -162,7 +176,8 @@ class ADOGeneric(object):
 
         # Calculate the marginal entropy and conditional entropy.
         self.ent_marg = -np.sum(np.exp(mll) * mll, -1)  # shape (num_designs,)
-        self.ent_cond = np.sum(self.post * self.ent_obs, axis=1)  # shape (num_designs,)
+        self.ent_cond = np.sum(
+            self.post * self.ent_obs, axis=1)  # shape (num_designs,)
 
         # Calculate the mutual information.
         self.mutual_info = self.ent_marg - self.ent_cond  # shape (num_designs,)
@@ -171,6 +186,7 @@ class ADOGeneric(object):
         self.flag_update_mutual_info = False
 
     def get_design(self, kind='optimal'):
+        # type: (str) -> np.ndarray
         r"""Choose a design with a given type.
 
         1. :code:`optimal`: an optimal design :math:`d^*` that maximizes the mutual information.
@@ -240,7 +256,12 @@ class ADOGeneric(object):
 
         self.flag_update_mutual_info = True
 
-    def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal', append=False):
+    def update_grid(self,
+                    grid,
+                    rotation='eig',
+                    grid_type='q',
+                    prior='normal',
+                    append=False):
         """Update the grid space for model parameters (Dynamic Gridding method)."""
         assert rotation in {'eig', 'svd', 'none', None}
         assert grid_type in {'q', 'z'}
@@ -273,9 +294,13 @@ class ADOGeneric(object):
         g_axes = None
         if grid_type == 'q':
             assert all([0 <= v <= 1 for v in grid])
-            g_axes = np.repeat(norm.ppf(np.array(grid)).reshape(-1, 1), self.num_params, axis=1)
+            g_axes = np.repeat(
+                norm.ppf(np.array(grid)).reshape(-1, 1),
+                self.num_params,
+                axis=1)
         elif grid_type == 'z':
-            g_axes = np.repeat(np.array(grid).reshape(-1, 1), self.num_params, axis=1)
+            g_axes = np.repeat(
+                np.array(grid).reshape(-1, 1), self.num_params, axis=1)
 
         # Compute new grid on the initial space.
         g_star = make_grid_matrix(*[v for v in g_axes.T])
