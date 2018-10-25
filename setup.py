@@ -28,10 +28,16 @@ setup(name='adopy',
           'scipy',
       ],
       extras_require={
+          'dev': [
+              'flake8',
+              'mypy',
+              'pytest',
+              'yapf',
+          ],
           'test': [
               'codecov',
               'pytest',
-              'pytest-cov'
+              'pytest-cov',
           ],
       }
       )
