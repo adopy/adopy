@@ -18,11 +18,11 @@ COND_PARAMS = {k: {} for k in FUNC_POW} ^ \
               {k: {} for k in FUNC_EXP}
 
 
-class DelayedDiscounting(ADOGeneric):
+class DDT(ADOGeneric):
     """ADO engine for delayed discounting task"""
 
     def __init__(self, func_type, durations, rewards, *args):
-        super(DelayedDiscounting, self).__init__()
+        super(DDT, self).__init__()
 
         self.label_design = ['d_early', 'd_delay', 'r_early', 'd_late']
         self.label_param = ['alpha', 'beta', 'gamma']
@@ -30,7 +30,8 @@ class DelayedDiscounting(ADOGeneric):
         assert func_type in FUNC_VALID
         self.func_type = func_type
 
-        assert len(np.shape(durations)) == 2, 'Durations should have 2 dimensions.'
+        assert len(
+            np.shape(durations)) == 2, 'Durations should have 2 dimensions.'
         self.durations = np.array(durations)
         assert len(np.shape(rewards)) == 2, 'Rewards should have 2 dimensions.'
         self.rewards = np.array(rewards)
@@ -47,9 +48,7 @@ class DelayedDiscounting(ADOGeneric):
         self.designs = [self.durations, self.rewards]
         self.params = self.args
 
-        self.cond_param = {
-            'gamma': lambda x: x >= 0
-        }
+        self.cond_param = {'gamma': lambda x: x >= 0}
 
         self.grid_design = make_grid_matrix(*self.designs)
         self.grid_param = make_grid_matrix(*self.params)
@@ -58,7 +57,8 @@ class DelayedDiscounting(ADOGeneric):
         self.initialize()
 
     @classmethod
-    def compute_p_obs(cls, func_type, prob, ambig, r_var, r_fix, alpha, beta, gamma):
+    def compute_p_obs(cls, func_type, prob, ambig, r_var, r_fix, alpha, beta,
+                      gamma):
         assert func_type in FUNC_VALID
 
         # Calculate the subjective value of a variable option (risky or ambiguous).

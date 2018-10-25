@@ -4,13 +4,6 @@ Tasks
 
 Already implemented tasks
 """
-
-from ._cra import CRA
-# from ._ddt import DelayedDiscounting
-from ._psi import Psi
-
-__all__ = [
-    'CRA',
-    # 'DelayedDiscounting',
-    'Psi',
-]
+from ._cra import *
+# from ._ddt import *
+from ._psi import *

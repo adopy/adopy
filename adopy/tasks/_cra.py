@@ -6,6 +6,8 @@ from adopy.base import ADOGeneric
 from adopy.functions import inv_logit, log_lik_bern
 from adopy.functions import make_vector_shape, make_grid_matrix
 
+__all__ = ['CRA']
+
 FUNC_LINEAR = {'l', 'lin', 'linear'}
 FUNC_EXP = {'e', 'exp', 'exponential'}
 
@@ -13,7 +15,7 @@ FUNC_VALID = FUNC_LINEAR ^ FUNC_EXP
 
 
 class CRA(ADOGeneric):
-    """Base class of ADO implementations for the choice under risk and ambiguity task"""
+    """ADO implementations for the choice under risk and ambiguity task"""
 
     def __init__(self, func_type, pr_am, rewards, alpha, beta, gamma):
         super(CRA, self).__init__()
@@ -38,9 +40,7 @@ class CRA(ADOGeneric):
         self.label_design = ['prob', 'ambig', 'r_var', 'r_fix']
         self.label_param = ['alpha', 'beta', 'gamma']
 
-        self.cond_param = {
-            'gamma': lambda x: x >= 0
-        }
+        self.cond_param = {'gamma': lambda x: x >= 0}
 
         self.grid_design = make_grid_matrix(*self.designs)
         self.grid_param = make_grid_matrix(*self.params)
