@@ -1,11 +1,13 @@
 from __future__ import absolute_import, division, print_function
 
+import abc
+
 import numpy as np
 from scipy.stats import norm, multivariate_normal as mvnm
 from scipy.special import logsumexp
 
-from adopy.functions import expand_multiple_dims, get_nearest_grid_index, get_random_design_index, make_grid_matrix, \
-    marginalize
+from adopy.functions import (expand_multiple_dims, get_nearest_grid_index, get_random_design_index, make_grid_matrix,
+                             marginalize)
 
 
 class ADOGeneric(object):
@@ -26,6 +28,7 @@ class ADOGeneric(object):
     get_response functions is a pseudo-function to run an experiment and get
     a response.
     """
+    __metaclass__ = abc.ABCMeta
 
     def __init__(self):
         super(ADOGeneric, self).__init__()
@@ -126,14 +129,17 @@ class ADOGeneric(object):
             self.dg_grid_params.append(self.grid_param)
 
     @classmethod
+    @abc.abstractmethod
     def compute_p_obs(cls):
         """Compute the probability of an observed response."""
-        raise NotImplementedError('The classmethod compute_p_obs should be implemented.')
+        raise NotImplementedError('The class method compute_p_obs should be implemented.')
 
+    @abc.abstractmethod
     def _compute_p_obs(self):
         """Compute the probability of getting observed response."""
         raise NotImplementedError('The method _compute_p_obs should be implemented.')
 
+    @abc.abstractmethod
     def _compute_log_lik(self):
         """Compute the log likelihood."""
         raise NotImplementedError('The method _compute_log_lik should be implemented.')

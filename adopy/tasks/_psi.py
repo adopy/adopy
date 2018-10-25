@@ -2,9 +2,8 @@ from __future__ import absolute_import, division, print_function
 
 import numpy as np
 from scipy.stats import norm, gumbel_l
-from scipy.special import logsumexp
 
-from adopy.generic import ADOGeneric
+from adopy.base import ADOGeneric
 from adopy.functions import inv_logit, log_lik_bern
 from adopy.functions import get_random_design_index, get_nearest_grid_index, make_vector_shape, make_grid_matrix
 

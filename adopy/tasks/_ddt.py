@@ -2,7 +2,7 @@ from __future__ import absolute_import, division, print_function
 
 import numpy as np
 
-from adopy.generic import ADOGeneric
+from adopy.base import ADOGeneric
 from adopy.functions import inv_logit, log_lik_bern
 from adopy.functions import make_vector_shape, make_grid_matrix
 
