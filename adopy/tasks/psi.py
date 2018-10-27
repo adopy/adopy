@@ -4,7 +4,7 @@ import numpy as np
 from scipy.stats import norm, gumbel_l
 
 from adopy.base import Engine
-from adopy.functions import inv_logit, log_lik_bern
+from adopy.functions import inv_logit, log_lik_bernoulli
 from adopy.functions import get_random_design_index, get_nearest_grid_index, make_vector_shape, make_grid_matrix
 
 
@@ -132,7 +132,7 @@ class Psi(Engine):
         y = self.y_obs.reshape(make_vector_shape(dim_p_obs + 1, dim_p_obs))
         p = np.expand_dims(self.p_obs, dim_p_obs)
 
-        return log_lik_bern(y, p)
+        return log_lik_bernoulli(y, p)
 
     def get_design(self, kind='optimal'):
         r"""Choose a design with a given type.

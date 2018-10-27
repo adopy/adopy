@@ -2,8 +2,8 @@ from __future__ import absolute_import, division, print_function
 
 import numpy as np
 
-from adopy.base import ADOGeneric
-from adopy.functions import inv_logit, log_lik_bern
+from adopy.base import Engine
+from adopy.functions import inv_logit, log_lik_bernoulli
 from adopy.functions import make_vector_shape, make_grid_matrix
 
 FUNC_POW = {'p', 'pow', 'power'}
@@ -18,7 +18,7 @@ COND_PARAMS = {k: {} for k in FUNC_POW} ^ \
               {k: {} for k in FUNC_EXP}
 
 
-class DDT(ADOGeneric):
+class DDT(Engine):
     """ADO engine for delayed discounting task"""
 
     def __init__(self, func_type, durations, rewards, *args):
@@ -97,4 +97,4 @@ class DDT(ADOGeneric):
         y = self.y_obs.reshape(make_vector_shape(dim_p_obs + 1, dim_p_obs))
         p = np.expand_dims(self.p_obs, dim_p_obs)
 
-        return log_lik_bern(y, p)
+        return log_lik_bernoulli(y, p)
