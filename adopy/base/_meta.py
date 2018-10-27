@@ -37,9 +37,8 @@ class MetaInterface(object):
     def _extract_vars(self, dt, keys):
         # type: (DT, Iterable[str]) -> OrderedDict[str, Any]
         ret = OrderedDict()  # type: OrderedDict[str, Any]
-        _get = lambda x, k: x[k] if isinstance(x, dict) else x[k].values
         for k in keys:
-            ret[k] = _get(dt, k)
+            ret[k] = dt[k] if isinstance(dt, dict) else dt[k].values
         return ret
 
 
