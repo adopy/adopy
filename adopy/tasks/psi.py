@@ -3,9 +3,10 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 from scipy.stats import norm, gumbel_l
 
-from adopy.base import ADOGeneric
+from adopy.base import Engine
 from adopy.functions import inv_logit, log_lik_bern
 from adopy.functions import get_random_design_index, get_nearest_grid_index, make_vector_shape, make_grid_matrix
+
 
 FUNC_LOGISTIC = {'l', 'logistic'}
 FUNC_WEIBULL = {'w', 'g', 'weibull', 'gumbel'}
@@ -14,7 +15,7 @@ FUNC_NORMAL = {'n', 'normal'}
 FUNC_VALID = FUNC_LOGISTIC ^ FUNC_WEIBULL ^ FUNC_NORMAL
 
 
-class Psi(ADOGeneric):
+class Psi(Engine):
     def __init__(self, func_type, stimulus, guess_rate, lapse_rate, threshold, slope):
         super(Psi, self).__init__()
 
