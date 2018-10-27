@@ -15,10 +15,10 @@ from adopy.functions import get_random_design_index
 from adopy.functions import make_grid_matrix
 from adopy.functions import marginalize
 
-__all__ = ['ADOGeneric']
+__all__ = ['Engine']
 
 
-class ADOGeneric(object):
+class Engine(object):
     """Generic class for ADOpy classes.
 
     Examples
@@ -39,7 +39,7 @@ class ADOGeneric(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self):
-        super(ADOGeneric, self).__init__()
+        super(Engine, self).__init__()
 
         self.designs = []
         self.params = []
