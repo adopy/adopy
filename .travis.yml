@@ -9,7 +9,6 @@ branches:
 
 python:
   - "2.7"
-  - "3.4"
   - "3.5"
   - "3.6"
 
@@ -17,5 +16,6 @@ install:
   - pip install .[test]
 
 script:
+  - flake8 adopy --format=pylint --statistics --exit-zero
   - pytest --cov=adopy
   - codecov --token $CODECOV_TOKEN
