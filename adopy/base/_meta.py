@@ -1,74 +1,97 @@
 from __future__ import absolute_import, division, print_function
 
 import abc
-from typing import Any
-from typing import Callable
-from typing import Dict
-from typing import Iterable
+from typing import Any, Callable, Dict, Iterable, Optional, Tuple, TypeVar
+from collections import OrderedDict
+
+import pandas as pd
 
 __all__ = ['Task', 'Model']
 
-
-class InvalidArgumentError(BaseException):
-    def __init__(self, message):
-        super(InvalidArgumentError, self).__init__(message)
+DT = TypeVar('DT', Dict[str, Any], pd.DataFrame)
 
 
 class MetaInterface(object):
-    __metaclass__ = abc.ABCMeta
+    """Meta interface for tasks and models.
 
-    def __init__(self, name, var):
-        # type: (str, Iterable[str]) -> None
-        self._name = name
-        self._var = tuple(var)
+    Generate a singleton instance.
+    """
+    _instance = None  # type: object
 
-    @property
-    def name(self):
-        return self._name
+    def __init__(self, name, key):
+        # type: (str, str) -> None
+        self._name = name  # type: str
+        self._key = key  # type: str
 
-    @property
-    def var(self):
-        return self._var
+    def __new__(class_, *args, **kwargs):
+        if not isinstance(class_._instance, class_):
+            class_._instance = object.__new__(class_, *args, **kwargs)
+        return class_._instance
 
-    def get_vars_from_dict(self, d):
-        # type: (Dict[str, Any]) -> Dict[str, Any]
-        ret = {}  # type: Dict[str, Any]
-        for v in self.var:
-            ret[v] = d.get(v, None)
+    key = property(lambda self: self._key)
+    """str: Key for the meta instance"""
+
+    name = property(lambda self: self._name)
+    """str: name of the meta instance"""
+
+    def _extract_vars(self, dt, keys):
+        # type: (DT, Iterable[str]) -> OrderedDict[str, Any]
+        ret = OrderedDict()  # type: OrderedDict[str, Any]
+        _get = lambda x, k: x[k] if isinstance(x, dict) else x[k].values
+        for k in keys:
+            ret[k] = _get(dt, k)
         return ret
 
 
 class Task(MetaInterface):
-    __metaclass__ = abc.ABCMeta
+    """Metaclass for tasks"""
 
-    def __repr__(self):
-        return 'Task(name={name}, var={var})'\
-            .format(name=repr(self.name), var=repr(list(self.var)))
+    def __init__(self, name, key, design):
+        # type: (str, str, Iterable[str]) -> None
+        super(Task, self).__init__(name, key)
+        self._design = tuple(design)  # type: Tuple[str, ...]
+
+    design = property(lambda self: self._design)
+    """Tuple[str]: Design labels of the task"""
+
+    def extract_designs(self, dt):
+        # type: (DT) -> OrderedDict[str, Any]
+        return self._extract_vars(dt, self.design)
+
+    def __repr__(self):  # type: () -> str
+        return 'Task({name}, design={var})'\
+            .format(name=repr(self.name), var=repr(list(self.design)))
 
 
 class Model(MetaInterface):
+    """Metaclass for models"""
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, name, var, task, func):
-        # type: (str, Iterable[str], Task, Callable) -> None
-        super(Model, self).__init__(name, var)
-        self._task = task
-        self._func = func
+    def __init__(self, name, key, task, param, constraint=None):
+        # type: (str, str, Task, Iterable[str], Optional[Dict[str, Callable]]) -> None
+        super(Model, self).__init__(name, key)
+        self._task = task  # type: Task
+        self._param = tuple(param)  # type: Tuple[str, ...]
+        self._constraint = {} if constraint is None else constraint  # type: Dict[str, Callable]
 
-    @property
-    def task(self):
-        return self._task
+    task = property(lambda self: self._task)
+    """Task: Task instance for the model"""
 
-    @property
-    def func(self):
-        return self._func
+    param = property(lambda self: self._param)
+    """Tuple[str]: Parameter labels of the model"""
 
+    constraint = property(lambda self: self._constraint)
+    """Dict[str, Callable]: Contraints on model parameters"""
+
+    def extract_params(self, dt):
+        # type: (DT) -> OrderedDict[str, Any]
+        return self._extract_vars(dt, self.param)
+
+    @abc.abstractmethod
     def compute(self, **kargs):
-        args = {}
-        args.update(self.get_vars_from_dict(kargs))
-        args.update(self.task.get_vars_from_dict(kargs))
-        return self.func(**args)
+        # type: (...) -> Any
+        raise NotImplementedError('Model.compute method is not implemented.')
 
-    def __repr__(self):
-        return 'Model(name={name}, var={var}, task={task})'\
-            .format(name=repr(self.name), var=repr(list(self.var)), task=repr(self.task))
+    def __repr__(self):  # type: () -> str
+        return 'Model({name}, param={param)'\
+            .format(name=repr(self.name), var=repr(list(self.param)))
