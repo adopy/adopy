@@ -7,6 +7,7 @@ import abc
 import numpy as np
 from scipy.special import logsumexp
 from scipy.stats import norm, multivariate_normal as mvnm
+import pandas as pd
 
 from adopy.functions import (expand_multiple_dims, get_nearest_grid_index, get_random_design_index, make_grid_matrix,
                              marginalize, make_vector_shape, log_lik_bernoulli)
@@ -36,7 +37,7 @@ class Engine(object):
     """
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, model, task, designs, params, y_obs):
+    def __init__(self, task, model, designs, params, y_obs):
         super(Engine, self).__init__()
 
         if model.task is not task:
@@ -46,9 +47,10 @@ class Engine(object):
 
         self.grid_design = make_grid_matrix(designs)[list(task.design)]
         self.grid_param = make_grid_matrix(params)[list(model.param)]
-        self.grid_response = y_obs  # TODO: consider cases with multiple response variables
+        # TODO: consider cases with multiple response variables
+        self.grid_response = pd.DataFrame(np.array(y_obs), columns=['y_obs'])
 
-        self.y_obs = y_obs
+        self.y_obs = np.array(y_obs)
         self.p_obs = self._compute_p_obs()
         self.log_lik = ll = self._compute_log_lik()
 
@@ -138,8 +140,8 @@ class Engine(object):
         shape_param = make_vector_shape(2, 1)
 
         args = {}
-        args.update({k: v.reshape(shape_design) for k, v in self.task.extract_designs(self.grid_design)})
-        args.update({k: v.reshape(shape_param) for k, v in self.model.extract_params(self.grid_param)})
+        args.update({k: v.reshape(shape_design) for k, v in self.task.extract_designs(self.grid_design).items()})
+        args.update({k: v.reshape(shape_param) for k, v in self.model.extract_params(self.grid_param).items()})
 
         return self.model.compute(**args)
 
@@ -208,10 +210,10 @@ class Engine(object):
         assert kind in {'optimal', 'random'}
 
         def get_design_optimal():
-            return self.grid_design[np.argmax(self.mutual_info)]
+            return self.grid_design.iloc[np.argmax(self.mutual_info)]
 
         def get_design_random():
-            return self.grid_design[get_random_design_index(self.grid_design)]
+            return self.grid_design.iloc[get_random_design_index(self.grid_design)]
 
         if kind == 'optimal':
             self._update_mutual_info()
@@ -243,15 +245,18 @@ class Engine(object):
         if store:
             self.dg_memory.append((design, response))
 
+        if not isinstance(design, pd.Series):
+            design = pd.Series(design, index=self.task.design)
+
         idx_design = get_nearest_grid_index(design, self.grid_design)
-        idx_response = get_nearest_grid_index(np.array(response), self.grid_response)  # yapf: disable
+        idx_response = get_nearest_grid_index(pd.Series(response), self.grid_response)
 
         self.log_post += self.log_lik[idx_design, :, idx_response].flatten()
         self.log_post -= logsumexp(self.log_post)
 
         self.flag_update_mutual_info = True
 
-    def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal', append=False, quiet=False):
+    def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal', append=False):
         """
         Update the grid space for model parameters (Dynamic Gridding method)
         """
