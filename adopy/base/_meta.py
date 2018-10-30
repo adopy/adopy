@@ -89,7 +89,7 @@ class Model(MetaInterface):
         if func is None:
             self._func = lambda **kargs: np.ones_like(reduce(lambda x, y: x * y, kargs.values())) / 2  # type: Callable
         else:
-            self._func = func  # type: Callable
+            self._func = lambda **kargs: func(**kargs)  # type: Callable
 
         if constraint is None:
             self._constraint = {}  # type: Dict[str, Callable]
