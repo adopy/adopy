@@ -3,8 +3,7 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 
 from adopy.base import Engine, Task, Model
-from adopy.functions import inv_logit, log_lik_bernoulli
-from adopy.functions import make_vector_shape, make_grid_matrix
+from adopy.functions import inv_logit
 
 __all__ = ['TaskCRA', 'ModelLinear', 'ModelExp', 'EngineCRA']
 
