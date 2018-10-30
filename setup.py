@@ -35,6 +35,7 @@ setup(name='adopy',
               'yapf',
           ],
           'test': [
+              'flake8',
               'codecov',
               'pytest',
               'pytest-cov',
