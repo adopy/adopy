@@ -3,58 +3,43 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 import pytest
 
-from adopy.tasks.psi import Psi
-from adopy.functions import make_vector_shape
+from adopy.tasks.psi import ModelLogistic, ModelWeibull, ModelNormal, EnginePsi
 
 
 @pytest.fixture()
-def stimuli():
-    return np.linspace(20 * np.log10(.05), 20 * np.log10(400), 120)
+def designs():
+    stimulus = np.linspace(20 * np.log10(.05), 20 * np.log10(400), 120)
+    designs = dict(stimulus=stimulus)
+    return designs
 
 
 @pytest.fixture()
-def guess_rate():
-    return 0.5
+def params():
+    guess_rate = [0.5]
+    lapse_rate = [0.05]
+    threshold = np.linspace(20 * np.log10(.1), 20 * np.log10(200), 100)
+    slope = np.linspace(0, 10, 100)[1:]
+    params = dict(guess_rate=guess_rate, lapse_rate=lapse_rate, threshold=threshold, slope=slope)
+    return params
 
 
-@pytest.fixture()
-def lapse_rate():
-    return 0.05
+@pytest.mark.parametrize('model', [ModelLogistic, ModelWeibull, ModelNormal])
+def test_calculate_psi(model, designs, params):
+    psi = EnginePsi(model=model(), designs=designs, params=params)
 
+    len_design = int(np.prod([np.size(des) for des in designs.values()]))
+    len_param = int(np.prod([np.size(par) for par in params.values()]))
 
-@pytest.fixture()
-def threshold():
-    return np.linspace(20 * np.log10(.1), 20 * np.log10(200), 100)
-
-
-@pytest.fixture()
-def slope():
-    return np.linspace(0, 10, 11)[1:]
-
-
-@pytest.mark.parametrize('func_type', ['l', 'w', 'g', 'n'])
-def test_calculate_psi(func_type, stimuli, guess_rate, lapse_rate, threshold, slope):
-    psi = Psi.compute_p_obs(
-        func_type=func_type,
-        stimulus=stimuli.reshape(make_vector_shape(3, 0)),
-        guess_rate=guess_rate,
-        lapse_rate=lapse_rate,
-        threshold=threshold.reshape(make_vector_shape(3, 1)),
-        slope=slope.reshape(make_vector_shape(3, 2)))
-
-    assert psi.shape == (len(stimuli), len(threshold), len(slope))
+    assert psi.p_obs.shape == (len_design, len_param)
 
 
 @pytest.mark.parametrize('design_type', ['optimal', 'staircase', 'random'])
-@pytest.mark.parametrize('func_type', ['l', 'w', 'n'])
+@pytest.mark.parametrize('model', [ModelLogistic, ModelWeibull, ModelNormal])
 @pytest.mark.parametrize('response', [0, 1])
-def test_classes(design_type, func_type, stimuli, guess_rate, lapse_rate, threshold, slope, response):
-    o = Psi(func_type, stimuli, guess_rate, lapse_rate, threshold, slope)
-
-    d = o.get_design(design_type)
-    assert d in stimuli
-
-    o.update(d, response)
+def test_classes(design_type, model, designs, params, response):
+    psi = EnginePsi(model=model(), designs=designs, params=params)
+    d = psi.get_design(design_type)
+    psi.update(d, response)
 
 
 if __name__ == '__main__':
