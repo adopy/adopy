@@ -3,7 +3,9 @@ from __future__ import absolute_import, division, print_function
 import abc
 from typing import Any, Callable, Dict, Iterable, Optional, Tuple, TypeVar
 from collections import OrderedDict
+from functools import reduce
 
+import numpy as np
 import pandas as pd
 
 __all__ = ['Task', 'Model']
@@ -23,10 +25,10 @@ class MetaInterface(object):
         self._name = name  # type: str
         self._key = key  # type: str
 
-    def __new__(class_, *args, **kwargs):
-        if not isinstance(class_._instance, class_):
-            class_._instance = object.__new__(class_, *args, **kwargs)
-        return class_._instance
+    def __new__(cls, *args, **kwargs):
+        if not isinstance(cls._instance, cls):
+            cls._instance = object.__new__(cls)
+        return cls._instance
 
     key = property(lambda self: self._key)
     """str: Key for the meta instance"""
@@ -48,7 +50,7 @@ class Task(MetaInterface):
 
     >>> task = Task('Task A', 'a', ['d1', 'd2'])
     >>> task
-    Task('Task A', var=['d1', 'd2'])
+    Task('Task A', design=['d1', 'd2'])
     """
 
     def __init__(self, name, key, design):
@@ -73,18 +75,26 @@ class Model(MetaInterface):
     Metaclass for models
 
     >>> task = Task('Task A', 'a', ['d1', 'd2'])
-    >>> model = Model('Model X', 'x', ['m1', 'm2', 'm3'])
+    >>> model = Model('Model X', 'x', task, ['m1', 'm2', 'm3'])
     >>> model
-    Model('Model X', var=['m1', 'm2', 'm3'])
+    Model('Model X', param=['m1', 'm2', 'm3'])
     """
-    __metaclass__ = abc.ABCMeta
 
-    def __init__(self, name, key, task, param, constraint=None):
-        # type: (str, str, Task, Iterable[str], Optional[Dict[str, Callable]]) -> None
+    def __init__(self, name, key, task, param, func=None, constraint=None):
+        # type: (str, str, Task, Iterable[str], Optional[Callable], Optional[Dict[str, Callable]]) -> None
         super(Model, self).__init__(name, key)
         self._task = task  # type: Task
         self._param = tuple(param)  # type: Tuple[str, ...]
-        self._constraint = {} if constraint is None else constraint  # type: Dict[str, Callable]
+
+        if func is None:
+            self._func = lambda **kargs: np.ones_like(reduce(lambda x, y: x * y, kargs.values())) / 2  # type: Callable
+        else:
+            self._func = func  # type: Callable
+
+        if constraint is None:
+            self._constraint = {}  # type: Dict[str, Callable]
+        else:
+            self._constraint = constraint  # type: Dict[str, Callable]
 
     task = property(lambda self: self._task)
     """Task: Task instance for the model"""
@@ -99,10 +109,9 @@ class Model(MetaInterface):
         # type: (DT) -> OrderedDict[str, Any]
         return self._extract_vars(dt, self.param)
 
-    @abc.abstractmethod
     def compute(self, **kargs):
         # type: (...) -> Any
-        raise NotImplementedError('Model.compute method is not implemented.')
+        return self._func(**kargs)
 
     def __repr__(self):  # type: () -> str
         return 'Model({name}, param={var})'\
