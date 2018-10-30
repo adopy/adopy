@@ -66,6 +66,14 @@ class Engine(object):
         self.ent_cond = None
         self.mutual_info = None
 
+        # For dynamic gridding
+        self.dg_memory = []  # [(design, response), ...]
+        self.dg_grid_params = []
+        self.dg_means = []
+        self.dg_covs = []
+        self.dg_priors = []
+        self.dg_posts = []
+
         self.idx_opt = None
         self.design_opt = None
 
@@ -114,6 +122,15 @@ class Engine(object):
     ##################################################################################################################
     # Methods
     ##################################################################################################################
+
+    def _initialize(self):
+        self.p_obs = self._compute_p_obs()
+        self.log_lik = ll = self._compute_log_lik()
+        self.ent_obs = -np.multiply(np.exp(ll), ll).sum(-1)
+
+        lp = np.ones(self.grid_param.shape[0])
+        self.log_prior = lp - logsumexp(lp)
+        self.log_post = self.log_prior.copy()
 
     def _compute_p_obs(self):
         """Compute the probability of getting observed response."""
@@ -223,6 +240,9 @@ class Engine(object):
         store : bool
             Whether to store observations of (design, response).
         """
+        if store:
+            self.dg_memory.append((design, response))
+
         idx_design = get_nearest_grid_index(design, self.grid_design)
         idx_response = get_nearest_grid_index(np.array(response), self.grid_response)  # yapf: disable
 
@@ -232,14 +252,12 @@ class Engine(object):
         self.flag_update_mutual_info = True
 
     def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal', append=False, quiet=False):
-        """Update the grid space for model parameters (Dynamic Gridding method)."""
+        """
+        Update the grid space for model parameters (Dynamic Gridding method)
+        """
         assert rotation in {'eig', 'svd', 'none', None}
         assert grid_type in {'q', 'z'}
         assert prior in {'recalc', 'normal', None}
-        assert self.model.constraint is None or \
-               (isinstance(self.model.constraint, dict) and
-                all([k in self.model.param for k in self.model.constraint.keys()]) and
-                all([hasattr(v, '__call__') for v in self.model.constraint.values()]))
 
         m = self.post_mean
         cov = self.post_cov
@@ -290,7 +308,7 @@ class Engine(object):
         if append:
             log_post_prev = self.log_post.copy()
 
-        self.initialize()
+        self._initialize()
 
         # Assign priors on new grid
         if prior == 'recalc':
