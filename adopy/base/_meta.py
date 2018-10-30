@@ -43,7 +43,13 @@ class MetaInterface(object):
 
 
 class Task(MetaInterface):
-    """Metaclass for tasks"""
+    """
+    Metaclass for tasks
+
+    >>> task = Task('Task A', 'a', ['d1', 'd2'])
+    >>> task
+    Task('Task A', var=['d1', 'd2'])
+    """
 
     def __init__(self, name, key, design):
         # type: (str, str, Iterable[str]) -> None
@@ -63,7 +69,14 @@ class Task(MetaInterface):
 
 
 class Model(MetaInterface):
-    """Metaclass for models"""
+    """
+    Metaclass for models
+
+    >>> task = Task('Task A', 'a', ['d1', 'd2'])
+    >>> model = Model('Model X', 'x', ['m1', 'm2', 'm3'])
+    >>> model
+    Model('Model X', var=['m1', 'm2', 'm3'])
+    """
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, name, key, task, param, constraint=None):
@@ -92,5 +105,5 @@ class Model(MetaInterface):
         raise NotImplementedError('Model.compute method is not implemented.')
 
     def __repr__(self):  # type: () -> str
-        return 'Model({name}, param={param)'\
+        return 'Model({name}, param={var})'\
             .format(name=repr(self.name), var=repr(list(self.param)))

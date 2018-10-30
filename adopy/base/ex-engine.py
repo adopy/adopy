@@ -5,11 +5,15 @@ from __future__ import print_function
 import abc
 
 import numpy as np
+from scipy.stats import norm
+from scipy.stats import multivariate_normal as mvnm
 from scipy.special import logsumexp
-from scipy.stats import norm, multivariate_normal as mvnm
 
-from adopy.functions import (expand_multiple_dims, get_nearest_grid_index, get_random_design_index, make_grid_matrix,
-                             marginalize, make_vector_shape, log_lik_bernoulli)
+from adopy.functions import expand_multiple_dims
+from adopy.functions import get_nearest_grid_index
+from adopy.functions import get_random_design_index
+from adopy.functions import make_grid_matrix
+from adopy.functions import marginalize
 
 __all__ = ['Engine']
 
@@ -23,9 +27,7 @@ class Engine(object):
     .. code-block:: python3
         :linenos:
 
-        ado =
-        task = Task('Task A', 'a', ['d1', 'd2'])
-        model = Model('Model X', 'x', ['m1', 'm2', 'm3'])
+        ado = ADOBase()
         for _ in range(num_trials):  # Loop for trials
             design = ado.get_design()
             response = get_response(design)
@@ -36,32 +38,35 @@ class Engine(object):
     """
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, model, task, designs, params, y_obs):
+    def __init__(self, model, task=None):
         super(Engine, self).__init__()
 
-        if model.task is not task:
-            raise RuntimeError('Given task and model are not matched.')
-        self._task = task  # type: Task
-        self._model = model  # type: Model
+        self.designs = []
+        self.params = []
 
-        self.grid_design = make_grid_matrix(designs)[list(task.design)]
-        self.grid_param = make_grid_matrix(params)[list(model.param)]
-        self.grid_response = y_obs  # TODO: consider cases with multiple response variables
+        self.label_design = []
+        self.label_param = []
 
-        self.y_obs = y_obs
-        self.p_obs = self._compute_p_obs()
-        self.log_lik = ll = self._compute_log_lik()
+        self.cond_param = {}
 
-        lp = np.ones(self.grid_param.shape[0])
-        self.log_prior = lp - logsumexp(lp)
-        self.log_post = self.log_prior.copy()
+        self.grid_design = None
+        self.grid_param = None
+        self.grid_response = None
 
-        lp = expand_multiple_dims(self.log_post, 1, 1)
-        mll = logsumexp(self.log_lik + lp, axis=1)
-        self.marg_log_lik = mll  # shape (num_design, num_response)
+        self.dg_memory = []  # [(design, response), ...]
+        self.dg_grid_params = []
+        self.dg_means = []
+        self.dg_covs = []
+        self.dg_priors = []
+        self.dg_posts = []
+
+        self.p_obs = None
+        self.log_lik = None
+        self.log_prior = None
+        self.log_post = None
         self.marg_log_lik = None
 
-        self.ent_obs = -np.multiply(np.exp(ll), ll).sum(-1)
+        self.ent_obs = None
         self.ent_marg = None
         self.ent_cond = None
         self.mutual_info = None
@@ -75,31 +80,38 @@ class Engine(object):
     # Properties
     ##################################################################################################################
 
-    task = property(lambda self: self._task)
-    """Task: Task of the engine"""
+    @property
+    def num_designs(self):
+        """Number of design grid axes"""
+        return self.grid_design.shape[-1]
 
-    model = property(lambda self: self._model)
-    """Model: Model of the engine"""
+    @property
+    def num_params(self):
+        """Number of parameter grid axes"""
+        return self.grid_param.shape[-1]
 
-    num_design = property(lambda self: len(self.task.design))
-    """Number of design grid axes"""
+    @property
+    def prior(self):
+        """Prior distributions of joint parameter space"""
+        return np.exp(self.log_prior)
 
-    num_param = property(lambda self: len(self.model.param))
-    """Number of parameter grid axes"""
-
-    prior = property(lambda self: np.exp(self.log_prior))
-    """Prior distributions of joint parameter space"""
-
-    post = property(lambda self: np.exp(self.log_post))
-    """Posterior distributions of joint parameter space"""
+    @property
+    def post(self):
+        """Posterior distributions of joint parameter space"""
+        return np.exp(self.log_post)
 
     @property
     def marg_post(self):
         """Marginal posterior distributions for each parameter"""
-        return [marginalize(self.post, self.grid_param, i) for i in range(self.num_param)]
+        return [
+            marginalize(self.post, self.grid_param, i)
+            for i in range(self.num_params)
+        ]
 
-    post_mean = property(lambda self: np.dot(self.post, self.grid_param))
-    """Estimated posterior means for each parameter"""
+    @property
+    def post_mean(self):
+        """Estimated posterior means for each parameter"""
+        return np.dot(self.post, self.grid_param)
 
     @property
     def post_cov(self):
@@ -115,29 +127,39 @@ class Engine(object):
     # Methods
     ##################################################################################################################
 
+    def initialize(self):
+        self.p_obs = self._compute_p_obs()
+        self.log_lik = ll = self._compute_log_lik()
+        self.ent_obs = -np.multiply(np.exp(ll), ll).sum(-1)
+
+        lp = np.ones(self.grid_param.shape[0])
+        self.log_prior = lp - logsumexp(lp)
+        self.log_post = self.log_prior.copy()
+
+        if len(self.dg_grid_params) == 0:
+            self.dg_grid_params.append(self.grid_param)
+
+    @classmethod
+    @abc.abstractmethod
+    def compute_p_obs(cls):
+        """Compute the probability of an observed response."""
+        raise NotImplementedError(
+            'The class method compute_p_obs should be implemented.')
+
+    @abc.abstractmethod
     def _compute_p_obs(self):
         """Compute the probability of getting observed response."""
-        shape_design = make_vector_shape(2, 0)
-        shape_param = make_vector_shape(2, 1)
+        raise NotImplementedError(
+            'The method _compute_p_obs should be implemented.')
 
-        args = {}
-        args.update({k: v.reshape(shape_design) for k, v in self.task.extract_designs(self.grid_design)})
-        args.update({k: v.reshape(shape_param) for k, v in self.model.extract_params(self.grid_param)})
-
-        return self.model.compute(**args)
-
+    @abc.abstractmethod
     def _compute_log_lik(self):
         """Compute the log likelihood."""
-        # TODO: Cover the case for Categorical distribution
-        dim_p_obs = len(self.p_obs.shape)
-        y = self.y_obs.reshape(make_vector_shape(dim_p_obs + 1, dim_p_obs))
-        p = np.expand_dims(self.p_obs, dim_p_obs)
-
-        return log_lik_bernoulli(y, p)
+        raise NotImplementedError(
+            'The method _compute_log_lik should be implemented.')
 
     def _update_mutual_info(self):
-        """
-        Update mutual information using posterior distributions.
+        """Update mutual information using posterior distributions.
 
         If there is no nedd to update mutual information, it ends.
         The flag to update mutual information must be true only when
@@ -154,7 +176,8 @@ class Engine(object):
 
         # Calculate the marginal entropy and conditional entropy.
         self.ent_marg = -np.sum(np.exp(mll) * mll, -1)  # shape (num_designs,)
-        self.ent_cond = np.sum(self.post * self.ent_obs, axis=1)  # shape (num_designs,)
+        self.ent_cond = np.sum(
+            self.post * self.ent_obs, axis=1)  # shape (num_designs,)
 
         # Calculate the mutual information.
         self.mutual_info = self.ent_marg - self.ent_cond  # shape (num_designs,)
@@ -164,8 +187,7 @@ class Engine(object):
 
     def get_design(self, kind='optimal'):
         # type: (str) -> np.ndarray
-        r"""
-        Choose a design with a given type.
+        r"""Choose a design with a given type.
 
         1. :code:`optimal`: an optimal design :math:`d^*` that maximizes the mutual information.
 
@@ -223,6 +245,9 @@ class Engine(object):
         store : bool
             Whether to store observations of (design, response).
         """
+        if store:
+            self.dg_memory.append((design, response))
+
         idx_design = get_nearest_grid_index(design, self.grid_design)
         idx_response = get_nearest_grid_index(np.array(response), self.grid_response)  # yapf: disable
 
@@ -231,15 +256,20 @@ class Engine(object):
 
         self.flag_update_mutual_info = True
 
-    def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal', append=False, quiet=False):
+    def update_grid(self,
+                    grid,
+                    rotation='eig',
+                    grid_type='q',
+                    prior='normal',
+                    append=False):
         """Update the grid space for model parameters (Dynamic Gridding method)."""
         assert rotation in {'eig', 'svd', 'none', None}
         assert grid_type in {'q', 'z'}
         assert prior in {'recalc', 'normal', None}
-        assert self.model.constraint is None or \
-               (isinstance(self.model.constraint, dict) and
-                all([k in self.model.param for k in self.model.constraint.keys()]) and
-                all([hasattr(v, '__call__') for v in self.model.constraint.values()]))
+        assert self.cond_param is None or \
+               (isinstance(self.cond_param, dict) and
+                all([k in self.label_param for k in self.cond_param.keys()]) and
+                all([hasattr(v, '__call__') for v in self.cond_param.values()]))
 
         m = self.post_mean
         cov = self.post_cov
@@ -264,17 +294,21 @@ class Engine(object):
         g_axes = None
         if grid_type == 'q':
             assert all([0 <= v <= 1 for v in grid])
-            g_axes = np.repeat(norm.ppf(np.array(grid)).reshape(-1, 1), self.num_param, axis=1)
+            g_axes = np.repeat(
+                norm.ppf(np.array(grid)).reshape(-1, 1),
+                self.num_params,
+                axis=1)
         elif grid_type == 'z':
-            g_axes = np.repeat(np.array(grid).reshape(-1, 1), self.num_param, axis=1)
+            g_axes = np.repeat(
+                np.array(grid).reshape(-1, 1), self.num_params, axis=1)
 
         # Compute new grid on the initial space.
         g_star = make_grid_matrix(*[v for v in g_axes.T])
         grid_new = np.dot(g_star, r_inv) + m
 
         # Remove improper points not in the parameter space
-        for k, f in self.model.constraint.items():
-            idx = self.model.param.index(k)
+        for k, f in self.cond_param.items():
+            idx = self.label_param.index(k)
             grid_new = grid_new[list(map(f, grid_new[:, idx]))]
 
         self.dg_means.append(m)

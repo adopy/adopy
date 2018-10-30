@@ -4,9 +4,10 @@ ADOpy
 
 ADOpy is a Python package for Adaptive Design Optimization.
 """
-from . import base
-from . import functions
-from . import tasks
+from adopy import base
+from adopy import functions
+from adopy import tasks
 
-from .base import Model
-from .base import Task
+
+from adopy.base import Model
+from adopy.base import Task
