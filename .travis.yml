@@ -6,6 +6,7 @@ branches:
   only:
   - master
   - develop
+  - hotfix/*
 
 python:
   - "2.7"
@@ -13,9 +14,9 @@ python:
   - "3.6"
 
 install:
-  - pip install .[test]
+  - pip install -e .[test]
 
 script:
-  - flake8 adopy --format=pylint --statistics --exit-zero
+  - flake8 adopy --format=pylint --statistics
   - pytest --cov=adopy
   - codecov --token $CODECOV_TOKEN
