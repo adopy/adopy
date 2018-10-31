@@ -2,12 +2,6 @@ language: python
 sudo: false
 cache: pip
 
-branches:
-  only:
-  - master
-  - develop
-  - hotfix/*
-
 python:
   - "2.7"
   - "3.5"
