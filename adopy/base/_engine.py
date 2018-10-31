@@ -206,19 +206,14 @@ class Engine(object):
         """
         assert kind in {'optimal', 'random'}
 
-        def get_design_optimal():
-            return self.grid_design.iloc[np.argmax(self.mutual_info)]
-
-        def get_design_random():
-            return self.grid_design.iloc[get_random_design_index(self.grid_design)]
-
         if kind == 'optimal':
             self._update_mutual_info()
-            return get_design_optimal()
-        elif kind == 'random':
-            return get_design_random()
-        else:
-            raise RuntimeError('An invalid kind of design: "{}".'.format(type))
+            return self.grid_design.iloc[np.argmax(self.mutual_info)]
+
+        if kind == 'random':
+            return self.grid_design.iloc[get_random_design_index(self.grid_design)]
+
+        raise RuntimeError('An invalid kind of design: "{}".'.format(type))
 
     def update(self, design, response, store=True):
         r"""

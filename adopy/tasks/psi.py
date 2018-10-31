@@ -155,26 +155,20 @@ class EnginePsi(Engine):
 
         self._update_mutual_info()
 
-        def get_design_optimal():
-            return self.grid_design.iloc[np.argmax(self.mutual_info)]
+        if kind == 'optimal':
+            ret = self.grid_design.iloc[np.argmax(self.mutual_info)]
 
-        def get_design_staircase():
+        elif kind == 'staircase':
             if self.y_obs_prev == 1:
                 idx = max(0, np.array(self.idx_opt)[0] - self.d_step)
             else:
                 idx = min(len(self.grid_design) - 1, np.array(self.idx_opt)[0] + self.d_step * 2)
 
-            return self.grid_design.iloc[np.int(idx)]
+            ret = self.grid_design.iloc[np.int(idx)]
 
-        def get_design_random():
-            return self.grid_design.iloc[get_random_design_index(self.grid_design)]
-
-        if kind == 'optimal':
-            ret = get_design_optimal()
-        elif kind == 'staircase':
-            ret = get_design_staircase()
         elif kind == 'random':
-            ret = get_design_random()
+            ret = self.grid_design.iloc[get_random_design_index(self.grid_design)]
+
         else:
             raise RuntimeError('An invalid kind of design: "{}".'.format(type))
 
