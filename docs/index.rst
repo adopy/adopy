@@ -10,7 +10,9 @@ Contents
    :maxdepth: 2
    :glob:
 
-   intro/*
+   intro/about.rst
+   intro/basics.rst
+   intro/example.rst
 
 .. toctree::
    :caption: API Reference

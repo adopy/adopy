@@ -1,0 +1,6 @@
+"""
+Tasks
+-----
+
+Already implemented tasks
+"""

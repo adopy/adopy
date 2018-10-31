@@ -12,6 +12,7 @@ def test_inv_logit():
     assert inv_logit(0) == 0.5
     assert inv_logit(np.inf) == 1.0
 
+
 def test_expand_multiple_dims():
     x = np.arange(4).reshape(-1)
 

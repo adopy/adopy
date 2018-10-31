@@ -1,11 +1,14 @@
 """
-ADOR
-====
+ADOpy
+=====
 
-ADOR is the package of Adaptive Design Optimization wRapper.
-The package is based on the code by Woojae Kim and Bryan Zake.
+ADOpy is a Python package for Adaptive Design Optimization.
 """
-from __future__ import absolute_import, division, print_function
+from adopy import base
+from adopy import functions
+from adopy import tasks
 
-from .generics import ADOGeneric
+from adopy.base import Task, Model, Engine
 
+__all__ = ['base', 'functions', 'tasks', 'Task', 'Model', 'Engine']
+__version__ = '0.1.0'
