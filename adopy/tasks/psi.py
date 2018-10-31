@@ -1,60 +1,36 @@
 from __future__ import absolute_import, division, print_function
 
+from typing import Any, Callable
+
 import numpy as np
 from scipy.stats import norm, gumbel_l
-from scipy.special import logsumexp
 
-from adopy.generic import ADOGeneric
-from adopy.functions import inv_logit, log_lik_bern
-from adopy.functions import get_random_design_index, get_nearest_grid_index, make_vector_shape, make_grid_matrix
-
-FUNC_LOGISTIC = {'l', 'logistic'}
-FUNC_WEIBULL = {'w', 'g', 'weibull', 'gumbel'}
-FUNC_NORMAL = {'n', 'normal'}
-
-FUNC_VALID = FUNC_LOGISTIC ^ FUNC_WEIBULL ^ FUNC_NORMAL
+from adopy.base import Engine, Task, Model
+from adopy.functions import inv_logit, get_random_design_index, get_nearest_grid_index
 
 
-class Psi(ADOGeneric):
-    def __init__(self, func_type, stimulus, guess_rate, lapse_rate, threshold, slope):
-        super(Psi, self).__init__()
+class TaskPsi(Task):
+    def __init__(self):
+        args = dict(name='Psi', key='psi', design=['stimulus'])
+        super(TaskPsi, self).__init__(**args)
 
-        assert func_type in FUNC_VALID
-        self.func_type = func_type
 
-        self.stimulus = np.array(stimulus).reshape(-1)
-        self.guess_rate = np.array(guess_rate).reshape(-1)
-        self.lapse_rate = np.array(lapse_rate).reshape(-1)
-        self.threshold = np.array(threshold).reshape(-1)
-        self.slope = np.array(slope).reshape(-1)
+class _ModelPsi(Model):
+    def __init__(self, name, key):
+        args = dict(
+            name=name,
+            key=key,
+            task=TaskPsi(),
+            param=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
+            constraint={
+                'guess_rate': lambda x: 0 <= x <= 1,
+                'lapse_rate': lambda x: 0 <= x <= 1,
+                'threshold': lambda x: x >= 0,
+                'slope': lambda x: x >= 0,
+            })
+        super(_ModelPsi, self).__init__(**args)
 
-        self.y_obs = np.array([0, 1])  # Binary response
-
-        self.designs = [self.stimulus]
-        self.params = [self.guess_rate, self.lapse_rate, self.threshold, self.slope]
-
-        self.label_design = ['stimulus']
-        self.label_param = ['guess_rate', 'lapse_rate', 'threshold', 'slope']
-
-        self.cond_param = {
-            'guess_rate': lambda x: 0 <= x <= 1,
-            'lapse_rate': lambda x: 0 <= x <= 1,
-            'threshold': lambda x: x >= 0,
-            'slope': lambda x: x >= 0
-        }
-
-        self.grid_design = make_grid_matrix(*self.designs)
-        self.grid_param = make_grid_matrix(*self.params)
-        self.grid_response = make_grid_matrix(self.y_obs)
-
-        self.idx_opt = get_random_design_index(self.grid_design)
-        self.y_obs_prev = 1
-        self.d_step = 1
-
-        self.initialize()
-
-    @classmethod
-    def compute_p_obs(cls, func_type, stimulus, guess_rate, lapse_rate, threshold, slope):
+    def _compute(self, func, stimulus, guess_rate, lapse_rate, threshold, slope):
         r"""
         Calculate the psychometric function given parameters.
 
@@ -87,10 +63,8 @@ class Psi(ADOGeneric):
 
         Parameters
         ----------
-        func_type : {'l', 'w', 'g', 'n'}
+        func : Callable
             The type of the function used in the Psi function.
-            It can have one type among Logistic ('l'), log Weibull ('w' or 'g'),
-            and normal CDF ('n').
         stimulus : numpy.ndarray or array_like
         guess_rate : numpy.ndarray or array_like
         lapse_rate : numpy.ndarray or array_like
@@ -100,39 +74,50 @@ class Psi(ADOGeneric):
         Returns
         -------
         psi : numpy.ndarray
-
         """
-        assert func_type in FUNC_VALID, 'Invalid func_type is given.'
+        return guess_rate + (1 - guess_rate - lapse_rate) * func(slope * (stimulus - threshold))
 
-        f = slope * (stimulus - threshold)
-        if func_type in FUNC_LOGISTIC:  # Logistic function
-            f = inv_logit(f)
-        elif func_type in FUNC_WEIBULL:  # Log Weibull (Gumbel) CDF
-            f = gumbel_l.cdf(f)
-        elif func_type in FUNC_NORMAL:  # Normal CDF
-            f = norm.cdf(f)
 
-        return guess_rate + (1 - guess_rate - lapse_rate) * f
+class ModelLogistic(_ModelPsi):
+    def __init__(self):
+        super(ModelLogistic, self).__init__(name='Logistic', key='logi')
 
-    def _compute_p_obs(self):
-        shape_design = make_vector_shape(2, 0)
-        shape_param = make_vector_shape(2, 1)
+    def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
+        return self._compute(inv_logit, stimulus, guess_rate, lapse_rate, threshold, slope)
 
-        st = self.grid_design[:, 0].reshape(shape_design)
-        gr = self.grid_param[:, 0].reshape(shape_param)
-        lr = self.grid_param[:, 1].reshape(shape_param)
-        th = self.grid_param[:, 2].reshape(shape_param)
-        sl = self.grid_param[:, 3].reshape(shape_param)
 
-        return Psi.compute_p_obs(
-            func_type=self.func_type, stimulus=st, guess_rate=gr, lapse_rate=lr, threshold=th, slope=sl)
+class ModelWeibull(_ModelPsi):
+    def __init__(self):
+        super(ModelWeibull, self).__init__(name='Weibull', key='weib')
 
-    def _compute_log_lik(self):
-        dim_p_obs = len(self.p_obs.shape)
-        y = self.y_obs.reshape(make_vector_shape(dim_p_obs + 1, dim_p_obs))
-        p = np.expand_dims(self.p_obs, dim_p_obs)
+    def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
+        return self._compute(gumbel_l.cdf, stimulus, guess_rate, lapse_rate, threshold, slope)
 
-        return log_lik_bern(y, p)
+
+class ModelNormal(_ModelPsi):
+    def __init__(self):
+        super(ModelNormal, self).__init__(name='Normal', key='norm')
+
+    def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
+        return self._compute(norm.cdf, stimulus, guess_rate, lapse_rate, threshold, slope)
+
+
+class EnginePsi(Engine):
+    def __init__(self, model, designs, params):
+        assert model in [ModelLogistic(), ModelWeibull(), ModelNormal()]
+
+        args = dict(
+            task=TaskPsi(),
+            model=model,
+            designs=designs,
+            params=params,
+            y_obs=np.array([0., 1.]),  # Binary response
+        )
+        super(EnginePsi, self).__init__(**args)
+
+        self.idx_opt = get_random_design_index(self.grid_design)
+        self.y_obs_prev = 1
+        self.d_step = 1
 
     def get_design(self, kind='optimal'):
         r"""Choose a design with a given type.
@@ -171,18 +156,18 @@ class Psi(ADOGeneric):
         self._update_mutual_info()
 
         def get_design_optimal():
-            return self.grid_design[np.argmax(self.mutual_info)]
+            return self.grid_design.iloc[np.argmax(self.mutual_info)]
 
         def get_design_staircase():
             if self.y_obs_prev == 1:
                 idx = max(0, np.array(self.idx_opt)[0] - self.d_step)
             else:
-                idx = min(len(self.stimulus) - 1, np.array(self.idx_opt)[0] + self.d_step * 2)
+                idx = min(len(self.grid_design) - 1, np.array(self.idx_opt)[0] + self.d_step * 2)
 
-            return self.grid_design[np.int(idx)]
+            return self.grid_design.iloc[np.int(idx)]
 
         def get_design_random():
-            return self.grid_design[get_random_design_index(self.grid_design)]
+            return self.grid_design.iloc[get_random_design_index(self.grid_design)]
 
         if kind == 'optimal':
             ret = get_design_optimal()
@@ -198,6 +183,7 @@ class Psi(ADOGeneric):
         return ret
 
     def update(self, design, response, store=True):
-        super(Psi, self).update(design, response, store)
+        super(EnginePsi, self).update(design, response, store)
 
+        # Store the previous response for staircase
         self.y_obs_prev = response

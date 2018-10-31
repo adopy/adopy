@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from codecs import open as codecs_open
-from setuptools import setup, find_packages
+from setuptools import setup
 
 
 # Get the long description from the relevant file
@@ -19,19 +19,26 @@ setup(name='adopy',
       author_email='jaeyeong.yang1125@gmail.com',
       url='https://github.com/JaeyeongYang/adopy',
       license='MIT',
-      # packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
       zip_safe=False,
       install_requires=[
+          'typing',
           'numpy',
           'pandas',
           'scipy',
       ],
       extras_require={
+          'dev': [
+              'flake8',
+              'mypy',
+              'pytest',
+              'yapf',
+          ],
           'test': [
+              'flake8',
               'codecov',
               'pytest',
-              'pytest-cov'
+              'pytest-cov',
           ],
       }
       )
