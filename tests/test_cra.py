@@ -3,7 +3,6 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 import pytest
 
-from adopy.functions import make_grid_matrix
 from adopy.tasks.cra import ModelLinear, ModelExp, EngineCRA
 
 
