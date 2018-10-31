@@ -11,12 +11,12 @@ from adopy.tasks.cra import ModelLinear, ModelExp, EngineCRA
 def designs():
     # Define grids for the probability for rewarding and the ambiguity level
     ## For risky conditions
-    pr_risky = np.linspace(0.0, 0.5, 11)
+    pr_risky = np.linspace(0.0, 0.5, 5)
     am_risky = np.array(0).reshape(-1)
 
     ## For ambiguous conditions
     pr_ambig = np.array(0.5).reshape(-1)
-    am_ambig = np.linspace(0.0, 0.8, 11)
+    am_ambig = np.linspace(0.0, 0.75, 5)
 
     ## Make cartesian products for each condition
     pr_am_risky = np.squeeze(np.stack(np.meshgrid(pr_risky, am_risky), -1))
@@ -26,8 +26,8 @@ def designs():
     pr_am = np.vstack([pr_am_risky[:-1, :], pr_am_ambig])
 
     # Define grids for rewards on each option
-    r_var = np.round(np.logspace(np.log10(10), np.log10(250), 11, base=10))
-    r_fix = np.round(np.logspace(np.log10(10), np.log10(125), 11, base=10))
+    r_var = np.round(np.logspace(np.log10(10), np.log10(250), 5, base=10))
+    r_fix = np.round(np.logspace(np.log10(10), np.log10(125), 5, base=10))
 
     rs = np.vstack([(rv, rf) for rv in r_var for rf in r_fix if rv > rf])
 
@@ -40,9 +40,9 @@ def designs():
 
 @pytest.fixture()
 def params():
-    alp = np.linspace(0.0, 2.0, 21)
-    bet = np.linspace(-1.0, 2.0, 21)
-    gam = np.linspace(0.0, 5.0, 21)
+    alp = np.linspace(0.0, 2.0, 5)
+    bet = np.linspace(-1.0, 2.0, 5)
+    gam = np.linspace(0.0, 5.0, 5)
     params = dict(alpha=alp, beta=bet, gamma=gam)
     return params
 
