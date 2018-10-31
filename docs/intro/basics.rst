@@ -13,9 +13,6 @@ ADO cycles consist of three steps: (1) Design optimization, (2) experiment, and 
    Model evaluation and selection. In Batchelder, W.H., Colonius, H., Dzhafarov, E., & Myung, J.I. (Eds.).
    *New Handbook of Mathematical Psychology*. London: Cambridge University Press.
 
-.. todo::
-   Explain what the ADO is and how to use it.
-
-.. autoclass:: adopy.generics.ADOGeneric
+.. autoclass:: adopy.base.Engine
    :members:
 
