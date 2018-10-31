@@ -61,7 +61,6 @@ class Engine(object):
         lp = expand_multiple_dims(self.log_post, 1, 1)
         mll = logsumexp(self.log_lik + lp, axis=1)
         self.marg_log_lik = mll  # shape (num_design, num_response)
-        self.marg_log_lik = None
 
         self.ent_obs = -np.multiply(np.exp(ll), ll).sum(-1)
         self.ent_marg = None

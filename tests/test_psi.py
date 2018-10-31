@@ -8,7 +8,7 @@ from adopy.tasks.psi import ModelLogistic, ModelWeibull, ModelNormal, EnginePsi
 
 @pytest.fixture()
 def designs():
-    stimulus = np.linspace(20 * np.log10(.05), 20 * np.log10(400), 120)
+    stimulus = np.linspace(20 * np.log10(.05), 20 * np.log10(400), 20)
     designs = dict(stimulus=stimulus)
     return designs
 
@@ -17,8 +17,8 @@ def designs():
 def params():
     guess_rate = [0.5]
     lapse_rate = [0.05]
-    threshold = np.linspace(20 * np.log10(.1), 20 * np.log10(200), 100)
-    slope = np.linspace(0, 10, 100)[1:]
+    threshold = np.linspace(20 * np.log10(.1), 20 * np.log10(200), 20)
+    slope = np.linspace(0, 10, 11)[1:]
     params = dict(guess_rate=guess_rate, lapse_rate=lapse_rate, threshold=threshold, slope=slope)
     return params
 
