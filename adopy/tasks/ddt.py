@@ -109,8 +109,7 @@ class ModelQuasiHyperbolic(Model):
         def discount(delay):
             if delay == 0:
                 return np.ones_like(beta * delta * delay)
-            else:
-                return beta * np.power(delta, delay)
+            return beta * np.power(delta, delay)
 
         v_ss = a_soon * discount(d_soon)
         v_ll = a_late * discount(d_late)

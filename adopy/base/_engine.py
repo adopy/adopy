@@ -47,7 +47,6 @@ class Engine(object):
 
         self.grid_design = make_grid_matrix(designs)[list(task.design)]
         self.grid_param = make_grid_matrix(params)[list(model.param)]
-        # TODO: consider cases with multiple response variables
         self.grid_response = pd.DataFrame(np.array(y_obs), columns=['y_obs'])
 
         self.y_obs = np.array(y_obs)
@@ -146,7 +145,6 @@ class Engine(object):
 
     def _compute_log_lik(self):
         """Compute the log likelihood."""
-        # TODO: Cover the case for Categorical distribution
         dim_p_obs = len(self.p_obs.shape)
         y = self.y_obs.reshape(make_vector_shape(dim_p_obs + 1, dim_p_obs))
         p = np.expand_dims(self.p_obs, dim_p_obs)
