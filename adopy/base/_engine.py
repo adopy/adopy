@@ -47,7 +47,6 @@ class Engine(object):
 
         self.grid_design = make_grid_matrix(designs)[list(task.design)]
         self.grid_param = make_grid_matrix(params)[list(model.param)]
-        # TODO: consider cases with multiple response variables
         self.grid_response = pd.DataFrame(np.array(y_obs), columns=['y_obs'])
 
         self.y_obs = np.array(y_obs)
@@ -61,7 +60,6 @@ class Engine(object):
         lp = expand_multiple_dims(self.log_post, 1, 1)
         mll = logsumexp(self.log_lik + lp, axis=1)
         self.marg_log_lik = mll  # shape (num_design, num_response)
-        self.marg_log_lik = None
 
         self.ent_obs = -np.multiply(np.exp(ll), ll).sum(-1)
         self.ent_marg = None
@@ -147,7 +145,6 @@ class Engine(object):
 
     def _compute_log_lik(self):
         """Compute the log likelihood."""
-        # TODO: Cover the case for Categorical distribution
         dim_p_obs = len(self.p_obs.shape)
         y = self.y_obs.reshape(make_vector_shape(dim_p_obs + 1, dim_p_obs))
         p = np.expand_dims(self.p_obs, dim_p_obs)
@@ -209,19 +206,14 @@ class Engine(object):
         """
         assert kind in {'optimal', 'random'}
 
-        def get_design_optimal():
-            return self.grid_design.iloc[np.argmax(self.mutual_info)]
-
-        def get_design_random():
-            return self.grid_design.iloc[get_random_design_index(self.grid_design)]
-
         if kind == 'optimal':
             self._update_mutual_info()
-            return get_design_optimal()
-        elif kind == 'random':
-            return get_design_random()
-        else:
-            raise RuntimeError('An invalid kind of design: "{}".'.format(type))
+            return self.grid_design.iloc[np.argmax(self.mutual_info)]
+
+        if kind == 'random':
+            return self.grid_design.iloc[get_random_design_index(self.grid_design)]
+
+        raise RuntimeError('An invalid kind of design: "{}".'.format(type))
 
     def update(self, design, response, store=True):
         r"""

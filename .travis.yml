@@ -2,12 +2,6 @@ language: python
 sudo: false
 cache: pip
 
-branches:
-  only:
-  - master
-  - develop
-  - hotfix/*
-
 python:
   - "2.7"
   - "3.5"
@@ -18,5 +12,5 @@ install:
 
 script:
   - flake8 adopy --format=pylint --statistics
-  - pytest --cov=adopy
+  - pytest --doctest-modules --cov=adopy
   - codecov --token $CODECOV_TOKEN

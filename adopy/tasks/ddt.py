@@ -6,8 +6,8 @@ from adopy.base import Engine, Task, Model
 from adopy.functions import inv_logit
 
 __all__ = [
-    'TaskDDT', 'ModelExp', 'ModelHyperbolic', 'ModelGeneralizedHyperbolic',
-    'ModelQuasiHyperbolic', 'ModelDoubleExp', 'ModelCS', 'EngineDDT'
+    'TaskDDT', 'ModelExp', 'ModelHyperbolic', 'ModelGeneralizedHyperbolic', 'ModelQuasiHyperbolic', 'ModelDoubleExp',
+    'ModelCS', 'EngineDDT'
 ]
 
 
@@ -82,7 +82,7 @@ class ModelGeneralizedHyperbolic(Model):
 
     def compute(cls, d_soon, d_late, a_soon, a_late, tau, k, s):
         def discount(delay):
-            return np.exp(np.divide(1, 1 + k * delay), s)
+            return np.divide(1, np.power(1 + k * delay, s))
 
         v_ss = a_soon * discount(d_soon)
         v_ll = a_late * discount(d_late)
@@ -102,15 +102,13 @@ class ModelQuasiHyperbolic(Model):
             constraint={
                 'tau': lambda x: x > 0,
                 'beta': lambda x: 0 < x < 1,
+                'delta': lambda x: 0 < x < 1,
             })
         super(ModelQuasiHyperbolic, self).__init__(**args)
 
     def compute(cls, d_soon, d_late, a_soon, a_late, tau, beta, delta):
         def discount(delay):
-            if delay == 0:
-                return np.ones_like(beta * delta * delay)
-            else:
-                return beta * np.power(delta, delay)
+            return np.where(delay == 0, np.ones_like(beta * delta * delay), beta * np.power(delta, delay))
 
         v_ss = a_soon * discount(d_soon)
         v_ll = a_late * discount(d_late)
