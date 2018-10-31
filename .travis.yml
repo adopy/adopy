@@ -12,5 +12,5 @@ install:
 
 script:
   - flake8 adopy --format=pylint --statistics
-  - pytest --cov=adopy
+  - pytest --doctest-modules --cov=adopy
   - codecov --token $CODECOV_TOKEN
