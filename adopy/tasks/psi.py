@@ -83,7 +83,7 @@ class ModelLogistic(_ModelPsi):
         super(ModelLogistic, self).__init__(name='Logistic', key='logi')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
-        self._compute(inv_logit, stimulus, guess_rate, lapse_rate, threshold, slope)
+        return self._compute(inv_logit, stimulus, guess_rate, lapse_rate, threshold, slope)
 
 
 class ModelWeibull(_ModelPsi):
@@ -91,7 +91,7 @@ class ModelWeibull(_ModelPsi):
         super(ModelWeibull, self).__init__(name='Weibull', key='weib')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
-        self._compute(gumbel_l.cdf, stimulus, guess_rate, lapse_rate, threshold, slope)
+        return self._compute(gumbel_l.cdf, stimulus, guess_rate, lapse_rate, threshold, slope)
 
 
 class ModelNormal(_ModelPsi):
@@ -99,7 +99,7 @@ class ModelNormal(_ModelPsi):
         super(ModelNormal, self).__init__(name='Normal', key='norm')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
-        self._compute(norm.cdf, stimulus, guess_rate, lapse_rate, threshold, slope)
+        return self._compute(norm.cdf, stimulus, guess_rate, lapse_rate, threshold, slope)
 
 
 class EnginePsi(Engine):
@@ -156,7 +156,7 @@ class EnginePsi(Engine):
         self._update_mutual_info()
 
         def get_design_optimal():
-            return self.grid_design[np.argmax(self.mutual_info)]
+            return self.grid_design.iloc[np.argmax(self.mutual_info)]
 
         def get_design_staircase():
             if self.y_obs_prev == 1:
@@ -164,10 +164,10 @@ class EnginePsi(Engine):
             else:
                 idx = min(len(self.grid_design) - 1, np.array(self.idx_opt)[0] + self.d_step * 2)
 
-            return self.grid_design[np.int(idx)]
+            return self.grid_design.iloc[np.int(idx)]
 
         def get_design_random():
-            return self.grid_design[get_random_design_index(self.grid_design)]
+            return self.grid_design.iloc[get_random_design_index(self.grid_design)]
 
         if kind == 'optimal':
             ret = get_design_optimal()
