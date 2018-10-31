@@ -6,8 +6,8 @@ from adopy.base import Engine, Task, Model
 from adopy.functions import inv_logit
 
 __all__ = [
-    'TaskDDT', 'ModelExp', 'ModelHyperbolic', 'ModelGeneralizedHyperbolic',
-    'ModelQuasiHyperbolic', 'ModelDoubleExp', 'ModelCS', 'EngineDDT'
+    'TaskDDT', 'ModelExp', 'ModelHyperbolic', 'ModelGeneralizedHyperbolic', 'ModelQuasiHyperbolic', 'ModelDoubleExp',
+    'ModelCS', 'EngineDDT'
 ]
 
 

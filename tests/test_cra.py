@@ -31,10 +31,7 @@ def designs():
 
     rs = np.vstack([(rv, rf) for rv in r_var for rf in r_fix if rv > rf])
 
-    designs = {
-        ('prob', 'ambig'): pr_am,
-        ('r_var', 'r_fix'): rs
-    }
+    designs = {('prob', 'ambig'): pr_am, ('r_var', 'r_fix'): rs}
     return designs
 
 
