@@ -27,8 +27,8 @@ def params():
 def test_calculate_psi(model, designs, params):
     psi = EnginePsi(model=model(), designs=designs, params=params)
 
-    len_design = int(np.prod([np.size(des) for des in designs.values()]))
-    len_param = int(np.prod([np.size(par) for par in params.values()]))
+    len_design = int(np.prod([np.shape(des)[0] for des in designs.values()]))
+    len_param = int(np.prod([np.shape(par)[0] for par in params.values()]))
 
     assert psi.p_obs.shape == (len_design, len_param)
 

@@ -31,11 +31,11 @@ def designs():
 
     rs = np.vstack([(rv, rf) for rv in r_var for rf in r_fix if rv > rf])
 
-    designs = make_grid_matrix({
+    designs = {
         ('prob', 'ambig'): pr_am,
         ('r_var', 'r_fix'): rs
-    })
-    return {k: v.values for k, v in designs.iteritems()}
+    }
+    return designs
 
 
 @pytest.fixture()
@@ -51,8 +51,8 @@ def params():
 def test_calculate_psi(model, designs, params):
     cra = EngineCRA(model=model(), designs=designs, params=params)
 
-    len_design = int(np.prod([np.size(des) for des in designs.values()]))
-    len_param = int(np.prod([np.size(par) for par in params.values()]))
+    len_design = int(np.prod([np.shape(des)[0] for des in designs.values()]))
+    len_param = int(np.prod([np.shape(par)[0] for par in params.values()]))
 
     assert cra.p_obs.shape == (len_design, len_param)
 
