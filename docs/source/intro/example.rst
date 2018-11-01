@@ -1,31 +1,48 @@
-Simple Example: Psi function
-============================
+Example: Psychometric function
+==============================
 
-Let’s start with an simple example: Psi function. The task has one
-design variable (stimulus :math:`x`) and the models for the task have four
-parameters (guess_rate :math:`\gamma`, lapse_rate :math:`\delta`,
-threshold :math:`\alpha`, slope :math:`\beta`).
-In this example, let’s use the logistic function for the model’s shape.
+Let’s start with an example: **Psychometric function**. The goal of the function
+is to figure out whether a subject can perceive a signal with varying levels
+of magnitude. The function has one design variable for the *intensity* of a
+stimulus, :math:`x`; the model has four model parameters:
+*guess rate* :math:`\gamma`, *lapse rate* :math:`\delta`,
+*threshold* :math:`\alpha`, and *slope* :math:`\beta`.
+
+.. figure:: ../_static/images/Psychometricfn.svg
+   :width: 70%
+   :align: center
+
+   A simple diagram for the Psychometric function.
+
+In this example, let’s use the **logistic function** for the model’s shape.
 Then, the model can compute the probability of a subject to perceive the
 given stimulus with the following equation:
 
 .. math::
 
-    p = \gamma + (1 - \gamma - \delta) \; \text{logit}^{-1}\left(
-        \beta (x - \alpha)
-    \right) \\
-    \text{where } \text{logit}^{-1}(x) = \frac{1}{1 + e^{-x}}
+    \Psi(x \mid \alpha, \beta, \gamma, \delta)
+    = \gamma + (1 - \gamma - \delta) \; \sigma\big( \beta (x - \alpha) \big)
+    \quad \text{where } \sigma(x) = \frac{1}{1 + e^{-x}}
 
-In this case, let’s only assume one constraint: ``slope`` > 0.
+For this example, let's assume the true parameters as :math:`\gamma = 0.5`,
+:math:`\delta = 0.04`, :math:`\alpha = 20`, and :math:`\beta = 1.5`.
 
-Defining Grids for Designs and Params
--------------------------------------
+.. code:: python
+
+   # Define true parameters
+   GR_TRUE = 0.5
+   LR_TRUE = 0.04
+   TH_TRUE = 20
+   SL_TRUE = 1.5
+
+Preparing grids
+---------------
 
 To make grids for designs and parameters, you should define two dictionaries
-that contains singls grids for each designs and each parameters, respectively.
+that contain singles grids for all designs and all parameters, respectively.
 In this example, we will fix the ``guess_rate`` to 0.5 and ``lapse_rate`` to 0.04.
 
-.. code::
+.. code:: python
 
    import numpy as np
 
@@ -40,42 +57,42 @@ In this example, we will fix the ``guess_rate`` to 0.5 and ``lapse_rate`` to 0.0
        'slope': np.linspace(0, 10, 200)
    }
 
-Using Predefined Classes
+Using pre-defined classes
 ------------------------
 
 To use the predefined classes for specific task and models, you can use it
-with ``adopy.tasks.<task_name>``.
+with `adopy.tasks.<task_name>`, e.g., ``adopy.tasks.psi``.
 
-.. code::
+.. code:: python
 
    from adopy.tasks.psi import ModelLogistic, EnginePsi
 
    model = ModelLogistic()
-   engine = EnginePsi(model=m, designs=designs, params=params)
+   engine = EnginePsi(model=model, designs=designs, params=params)
 
-Assuming :math:`\gamma = 0.5`, :math:`\delta = 0.04`, :math:`\alpha = 20` and :math:`\beta = 1.5`,
-you can get the probability of perceiving the stimulus with ``model_log.compute``.
+Using `compute()` method of the model instance, you can compute the probability
+for a subject to succeed to perceive a signal.
 
-.. code::
+.. code:: python
+
+   model.compute(stimulus=10, guess_rate=0.5, lapse_rate=0.04,
+                 threshold=10, slope=0.5)
+
+.. code:: python
 
    from scipy.stats import bernoulli
 
-   # Define true parameters
-   gr_true = 0.5
-   lr_true = 0.04
-   th_true = 20
-   sl_true = 1.5
-
-   p_obs = model_log.compute(stimulus=d_opt['stimulus'], guess_rate=gr_true, lapse_rate=lr_true,
-                             threshold=th_true, slope=sl_true)
+   p_obs = model.compute(stimulus=d_opt['stimulus'],
+                         guess_rate=gr_true, lapse_rate=lr_true,
+                         threshold=th_true, slope=sl_true)
    y_obs = bernoulli.rvs(p_obs)
 
-.. code::
+.. code:: python
 
    d_opt = e.get_design()
 
-Self-defined Classes
---------------------
+Using self-defined classes
+---------------------
 
 Instead of using pre-defined classes, they can be implemented as ``Task`` and ``Model`` objects by the
 codes below:
@@ -129,12 +146,6 @@ you can get the probability of perceiving the stimulus with `model_log.compute`.
 .. code:: python
 
    from scipy.stats import bernoulli
-
-   # Define true parameters
-   gr_true = 0.5
-   lr_true = 0.04
-   th_true = 20
-   sl_true = 1.5
 
    p_obs = model_log.compute(stimulus=d_opt['stimulus'], guess_rate=gr_true, lapse_rate=lr_true,
                              threshold=th_true, slope=sl_true)
