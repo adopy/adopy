@@ -9,8 +9,7 @@ python:
 
 install:
   - pip install -e .[test]
-  - pip install --user travis-sphinx
-  - export PATH=$HOME/.local/bin/$PATH
+  - pip install travis-sphinx
 
 script:
   - flake8 adopy --format=pylint --statistics
