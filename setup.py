@@ -35,6 +35,7 @@ setup(
         ],
         'test': [
             'flake8',
+            'pylint',
             'pytest',
             'pytest-cov',
             'codecov',
