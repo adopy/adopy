@@ -40,5 +40,8 @@ setup(
             'codecov',
             'pytest',
             'pytest-cov',
+            'sphinx',
+            'sphinx_rtd_theme',
+            'travis-sphinx',
         ],
     })

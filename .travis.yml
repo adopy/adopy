@@ -9,7 +9,6 @@ python:
 
 install:
   - pip install -e .[test]
-  - pip install travis-sphinx
 
 script:
   - flake8 adopy --format=pylint --statistics
