@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function
 
-from typing import Dict, Iterable, Tuple, TypeVar
+from typing import Dict, Iterable, List, Tuple, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -46,8 +46,8 @@ def make_grid_matrix(axes_dict):
     n_d_prev = np.cumsum(n_d_each) - n_d_each
     n_d_total = sum(n_d_each)
 
-    columns = []
-    grids = []
+    columns = []  # type: List[str]
+    grids = []  # type: List[np.ndarray]
     for i, (k, g) in enumerate(axes_dict.items()):
         dim_grid = np.append(make_vector_shape(n_dims, i), n_d_total)
 
@@ -60,6 +60,6 @@ def make_grid_matrix(axes_dict):
                       'constant').reshape(dim_grid)
         grids.append(grid)
 
-    grid_mat = sum(grids).reshape(-1, n_d_total)
+    grid_mat = np.sum(grids).reshape(-1, n_d_total)
 
     return pd.DataFrame(grid_mat, columns=columns)

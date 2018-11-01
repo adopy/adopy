@@ -86,14 +86,13 @@ class Model(MetaInterface):
         self._param = tuple(param)  # type: Tuple[str, ...]
 
         if func is None:
-            self._func = lambda **kargs: np.ones_like(reduce(lambda x, y: x * y, kargs.values())) / 2  # type: Callable
+            def _func(**kargs):
+                return np.ones_like(reduce(lambda x, y: x * y, kargs.values())) / 2
         else:
-            self._func = lambda **kargs: func(**kargs)  # type: Callable
+            _func = func
+        self._func = lambda **kargs: _func(**kargs)  # type: Callable
 
-        if constraint is None:
-            self._constraint = {}  # type: Dict[str, Callable]
-        else:
-            self._constraint = constraint  # type: Dict[str, Callable]
+        self._constraint = {} if constraint is None else constraint  # type: Dict[str, Callable]
 
     task = property(lambda self: self._task)
     """Task: Task instance for the model"""
