@@ -9,8 +9,15 @@ python:
 
 install:
   - pip install -e .[test]
+  - pip install --user travis-sphinx
+  - export PATH=$HOME/.local/bin/$PATH
 
 script:
   - flake8 adopy --format=pylint --statistics
   - pytest --doctest-modules --cov=adopy
   - codecov --token $CODECOV_TOKEN
+  - travis-sphinx build
+
+after_success:
+  - travis-sphinx deploy
+
