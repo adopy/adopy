@@ -22,7 +22,7 @@ import adopy  # noqa: E402
 # -- Project information -----------------------------------------------------
 
 project = 'ADOpy'
-copyright = '2018, Jaeyeong Yang'
+copyright = '2018, Jaeyeong Yang'  # pylint: disable=W0622
 author = 'Jaeyeong Yang'
 
 # The short X.Y version
