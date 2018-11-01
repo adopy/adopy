@@ -16,6 +16,8 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('..'))
 
+import adopy  # noqa: E402
+
 
 # -- Project information -----------------------------------------------------
 
@@ -26,7 +28,7 @@ author = 'Jaeyeong Yang'
 # The short X.Y version
 version = ''
 # The full version, including alpha/beta/rc tags
-release = '0.1.0'
+release = adopy.__version__
 
 
 # -- General configuration ---------------------------------------------------
