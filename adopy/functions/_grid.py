@@ -60,6 +60,6 @@ def make_grid_matrix(axes_dict):
                       'constant').reshape(dim_grid)
         grids.append(grid)
 
-    grid_mat = np.sum(grids).reshape(-1, n_d_total)
+    grid_mat = sum(grids, np.zeros_like(grids[0])).reshape(-1, n_d_total)
 
     return pd.DataFrame(grid_mat, columns=columns)

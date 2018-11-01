@@ -82,15 +82,16 @@ class Model(MetaInterface):
     def __init__(self, name, key, task, param, func=None, constraint=None):
         # type: (str, str, Task, Iterable[str], Optional[Callable], Optional[Dict[str, Callable]]) -> None
         super(Model, self).__init__(name, key)
+
         self._task = task  # type: Task
         self._param = tuple(param)  # type: Tuple[str, ...]
 
-        if func is None:
-            def _func(**kargs):
-                return np.ones_like(reduce(lambda x, y: x * y, kargs.values())) / 2
-        else:
-            _func = func
-        self._func = lambda **kargs: _func(**kargs)  # type: Callable
+        def _func(**kargs):
+            if func is not None:
+                return func(**kargs)
+            return np.ones_like(reduce(lambda x, y: x * y, kargs.values())) / 2
+
+        self._func = _func
 
         self._constraint = {} if constraint is None else constraint  # type: Dict[str, Callable]
 
