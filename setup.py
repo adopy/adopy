@@ -17,7 +17,7 @@ setup(
     author='Jaeyeong Yang',
     author_email='jaeyeong.yang1125@gmail.com',
     url='https://github.com/JaeyeongYang/adopy',
-    license='MIT',
+    license='GPL-3',
     include_package_data=True,
     zip_safe=False,
     install_requires=[
@@ -29,19 +29,20 @@ setup(
     extras_require={
         'dev': [
             'flake8',
+            'pylint',
             'mypy',
-            'pytest',
             'yapf',
-            'sphinx',
-            'sphinx_rtd_theme',
         ],
         'test': [
             'flake8',
-            'codecov',
             'pytest',
             'pytest-cov',
+            'codecov',
+        ],
+        'docs': [
             'sphinx',
             'sphinx_rtd_theme',
+            'sphinx-autobuild',
             'travis-sphinx',
-        ],
+        ]
     })
