@@ -170,7 +170,11 @@ texinfo_documents = [
 show_authors = True
 
 # Autodoc settings
+
 autodoc_member_order = 'bysource'
+autodoc_default_options = {
+    'show-inheritance': True
+}
 
 # Napoleon settings
 napoleon_numpy_docstring = True

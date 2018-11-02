@@ -1,9 +1,12 @@
-Basics
-======
+.. _about:
+
+=====
+About
+=====
 
 ADO cycles consist of three steps: (1) Design optimization, (2) experiment, and (3) Bayesian updating.
 
-.. figure:: ../_static/images/diagram-ado.png
+.. figure:: _static/images/diagram-ado.png
    :width: 70%
    :align: center
 
@@ -12,7 +15,3 @@ ADO cycles consist of three steps: (1) Design optimization, (2) experiment, and 
 .. [Myung2016] Myung, J.I., Cavagnaro, D.R., & Pitt, M.A. (2016).
    Model evaluation and selection. In Batchelder, W.H., Colonius, H., Dzhafarov, E., & Myung, J.I. (Eds.).
    *New Handbook of Mathematical Psychology*. London: Cambridge University Press.
-
-.. autoclass:: adopy.base.Engine
-   :members:
-

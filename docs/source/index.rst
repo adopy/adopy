@@ -7,19 +7,19 @@ Contents
 
 .. toctree::
    :caption: Getting Started
-   :maxdepth: 2
+   :maxdepth: 1
    :glob:
 
-   intro/about.rst
-   intro/basics.rst
-   intro/example.rst
+   about.rst
+   roadmap.rst
+   examples/index.rst
 
 .. toctree::
-   :caption: API Reference
-   :maxdepth: 2
+   :caption: Task API
+   :maxdepth: 1
    :glob:
 
-   reference/*
+   tasks/*
 
 Indices and tables
 ==================
