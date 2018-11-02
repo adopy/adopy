@@ -1,8 +1,13 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
+"""
+Base Classes
+============
 
-import abc
+"""
+from __future__ import absolute_import, division, print_function
+
+from typing import Any, Callable, Dict, Iterable, Optional, Tuple, TypeVar
+from collections import OrderedDict
+from functools import reduce
 
 import numpy as np
 from scipy.special import logsumexp
@@ -12,7 +17,130 @@ import pandas as pd
 from adopy.functions import (expand_multiple_dims, get_nearest_grid_index, get_random_design_index, make_grid_matrix,
                              marginalize, make_vector_shape, log_lik_bernoulli)
 
-__all__ = ['Engine']
+__all__ = ['Task', 'Model', 'Engine']
+
+DT = TypeVar('DT', Dict[str, Any], pd.DataFrame)
+
+
+class MetaInterface(object):
+    """
+    Meta interface for tasks and models.
+
+    Generate a singleton instance.
+    """
+    _instance = None  # type: object
+
+    def __init__(self, name, key):
+        # type: (str, str) -> None
+        self._name = name  # type: str
+        self._key = key  # type: str
+
+    def __new__(cls, *args, **kwargs):  # pylint: disable=unused-argument
+        if not isinstance(cls._instance, cls):
+            cls._instance = object.__new__(cls)
+        return cls._instance
+
+    key = property(lambda self: self._key)  # type: str
+    """str: Key for the meta instance"""
+
+    name = property(lambda self: self._name)
+    """str: name of the meta instance"""
+
+    @staticmethod
+    def _extract_vars(dt, keys):
+        # type: (DT, Iterable[str]) -> OrderedDict[str, Any]
+        ret = OrderedDict()  # type: OrderedDict[str, Any]
+
+        for k in keys:
+            ret[k] = dt[k] if isinstance(dt, dict) else dt[k].values
+
+        return ret
+
+
+class Task(MetaInterface):
+    """
+    Metaclass for tasks
+
+    >>> task = Task('Task A', 'a', ['d1', 'd2'])
+    >>> task
+    Task('Task A', design=['d1', 'd2'])
+    """
+
+    def __init__(self, name, key, design):
+        # type: (str, str, Iterable[str]) -> None
+        super(Task, self).__init__(name, key)
+        self._design = tuple(design)  # type: Tuple[str, ...]
+
+    design = property(lambda self: self._design)  # type: Tuple[str]
+    """Tuple[str]: Design labels of the task"""
+
+    def extract_designs(self, dt):
+        # type: (DT) -> OrderedDict[str, Any]
+        """
+        Extract design grids from given dictionary or dataframe.
+
+        Parameters
+        ----------
+        dt : Dict[str, array_like] or pd.DataFrame
+
+        Returns
+        -------
+        OrderedDict[str, array_like]
+            An ordered dictionary of single grids for design variables.
+        """
+        return self._extract_vars(dt, self.design)
+
+    def __repr__(self):  # type: () -> str
+        return 'Task({name}, design={var})' \
+            .format(name=repr(self.name), var=repr(list(self.design)))
+
+
+class Model(MetaInterface):
+    """
+    Metaclass for models
+
+    >>> task = Task('Task A', 'a', ['d1', 'd2'])
+    >>> model = Model('Model X', 'x', task, ['m1', 'm2', 'm3'])
+    >>> model
+    Model('Model X', param=['m1', 'm2', 'm3'])
+    """
+
+    def __init__(self, name, key, task, param, func=None, constraint=None):
+        # type: (str, str, Task, Iterable[str], Optional[Callable], Optional[Dict[str, Callable]]) -> None
+        super(Model, self).__init__(name, key)
+
+        self._task = task  # type: Task
+        self._param = tuple(param)  # type: Tuple[str, ...]
+
+        def _func(**kargs):
+            if func is not None:
+                return func(**kargs)
+            return np.ones_like(reduce(lambda x, y: x * y, kargs.values())) / 2
+
+        self._func = _func
+
+        self._constraint = {} if constraint is None else constraint  # type: Dict[str, Callable]
+
+    task = property(lambda self: self._task)
+    """Task: Task instance for the model"""
+
+    param = property(lambda self: self._param)
+    """Tuple[str]: Parameter labels of the model"""
+
+    constraint = property(lambda self: self._constraint)
+    """Dict[str, Callable]: Contraints on model parameters"""
+
+    def extract_params(self, dt):
+        # type: (DT) -> OrderedDict[str, Any]
+        return self._extract_vars(dt, self.param)
+
+    def compute(self, **kargs):
+        # type: (...) -> Any
+        return self._func(**kargs)
+
+    def __repr__(self):  # type: () -> str
+        return 'Model({name}, param={var})' \
+            .format(name=repr(self.name), var=repr(list(self.param)))
 
 
 class Engine(object):
@@ -35,13 +163,13 @@ class Engine(object):
     get_response functions is a pseudo-function to run an experiment and get
     a response.
     """
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, task, model, designs, params, y_obs):
         super(Engine, self).__init__()
 
         if model.task is not task:
             raise RuntimeError('Given task and model are not matched.')
+
         self._task = task  # type: Task
         self._model = model  # type: Model
 
@@ -73,9 +201,6 @@ class Engine(object):
         self.dg_covs = []
         self.dg_priors = []
         self.dg_posts = []
-
-        self.idx_opt = None
-        self.design_opt = None
 
         self.flag_update_mutual_info = True
 
@@ -179,7 +304,7 @@ class Engine(object):
         self.flag_update_mutual_info = False
 
     def get_design(self, kind='optimal'):
-        # type: (str) -> np.ndarray
+        # type: (str) -> pd.Series
         r"""
         Choose a design with a given type.
 
@@ -248,6 +373,31 @@ class Engine(object):
 
         self.flag_update_mutual_info = True
 
+    def _get_rotation_matrix(self, rotation):
+        assert rotation in {'eig', 'svd', 'none', None}
+
+        if rotation == 'eig':
+            el, ev = np.linalg.eig(self.post_cov)
+            ret = np.dot(np.sqrt(np.diag(el)), np.linalg.inv(ev))
+        elif rotation == 'svd':
+            _, sg, sv = np.linalg.svd(self.post_cov)
+            ret = np.dot(np.sqrt(np.diag(sg)), sv)
+        else:
+            ret = np.diag(self.post_sd)
+
+        return ret
+
+    def _get_grid_axes(self, grid, grid_type):
+        assert grid_type in {'q', 'z'}
+
+        if grid_type == 'q':
+            assert all([0 <= v <= 1 for v in grid])
+            g_axes = np.repeat(norm.ppf(np.array(grid)).reshape(-1, 1), self.num_param, axis=1)
+        elif grid_type == 'z':
+            g_axes = np.repeat(np.array(grid).reshape(-1, 1), self.num_param, axis=1)
+
+        return g_axes
+
     def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal', append=False):
         """
         Update the grid space for model parameters (Dynamic Gridding method)
@@ -258,30 +408,16 @@ class Engine(object):
 
         m = self.post_mean
         cov = self.post_cov
-        sd = self.post_sd
 
         if np.linalg.det(cov) == 0:
             print('Cannot update grid no more.')
             return
 
         # Calculate a rotation matrix
-        r_inv = None
-        if rotation == 'eig':
-            el, ev = np.linalg.eig(cov)
-            r_inv = np.dot(np.sqrt(np.diag(el)), np.linalg.inv(ev))
-        elif rotation == 'svd':
-            _, sg, sv = np.linalg.svd(cov)
-            r_inv = np.dot(np.sqrt(np.diag(sg)), sv)
-        elif rotation == 'none' or rotation is None:
-            r_inv = np.diag(sd)
+        r_inv = self._get_rotation_matrix(rotation)
 
         # Find grid points from the rotated space
-        g_axes = None
-        if grid_type == 'q':
-            assert all([0 <= v <= 1 for v in grid])
-            g_axes = np.repeat(norm.ppf(np.array(grid)).reshape(-1, 1), self.num_param, axis=1)
-        elif grid_type == 'z':
-            g_axes = np.repeat(np.array(grid).reshape(-1, 1), self.num_param, axis=1)
+        g_axes = self._get_grid_axes(grid, grid_type)
 
         # Compute new grid on the initial space.
         g_star = make_grid_matrix(*[v for v in g_axes.T])
@@ -292,18 +428,13 @@ class Engine(object):
             idx = self.model.param.index(k)
             grid_new = grid_new[list(map(f, grid_new[:, idx]))]
 
+        self.grid_param = np.concatenate([self.grid_param, grid_new]) if append else grid_new
+
         self.dg_means.append(m)
         self.dg_covs.append(cov)
         self.dg_grid_params.append(grid_new)
-        if append:
-            self.grid_param = np.concatenate([self.grid_param, grid_new])
-        else:
-            self.grid_param = grid_new
-
         self.dg_priors.append(self.prior)
         self.dg_posts.append(self.post)
-        if append:
-            log_post_prev = self.log_post.copy()
 
         self._initialize()
 
@@ -311,13 +442,15 @@ class Engine(object):
         if prior == 'recalc':
             for d, y in self.dg_memory:
                 self.update(d, y, False)
+
         elif prior == 'normal':
             if append:
                 mvnm_prior = mvnm.pdf(grid_new, mean=m, cov=cov)
-                self.log_prior = np.concatenate([log_post_prev, mvnm_prior])
-                self.log_post = self.log_prior.copy()
+                self.log_prior = np.concatenate([self.log_post.copy(), mvnm_prior])
             else:
                 self.log_prior = mvnm.pdf(grid_new, mean=m, cov=cov)
-                self.log_post = self.log_prior.copy()
+
+            self.log_post = self.log_prior.copy()
+
         elif prior is None:
             pass
