@@ -9,7 +9,7 @@ References
 ----------
 
 .. [Levy2010] Levy, I., Snell, J., Nelson, A. J., Rustichini, A., & Glimcher, P. W. (2010).
-  Neural Representation of Subjective Value Under Risk and Ambiguity. *Journal of Neurophysiology, 103* (2), 1036–1047.
+  Neural Representation of Subjective Value Under Risk and Ambiguity. *Journal of Neurophysiology, 103* (2), 1036-1047.
 
 """
 from __future__ import absolute_import, division, print_function

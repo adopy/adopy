@@ -1,6 +1,6 @@
 from __future__ import absolute_import, division, print_function
 
-from typing import Dict, Iterable, List, Tuple, TypeVar
+from typing import Iterable, List, Tuple, TypeVar
 
 import numpy as np
 import pandas as pd

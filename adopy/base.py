@@ -40,7 +40,7 @@ class MetaInterface(object):
             cls._instance = object.__new__(cls)
         return cls._instance
 
-    key = property(lambda self: self._key)  # type: str
+    key = property(lambda self: self._key)
     """str: Key for the meta instance"""
 
     name = property(lambda self: self._name)
@@ -71,7 +71,7 @@ class Task(MetaInterface):
         super(Task, self).__init__(name, key)
         self._design = tuple(design)  # type: Tuple[str, ...]
 
-    design = property(lambda self: self._design)  # type: Tuple[str]
+    design = property(lambda self: self._design)
     """Tuple[str]: Design labels of the task"""
 
     def extract_designs(self, dt):
@@ -402,9 +402,14 @@ class Engine(object):
         """
         Update the grid space for model parameters (Dynamic Gridding method)
         """
-        assert rotation in {'eig', 'svd', 'none', None}
-        assert grid_type in {'q', 'z'}
-        assert prior in {'recalc', 'normal', None}
+        if rotation not in {'eig', 'svd', 'none', None}:
+            raise RuntimeError('Invalid argument: rotation')
+
+        if grid_type not in {'q', 'z'}:
+            raise RuntimeError('Invalid argument: grid_type')
+
+        if prior not in {'recalc', 'normal', None}:
+            raise RuntimeError('Invalid argument: prior')
 
         m = self.post_mean
         cov = self.post_cov
