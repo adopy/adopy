@@ -14,14 +14,18 @@
              alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public." />
       </a>
       <a href="https://travis-ci.com/JaeyeongYang/adopy">
-        <img src="https://travis-ci.com/JaeyeongYang/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master" />
+        <img src="https://travis-ci.com/JaeyeongYang/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master" alt="Travis CI" />
       </a>
       <a href="https://codecov.io/gh/JaeyeongYang/adopy">
-        <img src="https://codecov.io/gh/JaeyeongYang/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k" />
+        <img src="https://codecov.io/gh/JaeyeongYang/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k" alt="CodeCov" />
+      </a>
+      <a href="https://www.codefactor.io/repository/github/jaeyeongyang/adopy">
+        <img src="https://www.codefactor.io/repository/github/jaeyeongyang/adopy/badge" alt="CodeFactor" />
       </a>
     </p>
 
 A Python package for Adaptive Design Optimization on psychological tasks.
+
 Currently working in progress.
 
 Dependencies

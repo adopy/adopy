@@ -9,19 +9,19 @@ from adopy.tasks.cra import ModelLinear, ModelExp, EngineCRA
 @pytest.fixture()
 def designs():
     # Define grids for the probability for rewarding and the ambiguity level
-    ## For risky conditions
+    # For risky conditions
     pr_risky = np.linspace(0.0, 0.5, 5)
     am_risky = np.array(0).reshape(-1)
 
-    ## For ambiguous conditions
+    # For ambiguous conditions
     pr_ambig = np.array(0.5).reshape(-1)
     am_ambig = np.linspace(0.0, 0.75, 5)
 
-    ## Make cartesian products for each condition
+    # Make cartesian products for each condition
     pr_am_risky = np.squeeze(np.stack(np.meshgrid(pr_risky, am_risky), -1))
     pr_am_ambig = np.squeeze(np.stack(np.meshgrid(pr_ambig, am_ambig), -1))
 
-    ## Merge two grids into one object
+    # Merge two grids into one object
     pr_am = np.vstack([pr_am_risky[:-1, :], pr_am_ambig])
 
     # Define grids for rewards on each option

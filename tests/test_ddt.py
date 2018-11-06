@@ -15,13 +15,13 @@ def make_grid(start, end, n):
 
 @pytest.fixture()
 def designs():
-    ## Amounts of rewards
+    # Amounts of rewards
     am_soon = [8, 12, 15, 17, 19, 22]
     am_late = [12, 15, 17, 19, 22, 23]
 
     amounts = np.vstack([(ams, aml) for ams in am_soon for aml in am_late if ams < aml])
 
-    ## Delays
+    # Delays
     d_soon = [0, 1, 2, 3, 5, 10, 20, 40]
     d_late = [1, 2, 3, 5, 10, 20, 40, 80]
 
@@ -61,8 +61,8 @@ def test_calculate_psi(model, designs, params):
     [
         (ModelExp, dict(tau=make_grid(0, 5, N_GRID), r=make_grid(0, 2, N_GRID))),
         (ModelHyperbolic, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID))),
-        #(ModelGeneralizedHyperbolic,
-        # dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID), s=make_grid(-1, 1, N_GRID))),
+        (ModelGeneralizedHyperbolic,
+         dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID), s=make_grid(-1, 1, N_GRID))),
         (ModelQuasiHyperbolic,
          dict(tau=make_grid(0, 5, N_GRID), beta=make_grid(0, 1, N_GRID), delta=make_grid(0, 1, N_GRID))),
         (ModelDoubleExp,

@@ -1,3 +1,26 @@
+r"""
+======================
+Psychometric Functions
+======================
+
+Psychometric function is to figure out whether a subject can perceive a signal with varying levels
+of magnitude. The function has one design variable for the *intensity* of a
+stimulus, :math:`x`; the model has four model parameters:
+*guess rate* :math:`\gamma`, *lapse rate* :math:`\delta`,
+*threshold* :math:`\alpha`, and *slope* :math:`\beta`.
+
+.. figure:: ../_static/images/Psychometricfn.svg
+    :width: 70%
+    :align: center
+
+    A simple diagram for the Psychometric function.
+
+.. [Cavagnaro2016]
+    Cavagnaro, D. R., Aranovich, G. J., McClure, S. M., Pitt, M. A., & Myung, J. I. (2016).
+    On the functional form of temporal discounting: An optimized adaptive test.
+    *Journal of risk and uncertainty, 52* (3), 233-254.
+
+"""
 from __future__ import absolute_import, division, print_function
 
 import numpy as np
@@ -10,6 +33,7 @@ __all__ = ['TaskPsi', 'ModelLogistic', 'ModelWeibull', 'ModelNormal', 'EnginePsi
 
 
 class TaskPsi(Task):
+    """Task class for Psychometric functions"""
     def __init__(self):
         args = dict(name='Psi', key='psi', design=['stimulus'])
         super(TaskPsi, self).__init__(**args)
@@ -31,50 +55,6 @@ class _ModelPsi(Model):
         super(_ModelPsi, self).__init__(**args)
 
     def _compute(self, func, stimulus, guess_rate, lapse_rate, threshold, slope):
-        r"""
-        Calculate the psychometric function given parameters.
-
-        Psychometric functions provide the probability of a subject to recognize
-        the stimulus intensity. The base form of the function is as below:
-
-        .. math::
-            \Psi(x; \gamma, \lambda, \mu, \beta)
-                = \gamma + (1 - \gamma - \lambda) \times F(x; \mu, \beta) \\
-
-        where :math:`x` is the intensity of a given stimulus,
-        :math:`\gamma` is the guess rate,
-        :math:`\lambda` is the lapse rate,
-        :math:`F(x; \mu, \beta)` is a function that defines the shape of a :math:`\Psi` function, and
-        :math:`\mu` and :math:`\beta` are the threshold and the slope of the function.
-
-        There are three types of psychometric functions with different :math:`F(x; \mu, \beta)`:
-
-        .. math::
-            \begin{align*}
-            \text{Logistic function} &\quad
-                F(x; \mu, \beta) = \left[
-                    1 + \exp\left(-\beta (x - \mu) \right)
-                \right]^{-1} \\
-            \text{Log Weibull (Gumbel) CDF} &\quad
-                F(x; \mu, \beta) = CDF_\text{Gumbel_l}\left( \beta (x - \mu) \right) \\
-            \text{Normal CDF} &\quad
-                F(x; \mu, \beta) = CDF_\text{Normal}\left( \beta (x - \mu) \right)
-            \end{align*}
-
-        Parameters
-        ----------
-        func : Callable
-            The type of the function used in the Psi function.
-        stimulus : numpy.ndarray or array_like
-        guess_rate : numpy.ndarray or array_like
-        lapse_rate : numpy.ndarray or array_like
-        threshold : numpy.ndarry or array_like
-        slope : numpy.ndarray or array_like
-
-        Returns
-        -------
-        psi : numpy.ndarray
-        """
         return guess_rate + (1 - guess_rate - lapse_rate) * func(slope * (stimulus - threshold))
 
 
@@ -83,6 +63,27 @@ class ModelLogistic(_ModelPsi):
         super(ModelLogistic, self).__init__(name='Logistic', key='logi')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
+        r"""
+        Calculate the psychometric function using logistic function.
+
+        .. math::
+
+            F(x; \mu, \beta) = \left[
+                1 + \exp\left(-\beta (x - \mu) \right)
+            \right]^{-1}
+
+        Parameters
+        ----------
+        stimulus : numpy.ndarray or array_like
+        guess_rate : numpy.ndarray or array_like
+        lapse_rate : numpy.ndarray or array_like
+        threshold : numpy.ndarry or array_like
+        slope : numpy.ndarray or array_like
+
+        Returns
+        -------
+        numpy.ndarray
+        """
         return self._compute(inv_logit, stimulus, guess_rate, lapse_rate, threshold, slope)
 
 
@@ -91,6 +92,25 @@ class ModelWeibull(_ModelPsi):
         super(ModelWeibull, self).__init__(name='Weibull', key='weib')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
+        r"""
+        Calculate the psychometric function using log Weibull model.
+
+        .. math::
+
+            F(x; \mu, \beta) = CDF_\text{Gumbel_l}\left( \beta (x - \mu) \right) \\
+
+        Parameters
+        ----------
+        stimulus : numpy.ndarray or array_like
+        guess_rate : numpy.ndarray or array_like
+        lapse_rate : numpy.ndarray or array_like
+        threshold : numpy.ndarry or array_like
+        slope : numpy.ndarray or array_like
+
+        Returns
+        -------
+        numpy.ndarray
+        """
         return self._compute(gumbel_l.cdf, stimulus, guess_rate, lapse_rate, threshold, slope)
 
 
@@ -99,6 +119,25 @@ class ModelNormal(_ModelPsi):
         super(ModelNormal, self).__init__(name='Normal', key='norm')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
+        r"""
+        Calculate the psychometric function with Logistic function.
+
+        .. math::
+
+            F(x; \mu, \beta) = CDF_\text{Normal}\left( \beta (x - \mu) \right)
+
+        Parameters
+        ----------
+        stimulus : numpy.ndarray or array_like
+        guess_rate : numpy.ndarray or array_like
+        lapse_rate : numpy.ndarray or array_like
+        threshold : numpy.ndarry or array_like
+        slope : numpy.ndarray or array_like
+
+        Returns
+        -------
+        numpy.ndarray
+        """
         return self._compute(norm.cdf, stimulus, guess_rate, lapse_rate, threshold, slope)
 
 
@@ -177,6 +216,25 @@ class EnginePsi(Engine):
         return ret
 
     def update(self, design, response, store=True):
+        r"""
+        Update the posterior distribution for model parameters.
+
+        .. math::
+
+            p(\theta | y_\text{obs}(t), d^*) =
+                \frac{ p( y_\text{obs}(t) | \theta, d^*) p_t(\theta) }
+                    { p( y_\text{obs}(t) | d^* ) }
+
+        Parameters
+        ----------
+        design
+            Design vector for given response
+        response
+            Any kinds of observed response
+        store : bool
+            Whether to store observations of (design, response).
+
+        """
         super(EnginePsi, self).update(design, response, store)
 
         # Store the previous response for staircase
