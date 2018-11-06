@@ -8,9 +8,15 @@ python:
   - "3.6"
 
 install:
-  - pip install -e .[test]
+  - pip install -e ".[test,docs]"
 
 script:
-  - flake8 adopy --format=pylint --statistics
   - pytest --doctest-modules --cov=adopy
   - codecov --token $CODECOV_TOKEN
+  # - travis-sphinx build
+
+after_success:
+  # - travis-sphinx deploy
+  - flake8 adopy --format=pylint --statistics --exit-zero
+  - pylint adopy --rcfile=setup.cfg --exit-zero
+
