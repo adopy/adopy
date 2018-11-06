@@ -22,9 +22,6 @@
       <a href="https://www.codefactor.io/repository/github/jaeyeongyang/adopy">
         <img src="https://www.codefactor.io/repository/github/jaeyeongyang/adopy/badge" alt="CodeFactor" />
       </a>
-      <a href="https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=JaeyeongYang/adopy&amp;utm_campaign=Badge_Grade">
-        <img src="https://api.codacy.com/project/badge/Grade/3373ba8d4fb04d3883ff0454decda3f7" alt="Codacy" />
-      </a>
     </p>
 
 A Python package for Adaptive Design Optimization on psychological tasks.

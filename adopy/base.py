@@ -394,7 +394,8 @@ class Engine(object):
             raise AssertionError('grid_type should be "q" (quantiles) or "z" (Z scores).')
 
         if grid_type == 'q':
-            assert all([0 <= v <= 1 for v in grid])
+            if not all([0 <= v <= 1 for v in grid]):
+                raise AssertionError('All quantile values should be between 0 and 1.')
             g_axes = np.repeat(norm.ppf(np.array(grid)).reshape(-1, 1), self.num_param, axis=1)
         elif grid_type == 'z':
             g_axes = np.repeat(np.array(grid).reshape(-1, 1), self.num_param, axis=1)
