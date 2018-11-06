@@ -168,7 +168,7 @@ class Engine(object):
         super(Engine, self).__init__()
 
         if model.task is not task:
-            raise RuntimeError('Given task and model are not matched.')
+            raise AssertionError('Given task and model are not matched.')
 
         self._task = task  # type: Task
         self._model = model  # type: Model
@@ -329,7 +329,8 @@ class Engine(object):
         design : array_like
             A chosen design vector
         """
-        assert kind in {'optimal', 'random'}
+        if kind not in {'optimal', 'random'}:
+            raise AssertionError('The argument kind should be "optimal" or "random".')
 
         if kind == 'optimal':
             self._update_mutual_info()
@@ -338,7 +339,7 @@ class Engine(object):
         if kind == 'random':
             return self.grid_design.iloc[get_random_design_index(self.grid_design)]
 
-        raise RuntimeError('An invalid kind of design: "{}".'.format(type))
+        raise AssertionError('An invalid kind of design: "{}".'.format(type))
 
     def update(self, design, response, store=True):
         r"""
@@ -374,7 +375,8 @@ class Engine(object):
         self.flag_update_mutual_info = True
 
     def _get_rotation_matrix(self, rotation):
-        assert rotation in {'eig', 'svd', 'none', None}
+        if rotation not in {'eig', 'svd', 'none', None}:
+            raise AssertionError('rotation should be "eig", "svd", "none", or None.')
 
         if rotation == 'eig':
             el, ev = np.linalg.eig(self.post_cov)
@@ -388,7 +390,8 @@ class Engine(object):
         return ret
 
     def _get_grid_axes(self, grid, grid_type):
-        assert grid_type in {'q', 'z'}
+        if grid_type not in {'q', 'z'}:
+            raise AssertionError('grid_type should be "q" (quantiles) or "z" (Z scores).')
 
         if grid_type == 'q':
             assert all([0 <= v <= 1 for v in grid])
@@ -403,13 +406,13 @@ class Engine(object):
         Update the grid space for model parameters (Dynamic Gridding method)
         """
         if rotation not in {'eig', 'svd', 'none', None}:
-            raise RuntimeError('Invalid argument: rotation')
+            raise AssertionError('Invalid argument: rotation')
 
         if grid_type not in {'q', 'z'}:
-            raise RuntimeError('Invalid argument: grid_type')
+            raise AssertionError('Invalid argument: grid_type')
 
         if prior not in {'recalc', 'normal', None}:
-            raise RuntimeError('Invalid argument: prior')
+            raise AssertionError('Invalid argument: prior')
 
         m = self.post_mean
         cov = self.post_cov
