@@ -235,9 +235,9 @@ class Engine(object):
     """Estimated posterior means for each parameter"""
 
     @property
-    def post_cov(self):
-        m = self.post_mean
-        d = self.grid_param - m
+    def post_cov(self):  # type: () -> np.ndarray
+        # shape: (N_grids, N_param)
+        d = self.grid_param.values - self.post_mean
         return np.dot(d.T, d * self.post.reshape(-1, 1))
 
     @property
