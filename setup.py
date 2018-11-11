@@ -1,17 +1,20 @@
 from __future__ import unicode_literals
 
+import os
 from codecs import open as codecs_open
 from setuptools import setup
-
-from adopy.version import VERSION
 
 # Get the long description from the relevant file
 with codecs_open('README.rst', encoding='utf-8') as f:
     long_description = f.read()
 
+# Load the version
+with open(os.path.join('adopy', 'VERSION'), 'r') as f:
+    version = f.read()
+
 setup(
     name='adopy',
-    version=VERSION,
+    version=version,
     description='',
     long_description=long_description,
     classifiers=[],
