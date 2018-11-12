@@ -36,7 +36,7 @@ setup(
             'flake8',
             'pylint',
             'mypy',
-            'yapf',
+            'autopep8',
         ],
         'test': [
             'flake8',

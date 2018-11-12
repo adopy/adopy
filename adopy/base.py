@@ -14,7 +14,8 @@ from scipy.special import logsumexp
 from scipy.stats import norm, multivariate_normal as mvnm
 import pandas as pd
 
-from adopy.functions import (expand_multiple_dims, get_nearest_grid_index, get_random_design_index, make_grid_matrix,
+from adopy.functions import (expand_multiple_dims, get_nearest_grid_index,
+                             get_random_design_index, make_grid_matrix,
                              marginalize, make_vector_shape, log_lik_bernoulli)
 
 __all__ = ['Task', 'Model', 'Engine']
@@ -40,11 +41,15 @@ class MetaInterface(object):
             cls._instance = object.__new__(cls)
         return cls._instance
 
-    key = property(lambda self: self._key)
-    """str: Key for the meta instance"""
+    @property
+    def key(self):  # type: () -> str
+        """Key for the meta instance"""
+        return self._key
 
-    name = property(lambda self: self._name)
-    """str: name of the meta instance"""
+    @property
+    def name(self):  # type: () -> str
+        """Name for the meta instance"""
+        return self._name
 
     @staticmethod
     def _extract_vars(dt, keys):
@@ -71,8 +76,10 @@ class Task(MetaInterface):
         super(Task, self).__init__(name, key)
         self._design = tuple(design)  # type: Tuple[str, ...]
 
-    design = property(lambda self: self._design)
-    """Tuple[str]: Design labels of the task"""
+    @property
+    def design(self):  # type: () -> List[str]
+        """Design labels of the task"""
+        return list(self._design)
 
     def extract_designs(self, dt):
         # type: (DT) -> OrderedDict[str, Any]
@@ -105,8 +112,15 @@ class Model(MetaInterface):
     Model('Model X', param=['m1', 'm2', 'm3'])
     """
 
-    def __init__(self, name, key, task, param, func=None, constraint=None):
-        # type: (str, str, Task, Iterable[str], Optional[Callable], Optional[Dict[str, Callable]]) -> None
+    def __init__(self,
+                 name,            # type: str
+                 key,             # type: str
+                 task,            # type: Task
+                 param,           # type: Iterable[str]
+                 func=None,       # type: Optional[Callable]
+                 constraint=None  # type: Optional[Dict[str, Callable]]
+                 ):
+        # type: (...) -> None
         super(Model, self).__init__(name, key)
 
         self._task = task  # type: Task
@@ -115,20 +129,29 @@ class Model(MetaInterface):
         def _func(**kargs):
             if func is not None:
                 return func(**kargs)
-            return np.ones_like(reduce(lambda x, y: x * y, kargs.values())) / 2
+            obj = reduce(lambda x, y: x * y, kargs.values())
+            return np.ones_like(obj) / 2
 
-        self._func = _func
+        self._func = _func  # type: Callable
 
-        self._constraint = {} if constraint is None else constraint  # type: Dict[str, Callable]
+        self._constraint = {}  # type: Dict[str, Callable]
+        if constraint is not None:
+            self._constraint.update(constraint)
 
-    task = property(lambda self: self._task)
-    """Task: Task instance for the model"""
+    @property
+    def task(self):  # type: () -> Task
+        """Task instance for the model"""
+        return self._task
 
-    param = property(lambda self: self._param)
-    """Tuple[str]: Parameter labels of the model"""
+    @property
+    def param(self):  # type: () -> List[str]
+        """Parameter labels of the model"""
+        return list(self._param)
 
-    constraint = property(lambda self: self._constraint)
-    """Dict[str, Callable]: Contraints on model parameters"""
+    @property
+    def constraint(self):  # type: () -> Dict[str, Callable]
+        """Contraints on model parameters"""
+        return self._constraint
 
     def extract_params(self, dt):
         # type: (DT) -> OrderedDict[str, Any]
@@ -204,9 +227,9 @@ class Engine(object):
 
         self.flag_update_mutual_info = True
 
-    ##################################################################################################################
+    ###########################################################################
     # Properties
-    ##################################################################################################################
+    ###########################################################################
 
     task = property(lambda self: self._task)
     """Task: Task of the engine"""
@@ -229,10 +252,15 @@ class Engine(object):
     @property
     def marg_post(self):
         """Marginal posterior distributions for each parameter"""
-        return [marginalize(self.post, self.grid_param, i) for i in range(self.num_param)]
+        return [
+            marginalize(self.post, self.grid_param, i)
+            for i in range(self.num_param)
+        ]
 
-    post_mean = property(lambda self: np.dot(self.post, self.grid_param))
-    """Estimated posterior means for each parameter"""
+    @property
+    def post_mean(self):  # type: () -> np.ndarray
+        """Estimated posterior means for each parameter"""
+        return np.dot(self.post, self.grid_param)
 
     @property
     def post_cov(self):  # type: () -> np.ndarray
@@ -244,9 +272,9 @@ class Engine(object):
     def post_sd(self):
         return np.sqrt(np.diag(self.post_cov))
 
-    ##################################################################################################################
+    ###########################################################################
     # Methods
-    ##################################################################################################################
+    ###########################################################################
 
     def _initialize(self):
         self.p_obs = self._compute_p_obs()
@@ -263,8 +291,14 @@ class Engine(object):
         shape_param = make_vector_shape(2, 1)
 
         args = {}
-        args.update({k: v.reshape(shape_design) for k, v in self.task.extract_designs(self.grid_design).items()})
-        args.update({k: v.reshape(shape_param) for k, v in self.model.extract_params(self.grid_param).items()})
+        args.update({
+            k: v.reshape(shape_design)
+            for k, v in self.task.extract_designs(self.grid_design).items()
+        })
+        args.update({
+            k: v.reshape(shape_param)
+            for k, v in self.model.extract_params(self.grid_param).items()
+        })
 
         return self.model.compute(**args)
 
@@ -295,10 +329,12 @@ class Engine(object):
 
         # Calculate the marginal entropy and conditional entropy.
         self.ent_marg = -np.sum(np.exp(mll) * mll, -1)  # shape (num_designs,)
-        self.ent_cond = np.sum(self.post * self.ent_obs, axis=1)  # shape (num_designs,)
+        self.ent_cond = np.sum(
+            self.post * self.ent_obs, axis=1)  # shape (num_designs,)
 
         # Calculate the mutual information.
-        self.mutual_info = self.ent_marg - self.ent_cond  # shape (num_designs,)
+        self.mutual_info = self.ent_marg - \
+            self.ent_cond  # shape (num_designs,)
 
         # Flag that there is no need to update mutual information again.
         self.flag_update_mutual_info = False
@@ -308,7 +344,8 @@ class Engine(object):
         r"""
         Choose a design with a given type.
 
-        1. :code:`optimal`: an optimal design :math:`d^*` that maximizes the mutual information.
+        1. :code:`optimal`: an optimal design :math:`d^*` that maximizes the
+            mutual information.
 
             .. math::
                 \begin{align*}
@@ -330,14 +367,16 @@ class Engine(object):
             A chosen design vector
         """
         if kind not in {'optimal', 'random'}:
-            raise AssertionError('The argument kind should be "optimal" or "random".')
+            raise AssertionError(
+                'The argument kind should be "optimal" or "random".')
 
         if kind == 'optimal':
             self._update_mutual_info()
             return self.grid_design.iloc[np.argmax(self.mutual_info)]
 
         if kind == 'random':
-            return self.grid_design.iloc[get_random_design_index(self.grid_design)]
+            return self.grid_design.iloc[get_random_design_index(
+                self.grid_design)]
 
         raise AssertionError('An invalid kind of design: "{}".'.format(type))
 
@@ -367,7 +406,8 @@ class Engine(object):
             design = pd.Series(design, index=self.task.design)
 
         idx_design = get_nearest_grid_index(design, self.grid_design)
-        idx_response = get_nearest_grid_index(pd.Series(response), self.grid_response)
+        idx_response = get_nearest_grid_index(
+            pd.Series(response), self.grid_response)
 
         self.log_post += self.log_lik[idx_design, :, idx_response].flatten()
         self.log_post -= logsumexp(self.log_post)
@@ -376,7 +416,8 @@ class Engine(object):
 
     def _get_rotation_matrix(self, rotation):
         if rotation not in {'eig', 'svd', 'none', None}:
-            raise AssertionError('rotation should be "eig", "svd", "none", or None.')
+            raise AssertionError(
+                'rotation should be "eig", "svd", "none", or None.')
 
         if rotation == 'eig':
             el, ev = np.linalg.eig(self.post_cov)
@@ -391,18 +432,29 @@ class Engine(object):
 
     def _get_grid_axes(self, grid, grid_type):
         if grid_type not in {'q', 'z'}:
-            raise AssertionError('grid_type should be "q" (quantiles) or "z" (Z scores).')
+            raise AssertionError(
+                'grid_type should be "q" (quantiles) or "z" (Z scores).')
 
         if grid_type == 'q':
             if not all([0 <= v <= 1 for v in grid]):
-                raise AssertionError('All quantile values should be between 0 and 1.')
-            g_axes = np.repeat(norm.ppf(np.array(grid)).reshape(-1, 1), self.num_param, axis=1)
+                raise AssertionError(
+                    'All quantile values should be between 0 and 1.')
+            g_axes = np.repeat(
+                norm.ppf(np.array(grid)).reshape(-1, 1),
+                self.num_param,
+                axis=1)
         elif grid_type == 'z':
-            g_axes = np.repeat(np.array(grid).reshape(-1, 1), self.num_param, axis=1)
+            g_axes = np.repeat(
+                np.array(grid).reshape(-1, 1), self.num_param, axis=1)
 
         return g_axes
 
-    def update_grid(self, grid, rotation='eig', grid_type='q', prior='normal', append=False):
+    def update_grid(self,
+                    grid,
+                    rotation='eig',
+                    grid_type='q',
+                    prior='normal',
+                    append=False):
         """
         Update the grid space for model parameters (Dynamic Gridding method)
         """
@@ -437,7 +489,8 @@ class Engine(object):
             idx = self.model.param.index(k)
             grid_new = grid_new[list(map(f, grid_new[:, idx]))]
 
-        self.grid_param = np.concatenate([self.grid_param, grid_new]) if append else grid_new
+        self.grid_param = np.concatenate([self.grid_param, grid_new])\
+            if append else grid_new
 
         self.dg_means.append(m)
         self.dg_covs.append(cov)
@@ -455,7 +508,8 @@ class Engine(object):
         elif prior == 'normal':
             if append:
                 mvnm_prior = mvnm.pdf(grid_new, mean=m, cov=cov)
-                self.log_prior = np.concatenate([self.log_post.copy(), mvnm_prior])
+                self.log_prior = np.concatenate(
+                    [self.log_post.copy(), mvnm_prior])
             else:
                 self.log_prior = mvnm.pdf(grid_new, mean=m, cov=cov)
 
