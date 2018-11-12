@@ -24,7 +24,9 @@ __all__ = ['TaskCRA', 'ModelLinear', 'ModelExp', 'EngineCRA']
 
 class TaskCRA(Task):
     def __init__(self):
-        args = dict(name='CRA', key='cra', design=['prob', 'ambig', 'r_var', 'r_fix'])
+        args = dict(name='CRA',
+                    key='cra',
+                    design=['prob', 'ambig', 'r_var', 'r_fix'])
         super(TaskCRA, self).__init__(**args)
 
 

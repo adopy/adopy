@@ -29,11 +29,13 @@ from scipy.stats import norm, gumbel_l
 from adopy.base import Engine, Task, Model
 from adopy.functions import inv_logit, get_random_design_index, get_nearest_grid_index
 
-__all__ = ['TaskPsi', 'ModelLogistic', 'ModelWeibull', 'ModelNormal', 'EnginePsi']
+__all__ = ['TaskPsi', 'ModelLogistic',
+           'ModelWeibull', 'ModelNormal', 'EnginePsi']
 
 
 class TaskPsi(Task):
     """Task class for Psychometric functions"""
+
     def __init__(self):
         args = dict(name='Psi', key='psi', design=['stimulus'])
         super(TaskPsi, self).__init__(**args)
@@ -201,12 +203,14 @@ class EnginePsi(Engine):
             if self.y_obs_prev == 1:
                 idx = max(0, np.array(self.idx_opt)[0] - self.d_step)
             else:
-                idx = min(len(self.grid_design) - 1, np.array(self.idx_opt)[0] + self.d_step * 2)
+                idx = min(len(self.grid_design) - 1,
+                          np.array(self.idx_opt)[0] + self.d_step * 2)
 
             ret = self.grid_design.iloc[np.int(idx)]
 
         elif kind == 'random':
-            ret = self.grid_design.iloc[get_random_design_index(self.grid_design)]
+            ret = self.grid_design.iloc[get_random_design_index(
+                self.grid_design)]
 
         else:
             raise RuntimeError('An invalid kind of design: "{}".'.format(type))
