@@ -25,7 +25,9 @@ def marginalize(post, grid_param, axis):
 
 def get_nearest_grid_index(design, designs):
     # type: (pd.Series, pd.DataFrame) -> int
-    return int(np.argmin(np.square((designs - design).values).sum(-1)))
+    ds = designs.values
+    d = design.values.reshape(1, -1)
+    return int(np.argmin(np.square(ds - d).sum(-1)))
 
 
 def get_random_design_index(designs):
@@ -42,7 +44,8 @@ def make_grid_matrix(axes_dict):
 
     n_dims = len(axes_dict)
 
-    n_d_each = [1 if len(np.shape(x)) == 1 else np.shape(x)[1] for x in axes_dict.values()]
+    n_d_each = [1 if len(np.shape(x)) == 1 else np.shape(x)[1]
+                for x in axes_dict.values()]
     n_d_prev = np.cumsum(n_d_each) - n_d_each
     n_d_total = sum(n_d_each)
 
