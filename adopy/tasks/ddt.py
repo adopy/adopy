@@ -19,7 +19,9 @@ __all__ = [
 
 class TaskDDT(Task):
     def __init__(self):
-        args = dict(name='DDT', key='ddt', design=['d_soon', 'd_late', 'a_soon', 'a_late'])
+        args = dict(name='DDT',
+                    key='ddt',
+                    design=['d_soon', 'd_late', 'a_soon', 'a_late'])
         super(TaskDDT, self).__init__(**args)
 
 

@@ -12,7 +12,7 @@ charset = utf-8
 # Use 4 spaces & 119 characters per line for Python
 [*.py]
 indent_size = 4
-max_line_length = 119
+max_line_length = 79
 
 # Use 2 spaces for the reStructuredText files
 [*.rst]
