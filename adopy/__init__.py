@@ -12,4 +12,6 @@ from adopy.base import Task, Model, Engine
 from adopy.version import VERSION
 
 __all__ = ['base', 'functions', 'tasks', 'Task', 'Model', 'Engine']
-__version__ = VERSION
+
+with open(os.path.join(os.path.dirname(__file__), 'VERSION'), 'r') as f:
+    __version__ = f.read()
