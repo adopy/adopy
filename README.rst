@@ -31,7 +31,7 @@ Currently working in progress.
 Dependencies
 ------------
 
-- Python 2.7 or 3.4+
+- Python 2.7 or 3.5+
 - NumPy
 - Pandas
 - SciPy
