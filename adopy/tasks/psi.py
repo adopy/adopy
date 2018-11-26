@@ -201,10 +201,10 @@ class EnginePsi(Engine):
 
         elif kind == 'staircase':
             if self.y_obs_prev == 1:
-                idx = max(0, np.array(self.idx_opt)[0] - self.d_step)
+                idx = max(0, self.idx_opt - self.d_step)
             else:
                 idx = min(len(self.grid_design) - 1,
-                          np.array(self.idx_opt)[0] + self.d_step * 2)
+                          self.idx_opt + (self.d_step * 2))
 
             ret = self.grid_design.iloc[np.int(idx)]
 

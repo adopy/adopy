@@ -34,7 +34,7 @@ def get_random_design_index(designs):
     dims_designs = designs.shape[:-1]
     num_possible_designs = np.int(np.prod(designs.shape[:-1]))
     idx = np.random.randint(0, num_possible_designs - 1)
-    return np.unravel_index(idx, dims_designs)
+    return np.unravel_index(idx, dims_designs)[0]
 
 
 def make_grid_matrix(axes_dict):
