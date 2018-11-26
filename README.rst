@@ -42,10 +42,10 @@ Installation
 .. code-block:: bash
 
     # Clone the repository from Github.
-    git clone <repo-url>
+    git clone https://github.com/JaeyeongYang/adopy.git
 
-    # Install the package with pip.
-    pip install .
+    # Set the working directory to the cloned repository.
+    cd adopy
 
-    # Or you can install it linked to sources for developmental purpose.
+    # Install ADOpy with pip (Currently for development)
     pip install -e .
