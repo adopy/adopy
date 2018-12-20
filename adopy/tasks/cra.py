@@ -3,8 +3,6 @@
 Choice under Risk and Ambiguity
 ===============================
 
-awefaw
-
 References
 ----------
 
@@ -30,6 +28,10 @@ class TaskCRA(Task):
         super(TaskCRA, self).__init__(**args)
 
 
+def const_gamma(x):
+    return x > 0
+
+
 class ModelLinear(Model):
     def __init__(self):
         args = dict(
@@ -38,21 +40,15 @@ class ModelLinear(Model):
             task=TaskCRA(),
             param=['alpha', 'beta', 'gamma'],
             constraint={
-                'gamma': lambda x: x >= 0,
+                'gamma': const_gamma,
             })
         super(ModelLinear, self).__init__(**args)
 
     def compute(cls, prob, ambig, r_var, r_fix, alpha, beta, gamma):
-        # Calculate the subjective value of a variable option (risky or ambiguous).
         sv_var = np.power(r_var, alpha)
         sv_var = (prob - beta * np.divide(ambig, 2)) * sv_var
-
-        # Calculate the subjective value of a reference option with a fixed probability of 0.5.
         sv_fix = .5 * np.power(r_fix, alpha)
-
-        # Using a logistic function, compute the probability to choose the variable option.
-        p_obs = inv_logit(gamma * (sv_var - sv_fix))
-        return p_obs
+        return inv_logit(gamma * (sv_var - sv_fix))
 
 
 class ModelExp(Model):
@@ -63,21 +59,15 @@ class ModelExp(Model):
             task=TaskCRA(),
             param=['alpha', 'beta', 'gamma'],
             constraint={
-                'gamma': lambda x: x >= 0,
+                'gamma': const_gamma,
             })
         super(ModelExp, self).__init__(**args)
 
     def compute(cls, prob, ambig, r_var, r_fix, alpha, beta, gamma):
-        # Calculate the subjective value of a variable option (risky or ambiguous).
         sv_var = np.power(r_var, alpha)
         sv_var = np.power(prob, 1 + beta * ambig) * sv_var
-
-        # Calculate the subjective value of a reference option with a fixed probability of 0.5.
         sv_fix = .5 * np.power(r_fix, alpha)
-
-        # Using a logistic function, compute the probability to choose the variable option.
-        p_obs = inv_logit(gamma * (sv_var - sv_fix))
-        return p_obs
+        return inv_logit(gamma * (sv_var - sv_fix))
 
 
 class EngineCRA(Engine):
