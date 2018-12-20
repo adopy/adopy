@@ -153,7 +153,7 @@ class Model(MetaInterface):
 
     def compute(self, **kargs):
         # type: (...) -> Any
-        if self.func is not None:
+        if self._func is not None:
             return self._func(**kargs)
         obj = reduce(lambda x, y: x * y, kargs.values())
         return np.ones_like(obj) / 2
