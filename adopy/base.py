@@ -126,13 +126,7 @@ class Model(MetaInterface):
         self._task = task  # type: Task
         self._param = tuple(param)  # type: Tuple[str, ...]
 
-        def _func(**kargs):
-            if func is not None:
-                return func(**kargs)
-            obj = reduce(lambda x, y: x * y, kargs.values())
-            return np.ones_like(obj) / 2
-
-        self._func = _func  # type: Callable
+        self._func = func  # type: Callable
 
         self._constraint = {}  # type: Dict[str, Callable]
         if constraint is not None:
@@ -159,7 +153,10 @@ class Model(MetaInterface):
 
     def compute(self, **kargs):
         # type: (...) -> Any
-        return self._func(**kargs)
+        if self._func is not None:
+            return self._func(**kargs)
+        obj = reduce(lambda x, y: x * y, kargs.values())
+        return np.ones_like(obj) / 2
 
     def __repr__(self):  # type: () -> str
         return 'Model({name}, param={var})' \
