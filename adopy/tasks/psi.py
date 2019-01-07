@@ -27,7 +27,8 @@ import numpy as np
 from scipy.stats import norm, gumbel_l
 
 from adopy.base import Engine, Task, Model
-from adopy.functions import inv_logit, get_random_design_index, get_nearest_grid_index
+from adopy.functions import (inv_logit, get_random_design_index,
+                             get_nearest_grid_index, const_positive, const_01)
 
 __all__ = ['TaskPsi', 'ModelLogistic',
            'ModelWeibull', 'ModelNormal', 'EnginePsi']
@@ -49,10 +50,10 @@ class _ModelPsi(Model):
             task=TaskPsi(),
             param=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
             constraint={
-                'guess_rate': lambda x: 0 <= x <= 1,
-                'lapse_rate': lambda x: 0 <= x <= 1,
-                'threshold': lambda x: x >= 0,
-                'slope': lambda x: x >= 0,
+                'guess_rate': const_01,
+                'lapse_rate': const_01,
+                'threshold': const_positive,
+                'slope': const_positive,
             })
         super(_ModelPsi, self).__init__(**args)
 

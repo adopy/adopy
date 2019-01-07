@@ -15,7 +15,7 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 
 from adopy.base import Engine, Task, Model
-from adopy.functions import inv_logit
+from adopy.functions import inv_logit, const_positive
 
 __all__ = ['TaskCRA', 'ModelLinear', 'ModelExp', 'EngineCRA']
 
@@ -28,10 +28,6 @@ class TaskCRA(Task):
         super(TaskCRA, self).__init__(**args)
 
 
-def const_gamma(x):
-    return x > 0
-
-
 class ModelLinear(Model):
     def __init__(self):
         args = dict(
@@ -40,7 +36,7 @@ class ModelLinear(Model):
             task=TaskCRA(),
             param=['alpha', 'beta', 'gamma'],
             constraint={
-                'gamma': const_gamma,
+                'gamma': const_positive,
             })
         super(ModelLinear, self).__init__(**args)
 
@@ -59,7 +55,7 @@ class ModelExp(Model):
             task=TaskCRA(),
             param=['alpha', 'beta', 'gamma'],
             constraint={
-                'gamma': const_gamma,
+                'gamma': const_positive,
             })
         super(ModelExp, self).__init__(**args)
 

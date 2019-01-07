@@ -9,11 +9,11 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 
 from adopy.base import Engine, Task, Model
-from adopy.functions import inv_logit
+from adopy.functions import inv_logit, const_positive, const_01
 
 __all__ = [
-    'TaskDDT', 'ModelExp', 'ModelHyperbolic', 'ModelGeneralizedHyperbolic', 'ModelQuasiHyperbolic', 'ModelDoubleExp',
-    'ModelCS', 'EngineDDT'
+    'TaskDDT', 'ModelExp', 'ModelHyperbolic', 'ModelGeneralizedHyperbolic',
+    'ModelQuasiHyperbolic', 'ModelDoubleExp', 'ModelCS', 'EngineDDT'
 ]
 
 
@@ -33,8 +33,8 @@ class ModelExp(Model):
             task=TaskDDT(),
             param=['tau', 'r'],
             constraint={
-                'tau': lambda x: x > 0,
-                'r': lambda x: x > 0,
+                'tau': const_positive,
+                'r': const_positive,
             })
         super(ModelExp, self).__init__(**args)
 
@@ -58,8 +58,8 @@ class ModelHyperbolic(Model):
             task=TaskDDT(),
             param=['tau', 'k'],
             constraint={
-                'tau': lambda x: x > 0,
-                'k': lambda x: x > 0,
+                'tau': const_positive,
+                'k': const_positive,
             })
         super(ModelHyperbolic, self).__init__(**args)
 
@@ -83,8 +83,8 @@ class ModelGeneralizedHyperbolic(Model):
             task=TaskDDT(),
             param=['tau', 'k', 's'],
             constraint={
-                'tau': lambda x: x > 0,
-                'k': lambda x: x > 0,
+                'tau': const_positive,
+                'k': const_positive,
             })
         super(ModelGeneralizedHyperbolic, self).__init__(**args)
 
@@ -108,15 +108,17 @@ class ModelQuasiHyperbolic(Model):
             task=TaskDDT(),
             param=['tau', 'beta', 'delta'],
             constraint={
-                'tau': lambda x: x > 0,
-                'beta': lambda x: 0 < x < 1,
-                'delta': lambda x: 0 < x < 1,
+                'tau': const_positive,
+                'beta': const_01,
+                'delta': const_01,
             })
         super(ModelQuasiHyperbolic, self).__init__(**args)
 
     def compute(cls, d_soon, d_late, a_soon, a_late, tau, beta, delta):
         def discount(delay):
-            return np.where(delay == 0, np.ones_like(beta * delta * delay), beta * np.power(delta, delay))
+            return np.where(delay == 0,
+                            np.ones_like(beta * delta * delay),
+                            beta * np.power(delta, delay))
 
         v_ss = a_soon * discount(d_soon)
         v_ll = a_late * discount(d_late)
@@ -134,16 +136,17 @@ class ModelDoubleExp(Model):
             task=TaskDDT(),
             param=['tau', 'omega', 'r', 's'],
             constraint={
-                'tau': lambda x: x > 0,
-                'omega': lambda x: 0 < x < 1,
-                'r': lambda x: x > 0,
-                's': lambda x: x > 0,
+                'tau': const_positive,
+                'omega': const_01,
+                'r': const_positive,
+                's': const_positive,
             })
         super(ModelDoubleExp, self).__init__(**args)
 
     def compute(cls, d_soon, d_late, a_soon, a_late, tau, omega, r, s):
         def discount(delay):
-            return omega * np.exp(-delay * r) + (1 - omega) * np.exp(-delay * s)
+            return omega * np.exp(-delay * r) + \
+                (1 - omega) * np.exp(-delay * s)
 
         v_ss = a_soon * discount(d_soon)
         v_ll = a_late * discount(d_late)
@@ -161,9 +164,9 @@ class ModelCS(Model):
             task=TaskDDT(),
             param=['tau', 'r', 's'],
             constraint={
-                'tau': lambda x: x > 0,
-                'r': lambda x: x > 0,
-                's': lambda x: x > 0,
+                'tau': const_positive,
+                'r': const_positive,
+                's': const_positive,
             })
         super(ModelCS, self).__init__(**args)
 
