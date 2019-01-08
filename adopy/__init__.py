@@ -15,4 +15,4 @@ from adopy.base import Task, Model, Engine
 __all__ = ['base', 'functions', 'tasks', 'Task', 'Model', 'Engine']
 
 with open(os.path.join(os.path.dirname(__file__), 'VERSION'), 'r') as f:
-    __version__ = f.read()
+    __version__ = f.read().strip()

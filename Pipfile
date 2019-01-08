@@ -8,9 +8,12 @@ autopep8 = "*"
 flake8 = "*"
 pylint = "*"
 mypy = "*"
+
+# For tests
 pytest = "*"
 pytest-cov = "*"
 codecov = "*"
+
 # For docs
 sphinx = "*"
 sphinx_rtd_theme = "*"
@@ -21,7 +24,7 @@ travis-sphinx = "*"
 pandas = "*"
 scipy = "*"
 numpy = "*"
-adopy = {editable = true,path = "."}
+flit = "*"
 
 [requires]
 python_version = "3.5"

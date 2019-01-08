@@ -1,6 +1,11 @@
+PIPENV_PATH = $(shell which pipenv)
+
 init:
-	pip3 install pipenv
+ifeq (, $(PIPENV_PATH))
+	pip install pipenv
+endif
 	pipenv install --dev
+	pipenv run python -m flit install
 
 test:
 	pipenv run py.test tests

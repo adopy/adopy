@@ -31,7 +31,7 @@ Currently working in progress.
 Dependencies
 ------------
 
-- Python 2.7 or 3.5+
+- Python 3.5+
 - NumPy
 - Pandas
 - SciPy
@@ -47,5 +47,24 @@ Installation
     # Set the working directory to the cloned repository.
     cd adopy
 
-    # Install ADOpy with pip (Currently for development)
-    pip install -e .
+    # Install ADOpy with pip
+    pip install .
+
+Development
+-----------
+
+You can set up a developmental environment using pipenv.
+
+.. code-block:: bash
+
+   # Clone the repository from Github.
+   git clone https://github.com/JaeyeongYang/adopy.git
+
+   # Set the working directory to the cloned repository.
+   cd adopy
+
+   # Install dev dependencies with pipenv
+   pipenv install --dev
+
+   # Install adopy with flit with symlink
+   pipenv run flit install -e
