@@ -3,20 +3,16 @@ sudo: false
 cache: pip
 
 python:
-  - "2.7"
   - "3.5"
   - "3.6"
+  - "3.7-dev"
 
-install:
-  - pip install -e ".[test,docs]"
+install: "make"
 
 script:
-  - pytest --doctest-modules --cov=adopy
-  - codecov --token $CODECOV_TOKEN
-  # - travis-sphinx build
+  - make test-travis
 
 after_success:
-  # - travis-sphinx deploy
-  - flake8 adopy --format=pylint --statistics --exit-zero
-  - pylint adopy --rcfile=setup.cfg --exit-zero
+  - make lint
+  # - make docs-travis
 

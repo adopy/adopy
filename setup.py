@@ -26,29 +26,8 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'typing',
         'numpy',
         'pandas',
         'scipy',
     ],
-    extras_require={
-        'dev': [
-            'flake8',
-            'pylint',
-            'mypy',
-            'autopep8',
-        ],
-        'test': [
-            'flake8',
-            'pylint',
-            'pytest',
-            'pytest-cov',
-            'codecov',
-        ],
-        'docs': [
-            'sphinx',
-            'sphinx_rtd_theme',
-            'sphinx-autobuild',
-            'travis-sphinx',
-        ]
-    })
+)
