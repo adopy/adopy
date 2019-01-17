@@ -2,8 +2,8 @@
 Basic functions
 """
 import collections
-from typing import (Any, Callable, Dict, Iterable, Optional, OrderedDict,
-                    List, Tuple, TypeVar)
+from typing import (Any, Callable, Dict, Iterable, Optional, List, Tuple,
+                    TypeVar)
 from functools import reduce
 
 import numpy as np
@@ -48,8 +48,8 @@ class MetaInterface(object):
         return self._name
 
     @staticmethod
-    def _extract_vars(dt: DT, keys: Iterable[str]) -> OrderedDict[str, Any]:
-        ret = collections.OrderedDict()  # type: OrderedDict[str, Any]
+    def _extract_vars(dt: DT, keys: Iterable[str]) -> Dict[str, Any]:
+        ret = {}  # type: Dict[str, Any]
         for k in keys:
             ret[k] = dt[k] if isinstance(dt, dict) else dt[k].values
         return ret
@@ -77,7 +77,7 @@ class Task(MetaInterface):
         """Design labels of the task"""
         return list(self._design)
 
-    def extract_designs(self, dt: DT) -> OrderedDict[str, Any]:
+    def extract_designs(self, dt: DT) -> Dict[str, Any]:
         """
         Extract design grids from given dictionary or dataframe.
 
@@ -87,7 +87,7 @@ class Task(MetaInterface):
 
         Returns
         -------
-        OrderedDict[str, array_like]
+        Dict[str, array_like]
             An ordered dictionary of single grids for design variables.
         """
         return self._extract_vars(dt, self.design)
@@ -140,7 +140,7 @@ class Model(MetaInterface):
         """Contraints on model parameters"""
         return self._constraint
 
-    def extract_params(self, dt: DT) -> OrderedDict[str, Any]:
+    def extract_params(self, dt: DT) -> Dict[str, Any]:
         return self._extract_vars(dt, self.param)
 
     def compute(self, **kargs) -> Any:
