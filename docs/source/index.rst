@@ -29,7 +29,7 @@ Contents
    :glob:
 
    base.rst
-   tasks/*
+   tasks.rst
 
 Indices and tables
 ==================
