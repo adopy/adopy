@@ -184,3 +184,5 @@ $RECYCLE.BIN/
 .idea
 .vscode
 
+Pipfile.lock
+
