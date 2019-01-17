@@ -2,9 +2,9 @@ PIPENV_PATH = $(shell which pipenv)
 
 init:
 ifeq (, $(PIPENV_PATH))
-	pip install pipenv
+	pip install --user pipenv
 endif
-	pipenv install --dev
+	pipenv install --dev --skip-lock
 	pipenv run python -m flit install
 
 test:
@@ -22,3 +22,4 @@ docs-travis:
 	pipenv run travis-sphinx build
 	pipenv run travis-sphinx deploy
 
+.PHONY: init test test-travis lint docs-travis
