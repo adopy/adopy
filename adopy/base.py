@@ -70,7 +70,7 @@ class Task(MetaInterface):
                  key: str,
                  design: Iterable[str]):
         super(Task, self).__init__(name, key)
-        self._design: Tuple[str, ...] = tuple(design)
+        self._design = tuple(design)  # type: Tuple[str, ...]
 
     @property
     def design(self) -> List[str]:
@@ -116,12 +116,12 @@ class Model(MetaInterface):
                  constraint: Optional[Dict[str, Callable]] = None):
         super(Model, self).__init__(name, key)
 
-        self._task: Task = task
-        self._param: Tuple[str, ...] = tuple(param)
+        self._task = task  # type: Task
+        self._param = tuple(param)  # type: Tuple[str, ...]
 
-        self._func: Optional[Callable] = func
+        self._func = func  # type: Optional[Callable]
 
-        self._constraint: Dict[str, Callable] = {}
+        self._constraint = {}  # type: Dict[str, Callable]
         if constraint is not None:
             self._constraint.update(constraint)
 
