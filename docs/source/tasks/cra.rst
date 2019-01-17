@@ -1,24 +1,9 @@
-.. _cra:
+:mod:`adopy.tasks.cra`
+======================
 
 .. automodule:: adopy.tasks.cra
+   :synopsis: Choice under Risk and Ambiguity Task.
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-  Task
-  ----
-
-  .. autoclass:: adopy.tasks.cra.TaskCRA
-    :members:
-
-  Model
-  -----
-
-  .. autoclass:: adopy.tasks.cra.ModelLinear
-    :members:
-
-  .. autoclass:: adopy.tasks.cra.ModelExp
-    :members:
-
-  Engine
-  ------
-
-  .. autoclass:: adopy.tasks.cra.EngineCRA
-    :members:

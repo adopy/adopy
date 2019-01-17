@@ -2,14 +2,19 @@
 #
 
 # You can set these variables from the command line.
-SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build
-SOURCEDIR     = source
-BUILDDIR      = build
+SPHINXOPTS      =
+SPHINXBUILD     = sphinx-build
+SPHINXAUTOBUILD = sphinx-autobuild
+SOURCEDIR       = source
+BUILDDIR        = build
+PACKAGEDIR      = ../adopy
 
 # Put it first so that "make" without argument is like "make help".
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+livehtml:
+	@$(SPHINXAUTOBUILD) -b html -z "$(PACKAGEDIR)" "$(SOURCEDIR)" "$(BUILDDIR)/html" $(SPHINXOPTS) $(O)
 
 .PHONY: help Makefile
 

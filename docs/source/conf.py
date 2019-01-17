@@ -22,7 +22,7 @@ import adopy  # noqa: E402
 # -- Project information -----------------------------------------------------
 
 project = 'ADOpy'
-copyright = '2018, Jaeyeong Yang'  # pylint: disable=W0622
+copyright = '2019, Jaeyeong Yang'  # pylint: disable=W0622
 author = 'Jaeyeong Yang'
 
 # The short X.Y version
@@ -43,12 +43,10 @@ release = adopy.__version__
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
-    'sphinx.ext.doctest',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'recommonmark',
+    'sphinx_autodoc_typehints',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -58,7 +56,11 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+# source_suffix = '.rst'
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
 
 # The master toctree document.
 master_doc = 'index'
