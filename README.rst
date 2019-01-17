@@ -24,9 +24,8 @@
       </a>
     </p>
 
-A Python package for Adaptive Design Optimization on psychological tasks.
-
-Currently working in progress.
+ADOpy is a Python package for Adaptive Design Optimization on experimental
+tasks.
 
 Dependencies
 ------------

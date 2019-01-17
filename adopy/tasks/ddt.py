@@ -1,8 +1,38 @@
-"""
-Delayed Discounting Task
-========================
+r"""
+**Delay discounting** refers to the well-established finding that humans
+tend to discount the value of a future reward such that the discount
+progressively increases as a function of the receipt delay
+[Green2004]_ [Vincent2016]_.
+In a typical **delay discounting (DD) task**, the participant is asked to
+indicate his/her preference between two delayed options:
+a smaller-sooner (SS) option (e.g., 10 dollars tomorrow) and
+a larger-longer (LL) option (e.g., 50 dollars in two weeks)
+
+We provides six models that had been compared in a previous paper
+[Cavagnaro2016]_:
+
+1. Exponential
+2. Hyperbolic
+3. Generalized Hyperbolic
+4. Quasi-hyperbolic
+5. Double exponential
+6. Constant sensitivity
 
 
+.. [Green2004]
+   Green, L. and Myerson, J. (2004). A discounting framework for choice with
+   delayed and probabilistic rewards. *Psychological Bulletin, 130*, 769–792.
+
+.. [Vincent2016]
+   Vincent, B. T. (2016). Hierarchical Bayesian estimation and hypothesis
+   testing for delay discounting tasks. *Behavior Research Methods, 48*,
+   1608–1620.
+
+.. [Cavagnaro2016]
+    Cavagnaro, D. R., Aranovich, G. J., McClure, S. M., Pitt, M. A., &
+    Myung, J. I. (2016). On the functional form of temporal discounting:
+    An optimized adaptive test. *Journal of risk and uncertainty, 52* (3),
+    233-254.
 """
 import numpy as np
 

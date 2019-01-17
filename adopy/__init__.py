@@ -1,9 +1,3 @@
-"""
-ADOpy
-=====
-
-ADOpy is a Python package for Adaptive Design Optimization.
-"""
 import os
 
 from adopy import base

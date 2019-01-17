@@ -1,6 +1,4 @@
-from __future__ import absolute_import, division, print_function
-
-from typing import Iterable, List, Tuple, TypeVar
+from typing import Dict, Iterable, List, Tuple, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -8,7 +6,8 @@ import pandas as pd
 from ._utils import make_vector_shape
 
 __all__ = [
-    'marginalize', 'get_nearest_grid_index', 'get_random_design_index', 'make_grid_matrix'
+    'marginalize', 'get_nearest_grid_index', 'get_random_design_index',
+    'make_grid_matrix'
 ]
 
 GK = TypeVar('GK', str, Tuple[str])
@@ -16,6 +15,7 @@ GV = TypeVar('GV', Iterable, np.ndarray)
 
 
 def marginalize(post, grid_param, axis):
+    """Return marginal distributions from grid-shaped posteriors"""
     mp = {}
     for value, p in zip(grid_param[:, axis], post):
         k = value if np.isscalar(value) else tuple(value)
@@ -23,8 +23,7 @@ def marginalize(post, grid_param, axis):
     return mp
 
 
-def get_nearest_grid_index(design, designs):
-    # type: (pd.Series, pd.DataFrame) -> int
+def get_nearest_grid_index(design: pd.Series, designs: pd.DataFrame) -> int:
     ds = designs.values
     d = design.values.reshape(1, -1)
     return int(np.argmin(np.square(ds - d).sum(-1)))
@@ -37,8 +36,7 @@ def get_random_design_index(designs):
     return np.unravel_index(idx, dims_designs)[0]
 
 
-def make_grid_matrix(axes_dict):
-    # type: (Dict[GK, GV]) -> pd.DataFrame
+def make_grid_matrix(axes_dict: Dict[GK, GV]) -> pd.DataFrame:
     assert isinstance(axes_dict, dict)
     assert all([len(np.shape(x)) in {1, 2} for x in axes_dict.values()])
 
@@ -59,8 +57,10 @@ def make_grid_matrix(axes_dict):
         else:
             columns.extend(k)
         g_2d = np.reshape(g, (-1, 1)) if n_d_each[i] == 1 else g
-        grid = np.pad(g_2d, [(0, 0), (n_d_prev[i], n_d_total - n_d_prev[i] - n_d_each[i])],
-                      'constant').reshape(dim_grid)
+        grid = np.pad(g_2d, [
+            (0, 0),
+            (n_d_prev[i], n_d_total - n_d_prev[i] - n_d_each[i])
+        ], 'constant').reshape(dim_grid)
         grids.append(grid)
 
     grid_mat = sum(grids, np.zeros_like(grids[0])).reshape(-1, n_d_total)

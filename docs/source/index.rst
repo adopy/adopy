@@ -1,4 +1,5 @@
-.. home:
+ADOpy
+=====
 
 .. include:: ../../README.rst
 
@@ -15,7 +16,7 @@ ADO cycles consist of three steps: (1) Design optimization, (2) experiment, and 
    *New Handbook of Mathematical Psychology*. London: Cambridge University Press.
 
 Contents
-========
+--------
 
 .. toctree::
    :maxdepth: 1
@@ -28,11 +29,10 @@ Contents
    :maxdepth: 1
    :glob:
 
-   base.rst
-   tasks.rst
+   api/*
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

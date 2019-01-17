@@ -1,28 +1,16 @@
 r"""
-======================
-Psychometric Functions
-======================
-
-Psychometric function is to figure out whether a subject can perceive a signal with varying levels
-of magnitude. The function has one design variable for the *intensity* of a
-stimulus, :math:`x`; the model has four model parameters:
-*guess rate* :math:`\gamma`, *lapse rate* :math:`\delta`,
+**Psychometric function** is to figure out whether a subject can perceive a
+signal with varying levels of magnitude. The function has one design variable
+for the *intensity* of a stimulus, :math:`x`; the model has four model
+parameters: *guess rate* :math:`\gamma`, *lapse rate* :math:`\delta`,
 *threshold* :math:`\alpha`, and *slope* :math:`\beta`.
 
-.. figure:: ../_static/images/Psychometricfn.svg
+.. figure:: ../../_static/images/Psychometricfn.svg
     :width: 70%
     :align: center
 
     A simple diagram for the Psychometric function.
-
-.. [Cavagnaro2016]
-    Cavagnaro, D. R., Aranovich, G. J., McClure, S. M., Pitt, M. A., & Myung, J. I. (2016).
-    On the functional form of temporal discounting: An optimized adaptive test.
-    *Journal of risk and uncertainty, 52* (3), 233-254.
-
 """
-from __future__ import absolute_import, division, print_function
-
 import numpy as np
 from scipy.stats import norm, gumbel_l
 
@@ -30,16 +18,17 @@ from adopy.base import Engine, Task, Model
 from adopy.functions import (inv_logit, get_random_design_index,
                              get_nearest_grid_index, const_positive, const_01)
 
-__all__ = ['TaskPsi', 'ModelLogistic',
-           'ModelWeibull', 'ModelNormal', 'EnginePsi']
+__all__ = [
+    'Task2AFC', 'ModelLogistic', 'ModelWeibull', 'ModelNormal', 'EnginePsi'
+]
 
 
-class TaskPsi(Task):
-    """Task class for Psychometric functions"""
+class Task2AFC(Task):
+    """Task class for a simple 2-alternative forced choice task"""
 
     def __init__(self):
         args = dict(name='Psi', key='psi', design=['stimulus'])
-        super(TaskPsi, self).__init__(**args)
+        super(Task2AFC, self).__init__(**args)
 
 
 class _ModelPsi(Model):
@@ -47,7 +36,7 @@ class _ModelPsi(Model):
         args = dict(
             name=name,
             key=key,
-            task=TaskPsi(),
+            task=Task2AFC(),
             param=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
             constraint={
                 'guess_rate': const_01,
@@ -57,8 +46,8 @@ class _ModelPsi(Model):
             })
         super(_ModelPsi, self).__init__(**args)
 
-    def _compute(self, func, stimulus, guess_rate, lapse_rate, threshold, slope):
-        return guess_rate + (1 - guess_rate - lapse_rate) * func(slope * (stimulus - threshold))
+    def _compute(self, func, st, gr, lr, th, sl):
+        return gr + (1 - gr - lr) * func(sl * (st - th))
 
 
 class ModelLogistic(_ModelPsi):
@@ -87,7 +76,8 @@ class ModelLogistic(_ModelPsi):
         -------
         numpy.ndarray
         """
-        return self._compute(inv_logit, stimulus, guess_rate, lapse_rate, threshold, slope)
+        return self._compute(inv_logit, stimulus,
+                             guess_rate, lapse_rate, threshold, slope)
 
 
 class ModelWeibull(_ModelPsi):
@@ -100,7 +90,8 @@ class ModelWeibull(_ModelPsi):
 
         .. math::
 
-            F(x; \mu, \beta) = CDF_\text{Gumbel_l}\left( \beta (x - \mu) \right) \\
+            F(x; \mu, \beta) = CDF_\text{Gumbel_l}
+                \left( \beta (x - \mu) \right) \\
 
         Parameters
         ----------
@@ -114,7 +105,8 @@ class ModelWeibull(_ModelPsi):
         -------
         numpy.ndarray
         """
-        return self._compute(gumbel_l.cdf, stimulus, guess_rate, lapse_rate, threshold, slope)
+        return self._compute(gumbel_l.cdf, stimulus,
+                             guess_rate, lapse_rate, threshold, slope)
 
 
 class ModelNormal(_ModelPsi):
@@ -141,7 +133,8 @@ class ModelNormal(_ModelPsi):
         -------
         numpy.ndarray
         """
-        return self._compute(norm.cdf, stimulus, guess_rate, lapse_rate, threshold, slope)
+        return self._compute(norm.cdf, stimulus,
+                             guess_rate, lapse_rate, threshold, slope)
 
 
 class EnginePsi(Engine):
@@ -149,7 +142,7 @@ class EnginePsi(Engine):
         assert model in [ModelLogistic(), ModelWeibull(), ModelNormal()]
 
         args = dict(
-            task=TaskPsi(),
+            task=Task2AFC(),
             model=model,
             designs=designs,
             params=params,
@@ -164,7 +157,8 @@ class EnginePsi(Engine):
     def get_design(self, kind='optimal'):
         r"""Choose a design with a given type.
 
-        1. :code:`optimal`: an optimal design :math:`d^*` that maximizes the mutual information.
+        1. :code:`optimal`: an optimal design :math:`d^*` that maximizes
+        the mutual information.
 
             .. math::
                 \begin{align*}

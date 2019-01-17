@@ -1,5 +1,6 @@
 """
-Basic functions
+Base classes of ADOpy. These classes provide built-in methods for inherited
+classes for specific tasks or models.
 """
 import collections
 from typing import (Any, Callable, Dict, Iterable, Optional, List, Tuple,
@@ -11,9 +12,10 @@ from scipy.special import logsumexp
 from scipy.stats import norm, multivariate_normal as mvnm
 import pandas as pd
 
-from adopy.functions import (expand_multiple_dims, get_nearest_grid_index,
-                             get_random_design_index, make_grid_matrix,
-                             marginalize, make_vector_shape, log_lik_bernoulli)
+from adopy.functions import (
+    expand_multiple_dims, get_nearest_grid_index, get_random_design_index,
+    make_grid_matrix, marginalize, make_vector_shape, log_lik_bernoulli
+)
 
 __all__ = ['Task', 'Model', 'Engine']
 
@@ -156,23 +158,6 @@ class Model(MetaInterface):
 
 class Engine(object):
     """Generic class for ADOpy classes.
-
-    Examples
-    --------
-
-    .. code-block:: python3
-        :linenos:
-
-        ado =
-        task = Task('Task A', 'a', ['d1', 'd2'])
-        model = Model('Model X', 'x', ['m1', 'm2', 'm3'])
-        for _ in range(num_trials):  # Loop for trials
-            design = ado.get_design()
-            response = get_response(design)
-            ado.update(design, response)
-
-    get_response functions is a pseudo-function to run an experiment and get
-    a response.
     """
 
     def __init__(self,
