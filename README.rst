@@ -6,13 +6,19 @@
 .. image:: https://www.repostatus.org/badges/latest/wip.svg
    :alt: Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.
    :target: https://www.repostatus.org/#wip
+   :align: center
 .. image:: https://travis-ci.com/JaeyeongYang/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master
+   :alt: Travis CI
    :target: https://travis-ci.com/JaeyeongYang/adopy
+   :align: center
 .. image:: https://codecov.io/gh/JaeyeongYang/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k
+   :alt: CodeCov
    :target: https://codecov.io/gh/JaeyeongYang/adopy
+   :align: center
 .. image:: https://www.codefactor.io/repository/github/jaeyeongyang/adopy/badge
-   :target: https://www.codefactor.io/repository/github/jaeyeongyang/adopy
    :alt: CodeFactor
+   :target: https://www.codefactor.io/repository/github/jaeyeongyang/adopy
+   :align: center
 
 **ADOpy** is a Python package for adaptive design optimization on experimental
 tasks.
