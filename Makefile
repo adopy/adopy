@@ -2,7 +2,7 @@ PIPENV_PATH = $(shell which pipenv)
 
 init:
 ifeq (, $(PIPENV_PATH))
-	pip install --user pipenv
+	pip install pipenv
 endif
 	pipenv install --dev --skip-lock
 	pipenv run python -m flit install
