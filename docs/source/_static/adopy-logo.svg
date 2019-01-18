@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 300 150"
+    width="300" height="150">
+  <defs>
+    <linearGradient id="linear-gradient" x1="53" y1="76.99" x2="247" y2="76.99" gradientUnits="userSpaceOnUse">
+      <stop offset="0"/>
+      <stop offset="0" stop-color="#090909"/>
+      <stop offset="0.02" stop-color="#373737"/>
+      <stop offset="0.05" stop-color="#626262"/>
+      <stop offset="0.07" stop-color="#888"/>
+      <stop offset="0.1" stop-color="#a8a8a8"/>
+      <stop offset="0.13" stop-color="#c4c4c4"/>
+      <stop offset="0.16" stop-color="#dadada"/>
+      <stop offset="0.2" stop-color="#ebebeb"/>
+      <stop offset="0.25" stop-color="#f6f6f6"/>
+      <stop offset="0.31" stop-color="#fdfdfd"/>
+      <stop offset="0.5" stop-color="#fff"/>
+      <stop offset="0.69" stop-color="#fdfdfd"/>
+      <stop offset="0.75" stop-color="#f6f6f6"/>
+      <stop offset="0.8" stop-color="#ebebeb"/>
+      <stop offset="0.84" stop-color="#dadada"/>
+      <stop offset="0.87" stop-color="#c4c4c4"/>
+      <stop offset="0.9" stop-color="#a8a8a8"/>
+      <stop offset="0.93" stop-color="#888"/>
+      <stop offset="0.95" stop-color="#626262"/>
+      <stop offset="0.98" stop-color="#373737"/>
+      <stop offset="1" stop-color="#090909"/>
+      <stop offset="1"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="53" y1="76.99" x2="247" y2="76.99" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-opacity="0"/>
+      <stop offset="0.07" stop-opacity="0.53"/>
+      <stop offset="0.5"/>
+      <stop offset="0.93" stop-opacity="0.53"/>
+      <stop offset="1" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <title>adopy-logo</title>
+  <g id="Layer_1" data-name="Layer 1">
+    <text transform="translate(59.71 53.33)" style="font-size: 54px;font-family: Lora-Bold, Lora;font-weight: 700">ADO<tspan x="118.58" y="0" style="letter-spacing: -0.003996672453703704em">p</tspan><tspan x="150.82" y="0">y</tspan></text>
+    <text transform="translate(30.31 107.03)" style="font-size: 24px;font-family: Oswald-Light, Oswald;font-weight: 300">Adaptive Design Optimiz<tspan x="198.93" y="0" style="letter-spacing: -0.003987630208333333em">a</tspan><tspan x="208.36" y="0">tion</tspan><tspan x="27.49" y="28.8">for Experimental </tspan><tspan x="166.45" y="28.8" style="letter-spacing: -0.04400634765625em">T</tspan><tspan x="175.33" y="28.8" style="letter-spacing: 0.000040690104166666664em">asks</tspan></text>
+  </g>
+  <g id="Seperator">
+    <line x1="247" y1="76.99" x2="53" y2="76.99" style="stroke-miterlimit: 10;fill: url(#linear-gradient);stroke: url(#linear-gradient-2)"/>
+  </g>
+</svg>

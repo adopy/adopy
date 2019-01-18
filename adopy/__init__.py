@@ -1,3 +1,6 @@
+"""
+ADOpy: Adaptive Design Optimization on Experimental Tasks
+"""
 import os
 
 from adopy import base

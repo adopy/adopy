@@ -6,26 +6,29 @@
            width="300px" height="150px">
     </p>
 
-.. raw:: html
+.. content-start::
 
-    <p align="center">
-      <a href="https://www.repostatus.org/#wip">
-        <img src="https://www.repostatus.org/badges/latest/wip.svg"
-             alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public." />
-      </a>
-      <a href="https://travis-ci.com/JaeyeongYang/adopy">
-        <img src="https://travis-ci.com/JaeyeongYang/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master" alt="Travis CI" />
-      </a>
-      <a href="https://codecov.io/gh/JaeyeongYang/adopy">
-        <img src="https://codecov.io/gh/JaeyeongYang/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k" alt="CodeCov" />
-      </a>
-      <a href="https://www.codefactor.io/repository/github/jaeyeongyang/adopy">
-        <img src="https://www.codefactor.io/repository/github/jaeyeongyang/adopy/badge" alt="CodeFactor" />
-      </a>
-    </p>
+.. image:: https://www.repostatus.org/badges/latest/wip.svg
+   :alt: Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.
+   :target: https://www.repostatus.org/#wip
+.. image:: https://travis-ci.com/JaeyeongYang/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master
+   :target: https://travis-ci.com/JaeyeongYang/adopy
+.. image:: https://codecov.io/gh/JaeyeongYang/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k
+   :target: https://codecov.io/gh/JaeyeongYang/adopy
+.. image:: https://www.codefactor.io/repository/github/jaeyeongyang/adopy/badge
+   :target: https://www.codefactor.io/repository/github/jaeyeongyang/adopy
+   :alt: CodeFactor
 
-ADOpy is a Python package for Adaptive Design Optimization on experimental
+**ADOpy** is a Python package for adaptive design optimization on experimental
 tasks.
+
+The adaptive design optimization (ADO) consist of three steps [Myung2013]_:
+(1) design optimization, (2) experimentation, and (3) Bayesian updating.
+
+.. [Myung2013]
+   Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
+   A tutorial on adaptive design optimization.
+   *Journal of Mathematical Psychology, 57*, 53–67.
 
 Dependencies
 ------------
@@ -35,35 +38,14 @@ Dependencies
 - Pandas
 - SciPy
 
-Installation
-------------
+Citation
+--------
 
-.. code-block:: bash
+To be announced.
 
-    # Clone the repository from Github.
-    git clone https://github.com/JaeyeongYang/adopy.git
+.. content-end::
 
-    # Set the working directory to the cloned repository.
-    cd adopy
+Documentation
+-------------
 
-    # Install ADOpy with pip
-    pip install .
-
-Development
------------
-
-You can set up a developmental environment using pipenv.
-
-.. code-block:: bash
-
-   # Clone the repository from Github.
-   git clone https://github.com/JaeyeongYang/adopy.git
-
-   # Set the working directory to the cloned repository.
-   cd adopy
-
-   # Install dev dependencies with pipenv
-   pipenv install --dev
-
-   # Install adopy with flit with symlink
-   pipenv run flit install -e
+See more details in the ADOpy documentation. Not linked yet.
