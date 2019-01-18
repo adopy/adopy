@@ -2,8 +2,8 @@ Home
 ====
 
 .. include:: ../../README.rst
-   :start-after: .. content-start::
-   :end-before: .. content-end::
+   :end-before: Documentation
+                -------------
 
 .. toctree::
    :caption: Getting Started
@@ -15,7 +15,7 @@ Home
    contributing.rst
 
 .. toctree::
-   :caption: API Reference
+   :caption: API References
    :maxdepth: 1
    :glob:
 
