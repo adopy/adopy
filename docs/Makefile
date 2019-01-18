@@ -7,7 +7,7 @@ SPHINXBUILD     = sphinx-build
 SPHINXAUTOBUILD = sphinx-autobuild
 SOURCEDIR       = source
 BUILDDIR        = build
-PACKAGEDIR      = ..
+PACKAGEDIR      = ../adopy
 
 # Put it first so that "make" without argument is like "make help".
 help:
