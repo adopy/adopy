@@ -1,4 +1,4 @@
-.. image:: https://user-images.githubusercontent.com/11037140/51371630-0fe37d00-1b3e-11e9-8569-f5ef8fb4752e.png
+.. image:: https://user-images.githubusercontent.com/11037140/51372654-39ea6e80-1b41-11e9-86bc-fac994b9d50e.png
    :width: 300
    :align: center
    :alt: ADOpy logo
