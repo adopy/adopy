@@ -24,7 +24,6 @@ Using adopy, you can utilize ADO for your experimentation, with a following
 style:
 
 .. code:: python
-   :caption: Pseudo-codes for an arbitrary task using ADOpy
 
    for trial in trials:
        design = engine.get_design()
