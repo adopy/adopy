@@ -1,3 +1,6 @@
+ADOpy: Adaptive Design Optimization for Experimental Tasks
+==========================================================
+
 .. image:: https://user-images.githubusercontent.com/11037140/51517429-03bd2f80-1e5e-11e9-84c5-482191196f98.png
    :width: 300
    :align: center
