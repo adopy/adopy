@@ -26,7 +26,7 @@ copyright = '2019, Jaeyeong Yang'  # pylint: disable=W0622
 author = 'Jaeyeong Yang'
 
 # The short X.Y version
-version = ''
+version = adopy.__version__
 # The full version, including alpha/beta/rc tags
 release = adopy.__version__
 

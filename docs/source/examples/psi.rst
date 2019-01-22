@@ -2,7 +2,7 @@
 Psychometric function
 =====================
 
-Let’s start with an example: **Psychometric function**. The goal of the function
+Let’s start with psychometric functions as an example. The goal of the function
 is to figure out whether a subject can perceive a signal with varying levels
 of magnitude. The function has one design variable for the *intensity* of a
 stimulus, :math:`x`; the model has four model parameters:
