@@ -18,9 +18,29 @@
 
 **ADOpy** is a Python package for adaptive design optimization on experimental
 tasks.
-
 The adaptive design optimization (ADO) consist of three steps [Myung2013]_:
 (1) design optimization, (2) experimentation, and (3) Bayesian updating.
+Using adopy, you can utilize ADO for your experimentation, with a following
+style:
+
+.. code-block:: python
+   :caption: Pseudo-codes of an arbitrary task using adopy
+
+   from adopy import Task, Model, Engine
+
+   task = Task()
+   model = Model()
+   engine = Engine()
+
+   for trial in trials:
+       design = engine.get_design()
+       response = get_response(design)
+       engine.update(design, response)
+
+.. [Myung2013]
+   Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
+   A tutorial on adaptive design optimization.
+   *Journal of Mathematical Psychology, 57*, 53–67.
 
 Dependencies
 ------------
@@ -34,14 +54,6 @@ Citation
 --------
 
 To be announced.
-
-References
-----------
-
-.. [Myung2013]
-   Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
-   A tutorial on adaptive design optimization.
-   *Journal of Mathematical Psychology, 57*, 53–67.
 
 Documentation
 -------------
