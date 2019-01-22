@@ -2,7 +2,7 @@
 Psychometric function
 =====================
 
-Let’s start with an example: **Psychometric function**. The goal of the function
+Let’s start with psychometric functions as an example. The goal of the function
 is to figure out whether a subject can perceive a signal with varying levels
 of magnitude. The function has one design variable for the *intensity* of a
 stimulus, :math:`x`; the model has four model parameters:
@@ -10,10 +10,10 @@ stimulus, :math:`x`; the model has four model parameters:
 *threshold* :math:`\alpha`, and *slope* :math:`\beta`.
 
 .. figure:: ../_static/images/Psychometricfn.svg
-  :width: 70%
-  :align: center
+   :width: 70%
+   :align: center
 
-  A simple diagram for the Psychometric function.
+   A simple diagram for the Psychometric function.
 
 In this example, let’s use the **logistic function** for the model’s shape.
 Then, the model can compute the probability of a subject to perceive the
@@ -21,9 +21,9 @@ given stimulus with the following equation:
 
 .. math::
 
-  \Psi(x \mid \alpha, \beta, \gamma, \delta)
-  = \gamma + (1 - \gamma - \delta) \; \sigma\big( \beta (x - \alpha) \big)
-  \quad \text{where } \sigma(x) = \frac{1}{1 + e^{-x}}
+   \Psi(x \mid \alpha, \beta, \gamma, \delta)
+   = \gamma + (1 - \gamma - \delta) \; \sigma\big( \beta (x - \alpha) \big)
+   \quad \text{where } \sigma(x) = \frac{1}{1 + e^{-x}}
 
 For this example, let's assume the true parameters as :math:`\gamma = 0.5`,
 :math:`\delta = 0.04`, :math:`\alpha = 20`, and :math:`\beta = 1.5`.

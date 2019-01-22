@@ -1,70 +1,67 @@
-.. raw:: html
+ADOpy: Adaptive Design Optimization for Experimental Tasks
+==========================================================
 
-    <p align="center">
-      <img src="https://user-images.githubusercontent.com/11037140/44476928-3b9e1d80-a607-11e8-8fe9-b2e4758e92ec.png"
-           alt="ADOpy: Adaptive Design Optimization for Psychological Tasks"
-           width="300px" height="150px">
-    </p>
+.. image:: https://user-images.githubusercontent.com/11037140/51517429-03bd2f80-1e5e-11e9-84c5-482191196f98.png
+   :width: 300
+   :align: center
+   :alt: ADOpy logo
 
-.. raw:: html
+.. image:: https://www.repostatus.org/badges/latest/wip.svg
+   :alt: Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.
+   :target: https://www.repostatus.org/#wip
+.. image:: https://travis-ci.com/JaeyeongYang/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master
+   :alt: Travis CI
+   :target: https://travis-ci.com/JaeyeongYang/adopy
+.. image:: https://codecov.io/gh/JaeyeongYang/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k
+   :alt: CodeCov
+   :target: https://codecov.io/gh/JaeyeongYang/adopy
+.. image:: https://www.codefactor.io/repository/github/jaeyeongyang/adopy/badge
+   :alt: CodeFactor
+   :target: https://www.codefactor.io/repository/github/jaeyeongyang/adopy
 
-    <p align="center">
-      <a href="https://www.repostatus.org/#wip">
-        <img src="https://www.repostatus.org/badges/latest/wip.svg"
-             alt="Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public." />
-      </a>
-      <a href="https://travis-ci.com/JaeyeongYang/adopy">
-        <img src="https://travis-ci.com/JaeyeongYang/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master" alt="Travis CI" />
-      </a>
-      <a href="https://codecov.io/gh/JaeyeongYang/adopy">
-        <img src="https://codecov.io/gh/JaeyeongYang/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k" alt="CodeCov" />
-      </a>
-      <a href="https://www.codefactor.io/repository/github/jaeyeongyang/adopy">
-        <img src="https://www.codefactor.io/repository/github/jaeyeongyang/adopy/badge" alt="CodeFactor" />
-      </a>
-    </p>
+**ADOpy** is a Python package for adaptive design optimization on experimental
+tasks. The adaptive design optimization (ADO) consist of three steps
+[Myung2013]_: (1) design optimization, (2) experimentation, and (3) Bayesian
+updating. Using adopy, you can easily utilize ADO for your experimentations,
+with a following style (pseudo-code):
 
-A Python package for Adaptive Design Optimization on psychological tasks.
+.. code:: python
 
-Currently working in progress.
+   for trial in trials:
+       design = engine.get_design()
+       response = get_response(design)
+       engine.update(design, response)
+
+.. [Myung2013]
+   Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
+   A tutorial on adaptive design optimization.
+   *Journal of Mathematical Psychology, 57*, 53–67.
 
 Dependencies
 ------------
 
-- Python 3.5+
-- NumPy
-- Pandas
-- SciPy
+- Python 3.5+ (no support for Python 2)
+- `NumPy <http://www.numpy.org/>`_
+- `SciPy <https://www.scipy.org/>`_
+- `Pandas <https://pandas.pydata.org/>`_
 
-Installation
-------------
+Citation
+--------
 
-.. code-block:: bash
+If you used ADOpy for your experiments, please cite this package on your paper,
+along with a specific version. It greatly encourages our contributors eager to
+continue supports on ADOpy.
 
-    # Clone the repository from Github.
-    git clone https://github.com/JaeyeongYang/adopy.git
+   To be announced.
 
-    # Set the working directory to the cloned repository.
-    cd adopy
+Documentation
+-------------
 
-    # Install ADOpy with pip
-    pip install .
+See more details in the ADOpy documentation. Not linked yet.
 
-Development
------------
+* Home
 
-You can set up a developmental environment using pipenv.
-
-.. code-block:: bash
-
-   # Clone the repository from Github.
-   git clone https://github.com/JaeyeongYang/adopy.git
-
-   # Set the working directory to the cloned repository.
-   cd adopy
-
-   # Install dev dependencies with pipenv
-   pipenv install --dev
-
-   # Install adopy with flit with symlink
-   pipenv run flit install -e
+  * Installation
+  * Examples
+  * Contributing
+  * API References

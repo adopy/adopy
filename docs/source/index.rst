@@ -1,28 +1,24 @@
-.. home:
+Home
+====
 
 .. include:: ../../README.rst
+   :start-after: ADOpy logo
+   :end-before: Documentation
 
-Contents
-========
+Content
+-------
 
 .. toctree::
-   :caption: Getting Started
    :maxdepth: 1
    :glob:
 
-   about.rst
-   roadmap.rst
+   install.rst
    examples/index.rst
-
-.. toctree::
-   :caption: Task API
-   :maxdepth: 1
-   :glob:
-
-   tasks/*
+   contributing.rst
+   api/index.rst
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

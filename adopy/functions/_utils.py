@@ -1,14 +1,18 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import numpy as np
 
 __all__ = ['expand_multiple_dims', 'make_vector_shape']
 
 
-def expand_multiple_dims(x, pre, post):
-    # type: (np.ndarray, int, int) -> np.ndarray
+def expand_multiple_dims(x: np.ndarray, pre: int, post: int) -> np.ndarray:
+    """Expand the dimensions of a given array.
+
+    >>> x = np.ones(3, 4, 2)
+    >>> print(x.shape)
+    (3, 4, 2)
+    >>> y = expand_multiple_dims(x, 2, 3)
+    >>> print(y.shape)
+    (1, 1, 3, 4, 2, 1, 1, 1)
+    """
     ret = x
     for _ in range(pre):
         ret = np.expand_dims(ret, 0)
@@ -17,8 +21,7 @@ def expand_multiple_dims(x, pre, post):
     return ret
 
 
-def make_vector_shape(n, axis=0):
-    # type: (int, int) -> np.ndarray
+def make_vector_shape(n: int, axis: int = 0) -> np.ndarray:
     ret = np.ones(n)
     ret[axis] = -1
     return ret.astype(np.int)

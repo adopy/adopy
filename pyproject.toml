@@ -28,6 +28,3 @@ classifiers = [
     "Programming Language :: Python :: 3 :: Only",
 ]
 
-[tool.flit.metadata.urls]
-Documentation = "https://jaeyeong-yang.com/adopy/"
-

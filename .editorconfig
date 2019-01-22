@@ -14,9 +14,9 @@ charset = utf-8
 indent_size = 4
 max_line_length = 79
 
-# Use 2 spaces for the reStructuredText files
+# Use 4 spaces for the reStructuredText files
 [*.rst]
-indent_size = 2
+indent_size = 4
 max_line_length = 79
 
 [Makefile]
