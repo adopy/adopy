@@ -4,7 +4,7 @@ ADOpy: Adaptive Design Optimization for Experimental Tasks
 .. raw:: html
 
    <div align="center">
-     <img src="https://adopy.github.io/logo/adopy-logo@2x.png">
+     <img src="https://adopy.github.io/logo/adopy-logo.svg">
    </div> <!-- ADOpy logo -->
 
 .. image:: https://www.repostatus.org/badges/latest/wip.svg
