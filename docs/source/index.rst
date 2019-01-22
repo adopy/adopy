@@ -2,7 +2,7 @@ Home
 ====
 
 .. include:: ../../README.rst
-   :start-after: ADOpy logo
+   :start-after: <!-- ADOpy logo -->
    :end-before: Documentation
 
 Content

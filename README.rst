@@ -1,13 +1,15 @@
 ADOpy: Adaptive Design Optimization for Experimental Tasks
 ==========================================================
 
-.. image:: https://user-images.githubusercontent.com/11037140/51517429-03bd2f80-1e5e-11e9-84c5-482191196f98.png
-   :width: 300
-   :align: center
-   :alt: ADOpy logo
+.. raw:: html
+
+   <div align="center">
+     <img src="https://adopy.github.io/logo/adopy-logo-tight.svg">
+   </div> <!-- ADOpy logo -->
 
 .. image:: https://www.repostatus.org/badges/latest/wip.svg
-   :alt: Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.
+   :alt: Project Status: WIP – Initial development is in progress,
+         but there has not yet been a stable, usable release suitable for the public.
    :target: https://www.repostatus.org/#wip
 .. image:: https://travis-ci.com/JaeyeongYang/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master
    :alt: Travis CI
