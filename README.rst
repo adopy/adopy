@@ -24,12 +24,7 @@ Using adopy, you can utilize ADO for your experimentation, with a following
 style:
 
 .. code:: python
-
-   from adopy import Task, Model, Engine
-
-   task = Task()
-   model = Model()
-   engine = Engine()
+   :caption: Pseudo-codes for an arbitrary task using ADOpy
 
    for trial in trials:
        design = engine.get_design()
