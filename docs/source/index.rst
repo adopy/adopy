@@ -2,6 +2,7 @@ Home
 ====
 
 .. include:: ../../README.rst
+   :start-after: ADOpy logo
    :end-before: Documentation
                 -------------
 
@@ -12,7 +13,6 @@ Home
 
    install.rst
    examples/index.rst
-   contributing.rst
 
 .. toctree::
    :caption: API References

@@ -19,8 +19,8 @@
 **ADOpy** is a Python package for adaptive design optimization on experimental
 tasks. The adaptive design optimization (ADO) consist of three steps
 [Myung2013]_: (1) design optimization, (2) experimentation, and (3) Bayesian
-updating. Using adopy, you can utilize ADO for your experimentations, with a
-following style (pseudo-code):
+updating. Using adopy, you can easily utilize ADO for your experimentations,
+with a following style (pseudo-code):
 
 .. code:: python
 
@@ -51,3 +51,7 @@ Documentation
 -------------
 
 See more details in the ADOpy documentation. Not linked yet.
+
+- Documentation
+- Installation
+- Examples
