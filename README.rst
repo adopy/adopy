@@ -48,6 +48,10 @@ Dependencies
 Citation
 --------
 
+If you used ADOpy for your experiments, please cite this package on your paper,
+along with a specific version. It greatly encourages our contributors eager to
+continue supports on ADOpy.
+
    To be announced.
 
 Documentation
@@ -55,6 +59,9 @@ Documentation
 
 See more details in the ADOpy documentation. Not linked yet.
 
-- Documentation
-- Installation
-- Examples
+* Home
+
+  * Installation
+  * Examples
+  * Contributing
+  * API References
