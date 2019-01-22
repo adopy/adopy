@@ -17,11 +17,10 @@
    :target: https://www.codefactor.io/repository/github/jaeyeongyang/adopy
 
 **ADOpy** is a Python package for adaptive design optimization on experimental
-tasks.
-The adaptive design optimization (ADO) consist of three steps [Myung2013]_:
-(1) design optimization, (2) experimentation, and (3) Bayesian updating.
-Using adopy, you can utilize ADO for your experimentation, with a following
-style:
+tasks. The adaptive design optimization (ADO) consist of three steps
+[Myung2013]_: (1) design optimization, (2) experimentation, and (3) Bayesian
+updating. Using adopy, you can utilize ADO for your experimentations, with a
+following style (pseudo-code):
 
 .. code:: python
 
@@ -38,15 +37,15 @@ style:
 Dependencies
 ------------
 
-- Python 3.5+
-- NumPy
-- Pandas
-- SciPy
+- Python 3.5+ (no support for Python 2)
+- `NumPy <http://www.numpy.org/>`_
+- `SciPy <https://www.scipy.org/>`_
+- `Pandas <https://pandas.pydata.org/>`_
 
 Citation
 --------
 
-To be announced.
+   To be announced.
 
 Documentation
 -------------
