@@ -23,8 +23,7 @@ The adaptive design optimization (ADO) consist of three steps [Myung2013]_:
 Using adopy, you can utilize ADO for your experimentation, with a following
 style:
 
-.. code-block:: python
-   :caption: Pseudo-codes of an arbitrary task using adopy
+.. code:: python
 
    from adopy import Task, Model, Engine
 
