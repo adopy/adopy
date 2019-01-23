@@ -1,6 +1,3 @@
-ADOpy: Adaptive Design Optimization for Experimental Tasks
-==========================================================
-
 .. raw:: html
 
    <div align="center">
