@@ -1,0 +1,10 @@
+include LICENSE README.rst
+include Makefile pyproject.toml
+exclude .editorconfig .travis.yml Pipfile* setup.cfg
+
+recursive-include docs *
+recursive-include tests *.py
+recursive-include examples *
+
+prune docs/build
+

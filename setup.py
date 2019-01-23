@@ -6,49 +6,25 @@ from setuptools import setup
 
 # Get the long description from the relevant file
 with codecs_open('README.rst', encoding='utf-8') as f:
-    long_description = f.read()
+    LONG_DESCRIPTION = f.read()
 
 # Load the version
 with open(os.path.join('adopy', 'VERSION'), 'r') as f:
-    version = f.read()
+    VERSION = f.read().strip()
 
+# Setup with minimal arguments
 setup(
     name='adopy',
-    version=version,
+    version=VERSION,
+    url='https://github.com/adopy',
     description='',
-    long_description=long_description,
-    classifiers=[],
-    keywords='',
     author='Jaeyeong Yang',
     author_email='jaeyeong.yang1125@gmail.com',
-    url='https://github.com/JaeyeongYang/adopy',
     license='GPL-3',
-    include_package_data=True,
-    zip_safe=False,
+    python_requires='>=3.5',
     install_requires=[
-        'typing',
         'numpy',
         'pandas',
         'scipy',
     ],
-    extras_require={
-        'dev': [
-            'flake8',
-            'pylint',
-            'mypy',
-            'autopep8',
-        ],
-        'test': [
-            'flake8',
-            'pylint',
-            'pytest',
-            'pytest-cov',
-            'codecov',
-        ],
-        'docs': [
-            'sphinx',
-            'sphinx_rtd_theme',
-            'sphinx-autobuild',
-            'travis-sphinx',
-        ]
-    })
+)

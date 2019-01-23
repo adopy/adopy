@@ -1,6 +1,3 @@
 """
-Tasks
------
-
 Already implemented tasks
 """

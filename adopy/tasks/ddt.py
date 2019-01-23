@@ -1,19 +1,47 @@
+r"""
+**Delay discounting** refers to the well-established finding that humans
+tend to discount the value of a future reward such that the discount
+progressively increases as a function of the receipt delay
+[Green2004]_ [Vincent2016]_.
+In a typical **delay discounting (DD) task**, the participant is asked to
+indicate his/her preference between two delayed options:
+a smaller-sooner (SS) option (e.g., 10 dollars tomorrow) and
+a larger-longer (LL) option (e.g., 50 dollars in two weeks)
+
+We provides six models that had been compared in a previous paper
+[Cavagnaro2016]_:
+
+1. Exponential
+2. Hyperbolic
+3. Generalized Hyperbolic
+4. Quasi-hyperbolic
+5. Double exponential
+6. Constant sensitivity
+
+
+.. [Green2004]
+   Green, L. and Myerson, J. (2004). A discounting framework for choice with
+   delayed and probabilistic rewards. *Psychological Bulletin, 130*, 769–792.
+
+.. [Vincent2016]
+   Vincent, B. T. (2016). Hierarchical Bayesian estimation and hypothesis
+   testing for delay discounting tasks. *Behavior Research Methods, 48*,
+   1608–1620.
+
+.. [Cavagnaro2016]
+    Cavagnaro, D. R., Aranovich, G. J., McClure, S. M., Pitt, M. A., &
+    Myung, J. I. (2016). On the functional form of temporal discounting:
+    An optimized adaptive test. *Journal of risk and uncertainty, 52* (3),
+    233-254.
 """
-Delayed Discounting Task
-========================
-
-
-"""
-from __future__ import absolute_import, division, print_function
-
 import numpy as np
 
 from adopy.base import Engine, Task, Model
-from adopy.functions import inv_logit
+from adopy.functions import inv_logit, const_positive, const_01
 
 __all__ = [
-    'TaskDDT', 'ModelExp', 'ModelHyperbolic', 'ModelGeneralizedHyperbolic', 'ModelQuasiHyperbolic', 'ModelDoubleExp',
-    'ModelCS', 'EngineDDT'
+    'TaskDDT', 'ModelExp', 'ModelHyperbolic', 'ModelGeneralizedHyperbolic',
+    'ModelQuasiHyperbolic', 'ModelDoubleExp', 'ModelCS', 'EngineDDT'
 ]
 
 
@@ -33,8 +61,8 @@ class ModelExp(Model):
             task=TaskDDT(),
             param=['tau', 'r'],
             constraint={
-                'tau': lambda x: x > 0,
-                'r': lambda x: x > 0,
+                'tau': const_positive,
+                'r': const_positive,
             })
         super(ModelExp, self).__init__(**args)
 
@@ -58,8 +86,8 @@ class ModelHyperbolic(Model):
             task=TaskDDT(),
             param=['tau', 'k'],
             constraint={
-                'tau': lambda x: x > 0,
-                'k': lambda x: x > 0,
+                'tau': const_positive,
+                'k': const_positive,
             })
         super(ModelHyperbolic, self).__init__(**args)
 
@@ -83,8 +111,8 @@ class ModelGeneralizedHyperbolic(Model):
             task=TaskDDT(),
             param=['tau', 'k', 's'],
             constraint={
-                'tau': lambda x: x > 0,
-                'k': lambda x: x > 0,
+                'tau': const_positive,
+                'k': const_positive,
             })
         super(ModelGeneralizedHyperbolic, self).__init__(**args)
 
@@ -108,15 +136,17 @@ class ModelQuasiHyperbolic(Model):
             task=TaskDDT(),
             param=['tau', 'beta', 'delta'],
             constraint={
-                'tau': lambda x: x > 0,
-                'beta': lambda x: 0 < x < 1,
-                'delta': lambda x: 0 < x < 1,
+                'tau': const_positive,
+                'beta': const_01,
+                'delta': const_01,
             })
         super(ModelQuasiHyperbolic, self).__init__(**args)
 
     def compute(cls, d_soon, d_late, a_soon, a_late, tau, beta, delta):
         def discount(delay):
-            return np.where(delay == 0, np.ones_like(beta * delta * delay), beta * np.power(delta, delay))
+            return np.where(delay == 0,
+                            np.ones_like(beta * delta * delay),
+                            beta * np.power(delta, delay))
 
         v_ss = a_soon * discount(d_soon)
         v_ll = a_late * discount(d_late)
@@ -134,16 +164,17 @@ class ModelDoubleExp(Model):
             task=TaskDDT(),
             param=['tau', 'omega', 'r', 's'],
             constraint={
-                'tau': lambda x: x > 0,
-                'omega': lambda x: 0 < x < 1,
-                'r': lambda x: x > 0,
-                's': lambda x: x > 0,
+                'tau': const_positive,
+                'omega': const_01,
+                'r': const_positive,
+                's': const_positive,
             })
         super(ModelDoubleExp, self).__init__(**args)
 
     def compute(cls, d_soon, d_late, a_soon, a_late, tau, omega, r, s):
         def discount(delay):
-            return omega * np.exp(-delay * r) + (1 - omega) * np.exp(-delay * s)
+            return omega * np.exp(-delay * r) + \
+                (1 - omega) * np.exp(-delay * s)
 
         v_ss = a_soon * discount(d_soon)
         v_ll = a_late * discount(d_late)
@@ -161,9 +192,9 @@ class ModelCS(Model):
             task=TaskDDT(),
             param=['tau', 'r', 's'],
             constraint={
-                'tau': lambda x: x > 0,
-                'r': lambda x: x > 0,
-                's': lambda x: x > 0,
+                'tau': const_positive,
+                'r': const_positive,
+                's': const_positive,
             })
         super(ModelCS, self).__init__(**args)
 

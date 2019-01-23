@@ -1,12 +1,10 @@
 """
-Base Classes
-============
-
+Base classes of ADOpy. These classes provide built-in methods for inherited
+classes for specific tasks or models.
 """
-from __future__ import absolute_import, division, print_function
-
-from typing import Any, Callable, Dict, Iterable, Optional, Tuple, TypeVar
-from collections import OrderedDict
+import collections
+from typing import (Any, Callable, Dict, Iterable, Optional, List, Tuple,
+                    TypeVar)
 from functools import reduce
 
 import numpy as np
@@ -14,9 +12,10 @@ from scipy.special import logsumexp
 from scipy.stats import norm, multivariate_normal as mvnm
 import pandas as pd
 
-from adopy.functions import (expand_multiple_dims, get_nearest_grid_index,
-                             get_random_design_index, make_grid_matrix,
-                             marginalize, make_vector_shape, log_lik_bernoulli)
+from adopy.functions import (
+    expand_multiple_dims, get_nearest_grid_index, get_random_design_index,
+    make_grid_matrix, marginalize, make_vector_shape, log_lik_bernoulli
+)
 
 __all__ = ['Task', 'Model', 'Engine']
 
@@ -31,8 +30,7 @@ class MetaInterface(object):
     """
     _instance = None  # type: object
 
-    def __init__(self, name, key):
-        # type: (str, str) -> None
+    def __init__(self, name, key):  # type: (str, str) -> None
         self._name = name  # type: str
         self._key = key  # type: str
 
@@ -42,23 +40,20 @@ class MetaInterface(object):
         return cls._instance
 
     @property
-    def key(self):  # type: () -> str
+    def key(self) -> str:
         """Key for the meta instance"""
         return self._key
 
     @property
-    def name(self):  # type: () -> str
+    def name(self) -> str:
         """Name for the meta instance"""
         return self._name
 
     @staticmethod
-    def _extract_vars(dt, keys):
-        # type: (DT, Iterable[str]) -> OrderedDict[str, Any]
-        ret = OrderedDict()  # type: OrderedDict[str, Any]
-
+    def _extract_vars(dt: DT, keys: Iterable[str]) -> Dict[str, Any]:
+        ret = {}  # type: Dict[str, Any]
         for k in keys:
             ret[k] = dt[k] if isinstance(dt, dict) else dt[k].values
-
         return ret
 
 
@@ -66,23 +61,25 @@ class Task(MetaInterface):
     """
     Metaclass for tasks
 
-    >>> task = Task('Task A', 'a', ['d1', 'd2'])
+    >>> task = Task(name='Task A', key='a',
+    ...             design=['d1', 'd2'], response=[0, 1])
     >>> task
     Task('Task A', design=['d1', 'd2'])
     """
 
-    def __init__(self, name, key, design):
-        # type: (str, str, Iterable[str]) -> None
+    def __init__(self,
+                 name: str,
+                 key: str,
+                 design: Iterable[str]):
         super(Task, self).__init__(name, key)
         self._design = tuple(design)  # type: Tuple[str, ...]
 
     @property
-    def design(self):  # type: () -> List[str]
+    def design(self) -> List[str]:
         """Design labels of the task"""
         return list(self._design)
 
-    def extract_designs(self, dt):
-        # type: (DT) -> OrderedDict[str, Any]
+    def extract_designs(self, dt: DT) -> Dict[str, Any]:
         """
         Extract design grids from given dictionary or dataframe.
 
@@ -92,12 +89,12 @@ class Task(MetaInterface):
 
         Returns
         -------
-        OrderedDict[str, array_like]
+        Dict[str, array_like]
             An ordered dictionary of single grids for design variables.
         """
         return self._extract_vars(dt, self.design)
 
-    def __repr__(self):  # type: () -> str
+    def __repr__(self) -> str:
         return 'Task({name}, design={var})' \
             .format(name=repr(self.name), var=repr(list(self.design)))
 
@@ -113,81 +110,63 @@ class Model(MetaInterface):
     """
 
     def __init__(self,
-                 name,            # type: str
-                 key,             # type: str
-                 task,            # type: Task
-                 param,           # type: Iterable[str]
-                 func=None,       # type: Optional[Callable]
-                 constraint=None  # type: Optional[Dict[str, Callable]]
-                 ):
-        # type: (...) -> None
+                 name: str,
+                 key: str,
+                 task: Task,
+                 param: Iterable[str],
+                 func: Optional[Callable] = None,
+                 constraint: Optional[Dict[str, Callable]] = None):
         super(Model, self).__init__(name, key)
 
         self._task = task  # type: Task
         self._param = tuple(param)  # type: Tuple[str, ...]
 
-        def _func(**kargs):
-            if func is not None:
-                return func(**kargs)
-            obj = reduce(lambda x, y: x * y, kargs.values())
-            return np.ones_like(obj) / 2
-
-        self._func = _func  # type: Callable
+        self._func = func  # type: Optional[Callable]
 
         self._constraint = {}  # type: Dict[str, Callable]
         if constraint is not None:
             self._constraint.update(constraint)
 
     @property
-    def task(self):  # type: () -> Task
+    def task(self) -> Task:
         """Task instance for the model"""
         return self._task
 
     @property
-    def param(self):  # type: () -> List[str]
+    def param(self) -> List[str]:
         """Parameter labels of the model"""
         return list(self._param)
 
     @property
-    def constraint(self):  # type: () -> Dict[str, Callable]
+    def constraint(self) -> Dict[str, Callable]:
         """Contraints on model parameters"""
         return self._constraint
 
-    def extract_params(self, dt):
-        # type: (DT) -> OrderedDict[str, Any]
+    def extract_params(self, dt: DT) -> Dict[str, Any]:
         return self._extract_vars(dt, self.param)
 
-    def compute(self, **kargs):
-        # type: (...) -> Any
-        return self._func(**kargs)
+    def compute(self, **kargs) -> Any:
+        if self._func is not None:
+            return self._func(**kargs)
+        obj = reduce(lambda x, y: x * y, kargs.values())
+        return np.ones_like(obj) / 2
 
-    def __repr__(self):  # type: () -> str
+    def __repr__(self) -> str:
         return 'Model({name}, param={var})' \
             .format(name=repr(self.name), var=repr(list(self.param)))
 
 
 class Engine(object):
     """Generic class for ADOpy classes.
-
-    Examples
-    --------
-
-    .. code-block:: python3
-        :linenos:
-
-        ado =
-        task = Task('Task A', 'a', ['d1', 'd2'])
-        model = Model('Model X', 'x', ['m1', 'm2', 'm3'])
-        for _ in range(num_trials):  # Loop for trials
-            design = ado.get_design()
-            response = get_response(design)
-            ado.update(design, response)
-
-    get_response functions is a pseudo-function to run an experiment and get
-    a response.
     """
 
-    def __init__(self, task, model, designs, params, y_obs):
+    def __init__(self,
+                 task,  # type: Task
+                 model,  # type: Model
+                 designs,
+                 params,
+                 y_obs,
+                 ):
         super(Engine, self).__init__()
 
         if model.task is not task:

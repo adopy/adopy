@@ -22,11 +22,11 @@ import adopy  # noqa: E402
 # -- Project information -----------------------------------------------------
 
 project = 'ADOpy'
-copyright = '2018, Jaeyeong Yang'  # pylint: disable=W0622
+copyright = '2019, Jaeyeong Yang'  # pylint: disable=W0622
 author = 'Jaeyeong Yang'
 
 # The short X.Y version
-version = ''
+version = adopy.__version__
 # The full version, including alpha/beta/rc tags
 release = adopy.__version__
 
@@ -43,12 +43,10 @@ release = adopy.__version__
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
-    'sphinx.ext.doctest',
-    'sphinx.ext.todo',
-    'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'recommonmark',
+    'sphinx_autodoc_typehints',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -58,7 +56,11 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+# source_suffix = '.rst'
+source_suffix = {
+    '.rst': 'restructuredtext',
+    '.md': 'markdown',
+}
 
 # The master toctree document.
 master_doc = 'index'
@@ -89,8 +91,9 @@ html_theme = 'sphinx_rtd_theme'
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#
-# html_theme_options = {}
+html_theme_options = {
+    'logo_only': True,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -106,6 +109,9 @@ html_static_path = ['_static']
 # 'searchbox.html']``.
 #
 # html_sidebars = {}
+
+html_logo = '_static/adopy-logo.svg'
+html_show_sourcelink = False
 
 
 # -- Options for HTMLHelp output ---------------------------------------------
@@ -185,8 +191,4 @@ napoleon_use_admonition_for_examples = False
 napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
 napoleon_use_ivar = False
-
-# -- Options for todo extension ----------------------------------------------
-
-# If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
+napoleon_use_param = False

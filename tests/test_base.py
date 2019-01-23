@@ -15,7 +15,8 @@ def task():
 @pytest.fixture()
 def model(task):
     def func_logistic(stimulus, guess_rate, lapse_rate, threshold, slope):
-        return guess_rate + (1 - guess_rate - lapse_rate) * inv_logit(slope * (stimulus - threshold))
+        return guess_rate + (1 - guess_rate - lapse_rate) \
+            * inv_logit(slope * (stimulus - threshold))
 
     return Model(
         name='Logistic',
@@ -38,13 +39,15 @@ def params():
     lapse_rate = [0.05]
     threshold = np.linspace(20 * np.log10(.1), 20 * np.log10(200), 100)
     slope = np.linspace(0, 10, 100)[1:]
-    params = dict(guess_rate=guess_rate, lapse_rate=lapse_rate, threshold=threshold, slope=slope)
+    params = dict(guess_rate=guess_rate, lapse_rate=lapse_rate,
+                  threshold=threshold, slope=slope)
     return params
 
 
 @pytest.fixture()
 def engine(task, model, designs, params):
-    return Engine(task=task, model=model, designs=designs, params=params, y_obs=[0, 1])
+    return Engine(task=task, model=model,
+                  designs=designs, params=params, y_obs=[0, 1])
 
 
 @pytest.mark.parametrize('design_type', ['optimal', 'random'])

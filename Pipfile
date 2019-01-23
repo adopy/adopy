@@ -1,0 +1,31 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+
+[dev-packages]
+flit = "*"
+autopep8 = "*"
+flake8 = "*"
+pylint = "*"
+mypy = "*"
+# For tests
+pytest = "*"
+pytest-cov = "*"
+codecov = "*"
+# For docs
+sphinx = "*"
+sphinx_rtd_theme = "*"
+sphinx-autobuild = "*"
+travis-sphinx = "*"
+sphinx-autodoc-typehints = "*"
+recommonmark = "*"
+
+[packages]
+pandas = "*"
+scipy = "*"
+numpy = "*"
+adopy = {editable = true, path = "."}
+
+[requires]
+python_version = "3"
