@@ -45,8 +45,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
-    'recommonmark',
     'sphinx_autodoc_typehints',
+    'sphinxcontrib.rawfiles',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -55,12 +55,7 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
-# source_suffix = '.rst'
-source_suffix = {
-    '.rst': 'restructuredtext',
-    '.md': 'markdown',
-}
+source_suffix = ['.rst']
 
 # The master toctree document.
 master_doc = 'index'
@@ -92,7 +87,8 @@ html_theme = 'sphinx_rtd_theme'
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    'logo_only': True,
+    # 'logo_only': True,
+    'analytics_id': 'UA-71789812-2',
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -110,7 +106,7 @@ html_static_path = ['_static']
 #
 # html_sidebars = {}
 
-html_logo = '_static/adopy-logo.svg'
+# html_logo = '_static/adopy-logo.svg'
 html_show_sourcelink = False
 
 
@@ -192,3 +188,6 @@ napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
 napoleon_use_ivar = False
 napoleon_use_param = False
+
+# Sphinx-contrib-rawfiles
+rawfiles = ['CNAME']
