@@ -18,7 +18,15 @@
    :alt: CodeFactor
    :target: https://www.codefactor.io/repository/github/jaeyeongyang/adopy
 
-**ADOpy** is a Python package for adaptive design optimization on experimental
+**ADOpy** is a Python implementation of adaptive design optimization [Myung2013]_ It is modular design and 
+simple structure are designed to permit easy use and integration into existing experimentation code. Specific
+features include:
+* Threshold estimation using the psi method (). This routine can be used for any 2AFC task with the independent variable on a continuous scale.
+*
+*
+*
+
+on experimental
 tasks. The adaptive design optimization (ADO) consist of three steps
 [Myung2013]_: (1) design optimization, (2) experimentation, and (3) Bayesian
 updating. Using adopy, you can easily utilize ADO for your experimentations,
