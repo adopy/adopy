@@ -18,7 +18,7 @@
    :alt: CodeFactor
    :target: https://www.codefactor.io/repository/github/jaeyeongyang/adopy
 
-**ADOpy** is a Python implementation of adaptive design optimization [Myung2013]_ Its modular design and 
+**ADOpy** is a Python implementation of adaptive design optimization [Myung2013]_. Its modular design and 
 simple structure permit easy use and integration into existing experimentation code. Specific
 features include:
 
@@ -55,7 +55,7 @@ Dependencies
 Citation
 --------
 
-If you use ADOpy, please cite this package along with a specific version. It greatly encourages  contributors to
+If you use ADOpy, please cite this package along with the specific version. It greatly encourages  contributors to
 continue supporting ADOpy.
 
    To be announced.
