@@ -19,7 +19,7 @@
    :target: https://www.codefactor.io/repository/github/jaeyeongyang/adopy
 
 **ADOpy** is a Python implementation of adaptive design optimization [Myung2013]_ Its modular design and 
-simple structure are designed to permit easy use and integration into existing experimentation code. Specific
+simple structure permit easy use and integration into existing experimentation code. Specific
 features include:
 * Threshold estimation using the psi method (). This routine can be used for any 2AFC task with the independent variable on a continuous scale.
 *
