@@ -21,11 +21,11 @@
 **ADOpy** is a Python implementation of adaptive design optimization [Myung2013]_ Its modular design and 
 simple structure permit easy use and integration into existing experimentation code. Specific
 features include:
-* Threshold estimation using the psi method (). This routine can be used for any 2AFC task with the independent variable on a continuous scale.
-*
-*
-*
 
+- Threshold estimation using the psi method (). This model can be used for any 2AFC task with the independent variable on a continuous scale.
+-
+-
+-
 on experimental
 tasks. The adaptive design optimization (ADO) consist of three steps
 [Myung2013]_: (1) design optimization, (2) experimentation, and (3) Bayesian
@@ -55,9 +55,8 @@ Dependencies
 Citation
 --------
 
-If you used ADOpy for your experiments, please cite this package on your paper,
-along with a specific version. It greatly encourages our contributors eager to
-continue supports on ADOpy.
+If you use ADOpy, please cite this package along with a specific version. It greatly encourages  contributors to
+continue supporting ADOpy.
 
    To be announced.
 
