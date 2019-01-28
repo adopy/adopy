@@ -4,7 +4,6 @@ url = "https://pypi.python.org/simple"
 verify_ssl = true
 
 [dev-packages]
-flit = "*"
 autopep8 = "*"
 flake8 = "*"
 pylint = "*"
@@ -20,12 +19,13 @@ sphinx-autobuild = "*"
 travis-sphinx = "*"
 sphinx-autodoc-typehints = "*"
 recommonmark = "*"
+sphinxcontrib-rawfiles = "*"
 
 [packages]
 pandas = "*"
 scipy = "*"
 numpy = "*"
-adopy = {editable = true, path = "."}
+adopy = {editable = true,path = "."}
 
 [requires]
 python_version = "3"

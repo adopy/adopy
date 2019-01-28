@@ -5,7 +5,6 @@ ifeq (, $(PIPENV_PATH))
 	pip install pipenv
 endif
 	pipenv install --dev --skip-lock
-	pipenv run python -m flit install
 
 test:
 	pipenv run py.test tests

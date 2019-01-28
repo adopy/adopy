@@ -14,5 +14,5 @@ script:
 
 after_success:
   - make lint
-  # - make docs-travis
+  - make docs-travis
 
