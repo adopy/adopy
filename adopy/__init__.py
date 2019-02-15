@@ -11,7 +11,8 @@ from adopy import tasks
 from adopy.base import Task, Model, Engine
 from .version import version as __version__
 
-__all__ = ['base', 'functions', 'tasks', 'Task', 'Model', 'Engine']
+__all__ = ['__version__', 'base', 'functions',
+           'tasks', 'Task', 'Model', 'Engine']
 
 # Ignore overflow and underflow floating-point errors
 np.seterr(over='ignore', under='ignore')
