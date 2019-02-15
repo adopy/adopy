@@ -184,5 +184,7 @@ $RECYCLE.BIN/
 .idea
 .vscode
 
+adopy/version.py
+
 Pipfile.lock
 
