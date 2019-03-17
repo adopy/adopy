@@ -21,17 +21,18 @@ def extract_vars_from_data(data: TYPE_DATA,
 
     Examples
     --------
-
     >>> data = {'x': [1, 2, 3], 'y': [4, 5, 6], 'z': [7, 8, 9]}
-    >>> extract_vars_from_dt(data, ['x', 'y'])
-    OrderedDict([('x', [1, 2, 3]), ('y': [4, 5, 6])])
-    >>> extract_vars_from_dt(data, ['a'])
+    >>> extract_vars_from_data(data, ['x', 'y'])
+    OrderedDict([('x', [1, 2, 3]), ('y', [4, 5, 6])])
+    >>> extract_vars_from_data(data, ['a'])
     Traceback (most recent call last):
         ...
-    NameError: name 'a' is not defined
+    RuntimeError: key 'a' is not available.
     """
     ret = OrderedDict()  # type: OrderedDict[str, Any]
     for k in keys:
+        if k not in data:
+            raise RuntimeError("key '{}' is not available.".format(k))
         if isinstance(data, pd.DataFrame):
             ret[k] = data[k].values
         else:
@@ -44,8 +45,8 @@ def expand_multiple_dims(x: np.ndarray, pre: int, post: int) -> np.ndarray:
 
     Examples
     --------
-
-    >>> x = np.ones(3, 4, 2)
+    >>> import numpy as np
+    >>> x = np.ones((3, 4, 2))
     >>> print(x.shape)
     (3, 4, 2)
     >>> y = expand_multiple_dims(x, 2, 3)

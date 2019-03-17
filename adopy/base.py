@@ -101,7 +101,7 @@ class Task(MetaInterface):
     --------
     >>> task = Task(name='Task A', designs=['d1', 'd2'], responses=[0, 1])
     >>> task
-    Task('Task A', design=['d1', 'd2'], responses=[0, 1])
+    Task('Task A', designs=['d1', 'd2'], responses=[0, 1])
     >>> task.name
     'Task A'
     >>> task.designs
@@ -148,10 +148,10 @@ class Task(MetaInterface):
         return extract_vars_from_data(data, self.designs)
 
     def __repr__(self) -> str:
-        return 'Task({name}, design={var}, responses={responses})' \
-            .format(name=repr(self.name),
-                    var=repr(self.design),
-                    responses=self.responses)
+        return 'Task({name}, designs={designs}, responses={responses})'.format(
+            name=repr(self.name),
+            designs=repr(self.designs),
+            responses=repr(self.responses))
 
 
 class Model(MetaInterface):
@@ -160,17 +160,23 @@ class Model(MetaInterface):
 
     Examples
     --------
-    >>> task = Task('Task A', 'a', ['d1', 'd2'])
-    >>> model = Model('Model X', 'x', task, ['m1', 'm2', 'm3'])
+    >>> task = Task(name='Task A', designs=['d1', 'd2'], responses=[0, 1])
+    >>> model = Model(name='Model X', task=task, params=['m1', 'm2', 'm3'])
     >>> model
-    Model('Model X', param=['m1', 'm2', 'm3'])
+    Model('Model X', params=['m1', 'm2', 'm3'])
+    >>> model.name
+    'Model X'
+    >>> model.task
+    Task('Task A', designs=['d1', 'd2'], responses=[0, 1])
+    >>> model.params
+    ['m1', 'm2', 'm3']
     """
 
     def __init__(self,
                  name: str,
-                 key: str,
                  task: Task,
                  params: Iterable[str],
+                 key: str = None,
                  func: Optional[Callable] = None,
                  constraint: Optional[Dict[str, Callable]] = None):
         super(Model, self).__init__(name, key)
@@ -226,8 +232,9 @@ class Model(MetaInterface):
         return np.ones_like(obj) / 2
 
     def __repr__(self) -> str:
-        return 'Model({name}, param={var})' \
-            .format(name=repr(self.name), var=repr(list(self.param)))
+        return 'Model({name}, params={params})'.format(
+            name=repr(self.name),
+            params=repr(self.params))
 
 
 class Engine(object):
