@@ -37,7 +37,8 @@ class TaskCRA(Task):
         super(TaskCRA, self).__init__(
             name='CRA',
             key='cra',
-            design=['prob', 'ambig', 'r_var', 'r_fix'],
+            designs=['prob', 'ambig', 'r_var', 'r_fix'],
+            responses=[0, 1]  # binary response
         )
 
 
@@ -47,7 +48,7 @@ class ModelLinear(Model):
             name='Linear',
             key='lin',
             task=TaskCRA(),
-            param=['alpha', 'beta', 'gamma'],
+            params=['alpha', 'beta', 'gamma'],
             constraint={
                 'gamma': const_positive,
             }
@@ -66,7 +67,7 @@ class ModelExp(Model):
             name='Exponential',
             key='exp',
             task=TaskCRA(),
-            param=['alpha', 'beta', 'gamma'],
+            params=['alpha', 'beta', 'gamma'],
             constraint={
                 'gamma': const_positive,
             }
@@ -92,6 +93,5 @@ class EngineCRA(Engine):
             task=TaskCRA(),
             model=model,
             designs=designs,
-            params=params,
-            y_obs=np.array([0., 1.])  # binary response
+            params=params
         )

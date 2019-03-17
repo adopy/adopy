@@ -27,8 +27,12 @@ class Task2AFC(Task):
     """Task class for a simple 2-alternative forced choice task"""
 
     def __init__(self):
-        args = dict(name='Psi', key='psi', design=['stimulus'])
-        super(Task2AFC, self).__init__(**args)
+        super(Task2AFC, self).__init__(
+            name='Psi',
+            key='psi',
+            designs=['stimulus'],
+            responses=[0, 1]  # binary responses
+        )
 
 
 class _ModelPsi(Model):
@@ -37,7 +41,7 @@ class _ModelPsi(Model):
             name=name,
             key=key,
             task=Task2AFC(),
-            param=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
+            params=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
             constraint={
                 'guess_rate': const_01,
                 'lapse_rate': const_01,
@@ -141,14 +145,12 @@ class EnginePsi(Engine):
     def __init__(self, model, designs, params):
         assert model in [ModelLogistic(), ModelWeibull(), ModelNormal()]
 
-        args = dict(
+        super(EnginePsi, self).__init__(
             task=Task2AFC(),
             model=model,
             designs=designs,
-            params=params,
-            y_obs=np.array([0., 1.]),  # Binary response
+            params=params
         )
-        super(EnginePsi, self).__init__(**args)
 
         self.idx_opt = get_random_design_index(self.grid_design)
         self.y_obs_prev = 1

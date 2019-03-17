@@ -9,7 +9,7 @@ from adopy.functions import inv_logit
 
 @pytest.fixture()
 def task():
-    return Task(name='Psi', key='psi', design=['stimulus'])
+    return Task(name='Psi', key='psi', designs=['stimulus'], responses=[0, 1])
 
 
 @pytest.fixture()
@@ -22,7 +22,7 @@ def model(task):
         name='Logistic',
         key='log',
         task=task,
-        param=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
+        params=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
         func=func_logistic)
 
 
@@ -46,8 +46,7 @@ def params():
 
 @pytest.fixture()
 def engine(task, model, designs, params):
-    return Engine(task=task, model=model,
-                  designs=designs, params=params, y_obs=[0, 1])
+    return Engine(task=task, model=model, designs=designs, params=params)
 
 
 @pytest.mark.parametrize('design_type', ['optimal', 'random'])

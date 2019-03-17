@@ -1,108 +1,165 @@
 """
 Base classes of ADOpy. These classes provide built-in methods for inherited
-classes for specific tasks or models.
+classes.
 """
-import collections
-from typing import (Any, Callable, Dict, Iterable, Optional, List, Tuple,
-                    TypeVar)
+from collections import OrderedDict
 from functools import reduce
+import re
+from typing import (
+    Any, Callable, Dict, Iterable, Optional, List, Tuple,
+    TypeVar
+)
 
 import numpy as np
 from scipy.special import logsumexp
 from scipy.stats import norm, multivariate_normal as mvnm
 import pandas as pd
 
+from adopy.types import TYPE_DATA, TYPE_ARRAY, TYPE_VECTOR, TYPE_MATRIX
 from adopy.functions import (
-    expand_multiple_dims, get_nearest_grid_index, get_random_design_index,
-    make_grid_matrix, marginalize, make_vector_shape, log_lik_bernoulli
+    extract_vars_from_data,
+    expand_multiple_dims,
+    get_nearest_grid_index,
+    get_random_design_index,
+    make_grid_matrix,
+    marginalize,
+    make_vector_shape,
+    log_lik_bernoulli
 )
 
 __all__ = ['Task', 'Model', 'Engine']
 
-DT = TypeVar('DT', Dict[str, Any], pd.DataFrame)
-
 
 class MetaInterface(object):
     """
-    Meta interface for tasks and models.
+    Meta interface for tasks and models. The class and its inherited classes
+    return the same instance when creating new instance.
 
-    Generate a singleton instance.
+    .. note::
+
+        This class is for developmental purpose, not intended to be used
+        directly by users. If you want to create new task or new model, please
+        see :mod:`adopy.base.Task` or :mod:`adopy.base.Model`.
+
+    Parameters
+    ----------
+    name : str
+        Name value of the class.
+    key : Optional[str]
+        Key value for the class. Should be an alphanumeric string that may
+        contain ``-`` (hyphen) or ``_`` (underscore).
     """
     _instance = None  # type: object
 
-    def __init__(self, name, key):  # type: (str, str) -> None
+    def __init__(self, name: str, key: Optional[str] = None):
         self._name = name  # type: str
-        self._key = key  # type: str
+        if not key:
+            new_key = re.sub(r'\s+', '_', name)
+            self._key = re.sub(r'[^a-zA-Z0-9_\-]+', '', new_key)
+        else:
+            self._key = key  # type: str
 
     def __new__(cls, *args, **kwargs):  # pylint: disable=unused-argument
+        # Create new instance if and only if there is no instance created
+        # before.
         if not isinstance(cls._instance, cls):
             cls._instance = object.__new__(cls)
         return cls._instance
 
     @property
-    def key(self) -> str:
-        """Key for the meta instance"""
-        return self._key
-
-    @property
     def name(self) -> str:
-        """Name for the meta instance"""
+        """Name value of the class."""
         return self._name
 
-    @staticmethod
-    def _extract_vars(dt: DT, keys: Iterable[str]) -> Dict[str, Any]:
-        ret = {}  # type: Dict[str, Any]
-        for k in keys:
-            ret[k] = dt[k] if isinstance(dt, dict) else dt[k].values
-        return ret
+    @property
+    def key(self) -> str:
+        """
+        Key value for the class. If no value is passed, the key will be created
+        as an alphanumeric string including ``-`` (hyphen) and ``_``
+        (underscore) from the given name. This value is used to check if the
+        instance is from the same class.
+        """
+        return self._key
 
 
 class Task(MetaInterface):
     """
-    Metaclass for tasks
+    A base class for a task in the ADOpy package.
 
-    >>> task = Task(name='Task A', key='a',
-    ...             design=['d1', 'd2'], response=[0, 1])
+    Parameters
+    ----------
+    name : str
+        aewf
+    designs : Iterable[str]
+        a
+    responses : Iterable[Any]
+        awef
+    keys : Optional[str]
+        awefw
+
+    Examples
+    --------
+    >>> task = Task(name='Task A', designs=['d1', 'd2'], responses=[0, 1])
     >>> task
-    Task('Task A', design=['d1', 'd2'])
+    Task('Task A', design=['d1', 'd2'], responses=[0, 1])
+    >>> task.name
+    'Task A'
+    >>> task.designs
+    ['d1', 'd2']
+    >>> task.responses
+    [0, 1]
     """
 
     def __init__(self,
                  name: str,
-                 key: str,
-                 design: Iterable[str]):
+                 designs: Iterable[str],
+                 responses: Iterable[Any],
+                 key: str = None,
+                 ):
         super(Task, self).__init__(name, key)
-        self._design = tuple(design)  # type: Tuple[str, ...]
+        self._designs = tuple(designs)  # type: Tuple[str, ...]
+        self._responses = np.array(responses)  # type: TYPE_VECTOR
 
     @property
-    def design(self) -> List[str]:
-        """Design labels of the task"""
-        return list(self._design)
+    def designs(self) -> List[str]:
+        """Labels for design variables of the task."""
+        return list(self._designs)
 
-    def extract_designs(self, dt: DT) -> Dict[str, Any]:
+    @property
+    def responses(self) -> List[str]:
+        """Possible values for the response variable of the task."""
+        return list(self._responses)
+
+    def extract_designs(self, data: TYPE_DATA) -> Dict[str, Any]:
         """
-        Extract design grids from given dictionary or dataframe.
+        Extract design grids from the given data.
 
         Parameters
         ----------
-        dt : Dict[str, array_like] or pd.DataFrame
+        data
+            A data object that contains key-value pairs or columns
+            corresponding to design variables.
 
         Returns
         -------
-        Dict[str, array_like]
-            An ordered dictionary of single grids for design variables.
+        ret
+            An ordered dictionary of grids for design variables.
         """
-        return self._extract_vars(dt, self.design)
+        return extract_vars_from_data(data, self.designs)
 
     def __repr__(self) -> str:
-        return 'Task({name}, design={var})' \
-            .format(name=repr(self.name), var=repr(list(self.design)))
+        return 'Task({name}, design={var}, responses={responses})' \
+            .format(name=repr(self.name),
+                    var=repr(self.design),
+                    responses=self.responses)
 
 
 class Model(MetaInterface):
     """
-    Metaclass for models
+    A base class for a model in the ADOpy package.
 
+    Examples
+    --------
     >>> task = Task('Task A', 'a', ['d1', 'd2'])
     >>> model = Model('Model X', 'x', task, ['m1', 'm2', 'm3'])
     >>> model
@@ -113,13 +170,13 @@ class Model(MetaInterface):
                  name: str,
                  key: str,
                  task: Task,
-                 param: Iterable[str],
+                 params: Iterable[str],
                  func: Optional[Callable] = None,
                  constraint: Optional[Dict[str, Callable]] = None):
         super(Model, self).__init__(name, key)
 
         self._task = task  # type: Task
-        self._param = tuple(param)  # type: Tuple[str, ...]
+        self._params = tuple(params)  # type: Tuple[str, ...]
 
         self._func = func  # type: Optional[Callable]
 
@@ -129,23 +186,40 @@ class Model(MetaInterface):
 
     @property
     def task(self) -> Task:
-        """Task instance for the model"""
+        """Task instance for the model."""
         return self._task
 
     @property
-    def param(self) -> List[str]:
-        """Parameter labels of the model"""
-        return list(self._param)
+    def params(self) -> List[str]:
+        """Labels for model parameters of the model."""
+        return list(self._params)
 
     @property
     def constraint(self) -> Dict[str, Callable]:
         """Contraints on model parameters"""
         return self._constraint
 
-    def extract_params(self, dt: DT) -> Dict[str, Any]:
-        return self._extract_vars(dt, self.param)
+    def extract_params(self, data: TYPE_DATA) -> Dict[str, Any]:
+        """
+        Extract parameter grids from the given data.
 
-    def compute(self, **kargs) -> Any:
+        Parameters
+        ----------
+        data
+            A data object that contains key-value pairs or columns
+            corresponding to design variables.
+
+        Returns
+        -------
+        ret
+            An ordered dictionary of grids for model parameters.
+        """
+        return extract_vars_from_data(data, self.params)
+
+    def compute(self, **kargs):
+        """
+        Compute the likelihood of data given model parameters.
+        """
         if self._func is not None:
             return self._func(**kargs)
         obj = reduce(lambda x, y: x * y, kargs.values())
@@ -157,16 +231,15 @@ class Model(MetaInterface):
 
 
 class Engine(object):
-    """Generic class for ADOpy classes.
+    """
+    A base class for an ADO engine to compute optimal designs.
     """
 
     def __init__(self,
-                 task,  # type: Task
-                 model,  # type: Model
-                 designs,
-                 params,
-                 y_obs,
-                 ):
+                 task: Task,
+                 model: Model,
+                 designs: Dict[str, Any],
+                 params: Dict[str, Any]):
         super(Engine, self).__init__()
 
         if model.task is not task:
@@ -175,11 +248,12 @@ class Engine(object):
         self._task = task  # type: Task
         self._model = model  # type: Model
 
-        self.grid_design = make_grid_matrix(designs)[list(task.design)]
-        self.grid_param = make_grid_matrix(params)[list(model.param)]
-        self.grid_response = pd.DataFrame(np.array(y_obs), columns=['y_obs'])
+        self.grid_design = make_grid_matrix(designs)[task.designs]
+        self.grid_param = make_grid_matrix(params)[model.params]
+        self.grid_response = pd.DataFrame(
+            np.array(task.responses), columns=['y_obs'])
 
-        self.y_obs = np.array(y_obs)
+        self.y_obs = np.array(task.responses)
         self.p_obs = self._compute_p_obs()
         self.log_lik = ll = self._compute_log_lik()
 
@@ -210,45 +284,68 @@ class Engine(object):
     # Properties
     ###########################################################################
 
-    task = property(lambda self: self._task)
-    """Task: Task of the engine"""
-
-    model = property(lambda self: self._model)
-    """Model: Model of the engine"""
-
-    num_design = property(lambda self: len(self.task.design))
-    """Number of design grid axes"""
-
-    num_param = property(lambda self: len(self.model.param))
-    """Number of parameter grid axes"""
-
-    prior = property(lambda self: np.exp(self.log_prior))
-    """Prior distributions of joint parameter space"""
-
-    post = property(lambda self: np.exp(self.log_post))
-    """Posterior distributions of joint parameter space"""
+    @property
+    def task(self) -> Task:
+        """Task instance for the engine"""
+        return self._task
 
     @property
-    def marg_post(self):
+    def model(self) -> Model:
+        """Model instance for the engine"""
+        return self._model
+
+    @property
+    def num_design(self):
+        """Number of design grid axes"""
+        return len(self.task.designs)
+
+    @property
+    def num_param(self):
+        """Number of parameter grid axes"""
+        return len(self.model.params)
+
+    @property
+    def prior(self) -> TYPE_ARRAY:
+        """Prior distributions of joint parameter space"""
+        return np.exp(self.log_prior)
+
+    @property
+    def post(self) -> TYPE_ARRAY:
+        """Posterior distributions of joint parameter space"""
+        return np.exp(self.log_post)
+
+    @property
+    def marg_post(self) -> TYPE_VECTOR:
         """Marginal posterior distributions for each parameter"""
-        return [
+        return np.array([
             marginalize(self.post, self.grid_param, i)
             for i in range(self.num_param)
-        ]
+        ])
 
     @property
-    def post_mean(self):  # type: () -> np.ndarray
-        """Estimated posterior means for each parameter"""
+    def post_mean(self) -> TYPE_VECTOR:
+        """
+        A vector of estimated means for the posterior distribution.
+        Its length is ``num_params``.
+        """
         return np.dot(self.post, self.grid_param)
 
     @property
-    def post_cov(self):  # type: () -> np.ndarray
+    def post_cov(self) -> np.ndarray:
+        """
+        An estimated covariance matrix for the posterior distribution.
+        Its shape is ``(num_grids, num_params)``.
+        """
         # shape: (N_grids, N_param)
         d = self.grid_param.values - self.post_mean
         return np.dot(d.T, d * self.post.reshape(-1, 1))
 
     @property
-    def post_sd(self):
+    def post_sd(self) -> TYPE_VECTOR:
+        """
+        A vector of estimated standard deviations for the posterior
+        distribution. Its length is ``num_params``.
+        """
         return np.sqrt(np.diag(self.post_cov))
 
     ###########################################################################
@@ -323,17 +420,9 @@ class Engine(object):
         r"""
         Choose a design with a given type.
 
-        1. :code:`optimal`: an optimal design :math:`d^*` that maximizes the
-            mutual information.
-
-            .. math::
-                \begin{align*}
-                    p(y | d) &= \sum_\theta p(y | \theta, d) p_t(\theta) \\
-                    I(Y(d); \Theta) &= H(Y(d)) - H(Y(d) | \Theta) \\
-                    d^* &= \operatorname*{argmax}_d I(Y(d); |Theta) \\
-                \end{align*}
-
-        2. :code:`random`: a design randomly chosen.
+        * ``optimal``: an optimal design :math:`d^*` that maximizes the mutual
+          information.
+        * ``random``: a design randomly chosen.
 
         Parameters
         ----------
@@ -382,7 +471,7 @@ class Engine(object):
             self.dg_memory.append((design, response))
 
         if not isinstance(design, pd.Series):
-            design = pd.Series(design, index=self.task.design)
+            design = pd.Series(design, index=self.task.designs)
 
         idx_design = get_nearest_grid_index(design, self.grid_design)
         idx_response = get_nearest_grid_index(
@@ -434,9 +523,7 @@ class Engine(object):
                     grid_type='q',
                     prior='normal',
                     append=False):
-        """
-        Update the grid space for model parameters (Dynamic Gridding method)
-        """
+        # Update the grid space for model parameters (Dynamic Gridding method)
         if rotation not in {'eig', 'svd', 'none', None}:
             raise AssertionError('Invalid argument: rotation')
 
@@ -465,7 +552,7 @@ class Engine(object):
 
         # Remove improper points not in the parameter space
         for k, f in self.model.constraint.items():
-            idx = self.model.param.index(k)
+            idx = self.model.params.index(k)
             grid_new = grid_new[list(map(f, grid_new[:, idx]))]
 
         self.grid_param = np.concatenate([self.grid_param, grid_new])\

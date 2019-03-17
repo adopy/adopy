@@ -40,17 +40,25 @@ from adopy.base import Engine, Task, Model
 from adopy.functions import inv_logit, const_positive, const_01
 
 __all__ = [
-    'TaskDDT', 'ModelExp', 'ModelHyperbolic', 'ModelGeneralizedHyperbolic',
-    'ModelQuasiHyperbolic', 'ModelDoubleExp', 'ModelCS', 'EngineDDT'
+    'TaskDDT',
+    'ModelExp',
+    'ModelHyperbolic',
+    'ModelGeneralizedHyperbolic',
+    'ModelQuasiHyperbolic',
+    'ModelDoubleExp',
+    'ModelCS',
+    'EngineDDT'
 ]
 
 
 class TaskDDT(Task):
     def __init__(self):
-        args = dict(name='DDT',
-                    key='ddt',
-                    design=['d_soon', 'd_late', 'a_soon', 'a_late'])
-        super(TaskDDT, self).__init__(**args)
+        super(TaskDDT, self).__init__(
+            name='DDT',
+            key='ddt',
+            designs=['d_soon', 'd_late', 'a_soon', 'a_late'],
+            responses=[0, 1]  # Binary response
+        )
 
 
 class ModelExp(Model):
@@ -59,7 +67,7 @@ class ModelExp(Model):
             name='Exponential',
             key='exp',
             task=TaskDDT(),
-            param=['tau', 'r'],
+            params=['tau', 'r'],
             constraint={
                 'tau': const_positive,
                 'r': const_positive,
@@ -84,7 +92,7 @@ class ModelHyperbolic(Model):
             name='Hyperbolic',
             key='hyp',
             task=TaskDDT(),
-            param=['tau', 'k'],
+            params=['tau', 'k'],
             constraint={
                 'tau': const_positive,
                 'k': const_positive,
@@ -109,7 +117,7 @@ class ModelGeneralizedHyperbolic(Model):
             name='Generalized Hyperbolic',
             key='ghyp',
             task=TaskDDT(),
-            param=['tau', 'k', 's'],
+            params=['tau', 'k', 's'],
             constraint={
                 'tau': const_positive,
                 'k': const_positive,
@@ -134,7 +142,7 @@ class ModelQuasiHyperbolic(Model):
             name='Quasi-Hyperbolic',
             key='qhyp',
             task=TaskDDT(),
-            param=['tau', 'beta', 'delta'],
+            params=['tau', 'beta', 'delta'],
             constraint={
                 'tau': const_positive,
                 'beta': const_01,
@@ -162,7 +170,7 @@ class ModelDoubleExp(Model):
             name='Double Exponential',
             key='dexp',
             task=TaskDDT(),
-            param=['tau', 'omega', 'r', 's'],
+            params=['tau', 'omega', 'r', 's'],
             constraint={
                 'tau': const_positive,
                 'omega': const_01,
@@ -190,7 +198,7 @@ class ModelCS(Model):
             name='Constant Sensitivity',
             key='cs',
             task=TaskDDT(),
-            param=['tau', 'r', 's'],
+            params=['tau', 'r', 's'],
             constraint={
                 'tau': const_positive,
                 'r': const_positive,
@@ -224,11 +232,9 @@ class EngineDDT(Engine):
             ModelCS()
         ]
 
-        args = {
-            'task': TaskDDT(),
-            'model': model,
-            'designs': designs,
-            'params': params,
-            'y_obs': np.array([0., 1.]),  # Binary response
-        }
-        super(EngineDDT, self).__init__(**args)
+        super(EngineDDT, self).__init__(
+            task=TaskDDT(),
+            model=model,
+            designs=designs,
+            params=params
+        )

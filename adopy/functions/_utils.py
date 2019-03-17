@@ -1,10 +1,49 @@
-import numpy as np
+from typing import Any, Iterable
+from collections import OrderedDict
 
-__all__ = ['expand_multiple_dims', 'make_vector_shape']
+import numpy as np
+import pandas as pd
+
+from adopy.types import TYPE_DATA
+
+__all__ = [
+    'extract_vars_from_data',
+    'expand_multiple_dims',
+    'make_vector_shape',
+]
+
+
+def extract_vars_from_data(data: TYPE_DATA,
+                           keys: Iterable[str]) -> 'OrderedDict[str, Any]':
+    """
+    Extract variables corresponding to given keys from the data. The data can
+    be a dictionary, an ``OrderedDict``, or a pandas.DataFrame.
+
+    Examples
+    --------
+
+    >>> data = {'x': [1, 2, 3], 'y': [4, 5, 6], 'z': [7, 8, 9]}
+    >>> extract_vars_from_dt(data, ['x', 'y'])
+    OrderedDict([('x', [1, 2, 3]), ('y': [4, 5, 6])])
+    >>> extract_vars_from_dt(data, ['a'])
+    Traceback (most recent call last):
+        ...
+    NameError: name 'a' is not defined
+    """
+    ret = OrderedDict()  # type: OrderedDict[str, Any]
+    for k in keys:
+        if isinstance(data, pd.DataFrame):
+            ret[k] = data[k].values
+        else:
+            ret[k] = data[k]
+    return ret
 
 
 def expand_multiple_dims(x: np.ndarray, pre: int, post: int) -> np.ndarray:
     """Expand the dimensions of a given array.
+
+    Examples
+    --------
 
     >>> x = np.ones(3, 4, 2)
     >>> print(x.shape)
