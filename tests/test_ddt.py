@@ -3,8 +3,8 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 import pytest
 
-from adopy.tasks.ddt import (ModelExp, ModelHyperbolic, ModelGeneralizedHyperbolic, ModelQuasiHyperbolic,
-                             ModelDoubleExp, ModelCS, EngineDDT)
+from adopy.tasks.ddt import (ModelExp, ModelHyp, ModelGH, ModelQH,
+                             ModelDE, ModelCOS, EngineDDT)
 
 N_GRID = 7
 
@@ -19,7 +19,8 @@ def designs():
     am_soon = [8, 12, 15, 17, 19, 22]
     am_late = [12, 15, 17, 19, 22, 23]
 
-    amounts = np.vstack([(ams, aml) for ams in am_soon for aml in am_late if ams < aml])
+    amounts = np.vstack([(ams, aml)
+                         for ams in am_soon for aml in am_late if ams < aml])
 
     # Delays
     d_soon = [0, 1, 2, 3, 5, 10, 20, 40]
@@ -33,18 +34,15 @@ def designs():
 
 @pytest.mark.parametrize('model, params', [
     (ModelExp, dict(tau=make_grid(0, 5, N_GRID), r=make_grid(0, 2, N_GRID))),
-    (ModelHyperbolic, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID))),
-    (ModelGeneralizedHyperbolic,
-     dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID), s=make_grid(-1, 1, N_GRID))),
-    (ModelQuasiHyperbolic,
-     dict(tau=make_grid(0, 5, N_GRID), beta=make_grid(0, 1, N_GRID), delta=make_grid(0, 1, N_GRID))),
-    (ModelDoubleExp,
-     dict(
-         tau=make_grid(0, 5, N_GRID),
-         omega=make_grid(0, 1, N_GRID),
-         r=make_grid(0, 2, N_GRID),
-         s=make_grid(0, 2, N_GRID))),
-    (ModelCS, dict(tau=np.linspace(0, 5, N_GRID), r=np.linspace(0, 2, N_GRID), s=np.linspace(0, 2, N_GRID))),
+    (ModelHyp, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID))),
+    (ModelGH, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID),
+                   s=make_grid(-1, 1, N_GRID))),
+    (ModelQH, dict(tau=make_grid(0, 5, N_GRID), beta=make_grid(0, 1, N_GRID),
+                   delta=make_grid(0, 1, N_GRID))),
+    (ModelDE, dict(tau=make_grid(0, 5, N_GRID), omega=make_grid(0, 1, N_GRID),
+                   r=make_grid(0, 2, N_GRID), s=make_grid(0, 2, N_GRID))),
+    (ModelCOS, dict(tau=np.linspace(0, 5, N_GRID), r=np.linspace(0, 2, N_GRID),
+                    s=np.linspace(0, 2, N_GRID))),
 ])
 def test_calculate_psi(model, designs, params):
     ddt = EngineDDT(model=model(), designs=designs, params=params)
@@ -56,23 +54,18 @@ def test_calculate_psi(model, designs, params):
 
 
 @pytest.mark.parametrize('design_type', ['optimal', 'random'])
-@pytest.mark.parametrize(
-    'model, params',
-    [
-        (ModelExp, dict(tau=make_grid(0, 5, N_GRID), r=make_grid(0, 2, N_GRID))),
-        (ModelHyperbolic, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID))),
-        (ModelGeneralizedHyperbolic,
-         dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID), s=make_grid(-1, 1, N_GRID))),
-        (ModelQuasiHyperbolic,
-         dict(tau=make_grid(0, 5, N_GRID), beta=make_grid(0, 1, N_GRID), delta=make_grid(0, 1, N_GRID))),
-        (ModelDoubleExp,
-         dict(
-             tau=make_grid(0, 5, N_GRID),
-             omega=make_grid(0, 1, N_GRID),
-             r=make_grid(0, 2, N_GRID),
-             s=make_grid(0, 2, N_GRID))),
-        (ModelCS, dict(tau=np.linspace(0, 5, N_GRID), r=np.linspace(0, 2, N_GRID), s=np.linspace(0, 2, N_GRID))),
-    ])
+@pytest.mark.parametrize('model, params', [
+    (ModelExp, dict(tau=make_grid(0, 5, N_GRID), r=make_grid(0, 2, N_GRID))),
+    (ModelHyp, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID))),
+    (ModelGH, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID),
+                   s=make_grid(-1, 1, N_GRID))),
+    (ModelQH, dict(tau=make_grid(0, 5, N_GRID), beta=make_grid(0, 1, N_GRID),
+                   delta=make_grid(0, 1, N_GRID))),
+    (ModelDE, dict(tau=make_grid(0, 5, N_GRID), omega=make_grid(0, 1, N_GRID),
+                   r=make_grid(0, 2, N_GRID), s=make_grid(0, 2, N_GRID))),
+    (ModelCOS, dict(tau=np.linspace(0, 5, N_GRID), r=np.linspace(0, 2, N_GRID),
+                    s=np.linspace(0, 2, N_GRID))),
+])
 @pytest.mark.parametrize('response', [0, 1])
 def test_classes(design_type, model, designs, params, response):
     ddt = EngineDDT(model=model(), designs=designs, params=params)

@@ -11,13 +11,12 @@ a larger-longer (LL) option (e.g., 50 dollars in two weeks)
 We provides six models that had been compared in a previous paper
 [Cavagnaro2016]_:
 
-1. Exponential
-2. Hyperbolic
-3. Generalized Hyperbolic
-4. Quasi-hyperbolic
-5. Double exponential
-6. Constant sensitivity
-
+1. Exponential model (`adopy.tasks.ddt.ModelExp`)
+2. Hyperbolic (`adopy.tasks.ddt.ModelHyp`)
+3. Generalized Hyperbolic (`adopy.tasks.ddt.ModelGH`)
+4. Quasi-hyperbolic (`adopy.tasks.ddt.ModelQH`)
+5. Double exponential (`adopy.tasks.ddt.ModelDE`)
+6. Constant sensitivity (`adopy.tasks.ddt.ModelCOS`)
 
 .. [Green2004]
    Green, L. and Myerson, J. (2004). A discounting framework for choice with
@@ -42,11 +41,11 @@ from adopy.functions import inv_logit, const_positive, const_01
 __all__ = [
     'TaskDDT',
     'ModelExp',
-    'ModelHyperbolic',
-    'ModelGeneralizedHyperbolic',
-    'ModelQuasiHyperbolic',
-    'ModelDoubleExp',
-    'ModelCS',
+    'ModelHyp',
+    'ModelGH',
+    'ModelQH',
+    'ModelDE',
+    'ModelCOS',
     'EngineDDT'
 ]
 
@@ -86,7 +85,7 @@ class ModelExp(Model):
         return p_obs
 
 
-class ModelHyperbolic(Model):
+class ModelHyp(Model):
     def __init__(self):
         args = dict(
             name='Hyperbolic',
@@ -97,7 +96,7 @@ class ModelHyperbolic(Model):
                 'tau': const_positive,
                 'k': const_positive,
             })
-        super(ModelHyperbolic, self).__init__(**args)
+        super(ModelHyp, self).__init__(**args)
 
     def compute(cls, d_soon, d_late, a_soon, a_late, tau, k):
         def discount(delay):
@@ -111,7 +110,7 @@ class ModelHyperbolic(Model):
         return p_obs
 
 
-class ModelGeneralizedHyperbolic(Model):
+class ModelGH(Model):
     def __init__(self):
         args = dict(
             name='Generalized Hyperbolic',
@@ -122,7 +121,7 @@ class ModelGeneralizedHyperbolic(Model):
                 'tau': const_positive,
                 'k': const_positive,
             })
-        super(ModelGeneralizedHyperbolic, self).__init__(**args)
+        super(ModelGH, self).__init__(**args)
 
     def compute(cls, d_soon, d_late, a_soon, a_late, tau, k, s):
         def discount(delay):
@@ -136,7 +135,7 @@ class ModelGeneralizedHyperbolic(Model):
         return p_obs
 
 
-class ModelQuasiHyperbolic(Model):
+class ModelQH(Model):
     def __init__(self):
         args = dict(
             name='Quasi-Hyperbolic',
@@ -148,7 +147,7 @@ class ModelQuasiHyperbolic(Model):
                 'beta': const_01,
                 'delta': const_01,
             })
-        super(ModelQuasiHyperbolic, self).__init__(**args)
+        super(ModelQH, self).__init__(**args)
 
     def compute(cls, d_soon, d_late, a_soon, a_late, tau, beta, delta):
         def discount(delay):
@@ -164,7 +163,7 @@ class ModelQuasiHyperbolic(Model):
         return p_obs
 
 
-class ModelDoubleExp(Model):
+class ModelDE(Model):
     def __init__(self):
         args = dict(
             name='Double Exponential',
@@ -177,7 +176,7 @@ class ModelDoubleExp(Model):
                 'r': const_positive,
                 's': const_positive,
             })
-        super(ModelDoubleExp, self).__init__(**args)
+        super(ModelDE, self).__init__(**args)
 
     def compute(cls, d_soon, d_late, a_soon, a_late, tau, omega, r, s):
         def discount(delay):
@@ -192,7 +191,7 @@ class ModelDoubleExp(Model):
         return p_obs
 
 
-class ModelCS(Model):
+class ModelCOS(Model):
     def __init__(self):
         args = dict(
             name='Constant Sensitivity',
@@ -204,7 +203,7 @@ class ModelCS(Model):
                 'r': const_positive,
                 's': const_positive,
             })
-        super(ModelCS, self).__init__(**args)
+        super(ModelCOS, self).__init__(**args)
 
     def compute(cls, d_soon, d_late, a_soon, a_late, tau, r, s):
         def discount(delay):
@@ -224,12 +223,11 @@ class EngineDDT(Engine):
     def __init__(self, model, designs, params):
         assert model in [
             ModelExp(),
-            ModelHyperbolic(),
-            ModelHyperbolic(),
-            ModelQuasiHyperbolic(),
-            ModelGeneralizedHyperbolic(),
-            ModelDoubleExp(),
-            ModelCS()
+            ModelHyp(),
+            ModelQH(),
+            ModelGH(),
+            ModelDE(),
+            ModelCOS()
         ]
 
         super(EngineDDT, self).__init__(
