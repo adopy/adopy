@@ -90,7 +90,8 @@ class ModelWeibull(_ModelPsi):
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
         r"""
-        Calculate the psychometric function using log Weibull model.
+        Calculate the psychometric function using log Weibull (Gumbel)
+        cumulative distribution function.
 
         .. math::
 
@@ -119,7 +120,8 @@ class ModelNormal(_ModelPsi):
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
         r"""
-        Calculate the psychometric function with Logistic function.
+        Calculate the psychometric function with the Normal cumulative
+        distribution function.
 
         .. math::
 
