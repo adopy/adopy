@@ -19,7 +19,8 @@ def params():
     lapse_rate = [0.05]
     threshold = np.linspace(20 * np.log10(.1), 20 * np.log10(200), 20)
     slope = np.linspace(0, 10, 11)[1:]
-    params = dict(guess_rate=guess_rate, lapse_rate=lapse_rate, threshold=threshold, slope=slope)
+    params = dict(guess_rate=guess_rate, lapse_rate=lapse_rate,
+                  threshold=threshold, slope=slope)
     return params
 
 

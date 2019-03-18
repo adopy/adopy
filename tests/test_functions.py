@@ -24,21 +24,5 @@ def test_expand_multiple_dims():
     assert expand_multiple_dims(y, 3, 2).shape == (1, 1, 1, 3, 4, 1, 1)
 
 
-def test_get_nearest_design_index():
-    pass
-
-
-def test_get_random_design_index():
-    pass
-
-
-def test_make_vector_shape():
-    pass
-
-
-def test_make_grid_design():
-    pass
-
-
 if __name__ == '__main__':
     pytest.main()
