@@ -11,9 +11,9 @@ a larger-longer (LL) option (e.g., 50 dollars in two weeks)
 We provides six models that had been compared in a previous paper
 [Cavagnaro2016]_:
 
-1. Exponential model (`adopy.tasks.ddt.ModelExp`)
+1. Exponential (`adopy.tasks.ddt.ModelExp`)
 2. Hyperbolic (`adopy.tasks.ddt.ModelHyp`)
-3. Generalized Hyperbolic (`adopy.tasks.ddt.ModelGH`)
+3. Hyperboloid (`adopy.tasks.ddt.ModelHPB`)
 4. Quasi-hyperbolic (`adopy.tasks.ddt.ModelQH`)
 5. Double exponential (`adopy.tasks.ddt.ModelDE`)
 6. Constant sensitivity (`adopy.tasks.ddt.ModelCOS`)
@@ -42,10 +42,10 @@ __all__ = [
     'TaskDDT',
     'ModelExp',
     'ModelHyp',
-    'ModelGH',
+    'ModelHPB',
+    'ModelCOS',
     'ModelQH',
     'ModelDE',
-    'ModelCOS',
     'EngineDDT'
 ]
 
@@ -110,22 +110,48 @@ class ModelHyp(Model):
         return p_obs
 
 
-class ModelGH(Model):
+class ModelHPB(Model):
     def __init__(self):
         args = dict(
-            name='Generalized Hyperbolic',
-            key='ghyp',
+            name='Hyperboloid',
+            key='hpb',
             task=TaskDDT(),
             params=['tau', 'k', 's'],
             constraint={
                 'tau': const_positive,
                 'k': const_positive,
             })
-        super(ModelGH, self).__init__(**args)
+        super(ModelHPB, self).__init__(**args)
 
     def compute(cls, d_soon, d_late, a_soon, a_late, tau, k, s):
         def discount(delay):
             return np.divide(1, np.power(1 + k * delay, s))
+
+        v_ss = a_soon * discount(d_soon)
+        v_ll = a_late * discount(d_late)
+
+        # Probability to choose an option with late and large rewards.
+        p_obs = inv_logit(tau * (v_ll - v_ss))
+        return p_obs
+
+
+class ModelCOS(Model):
+    def __init__(self):
+        args = dict(
+            name='Constant Sensitivity',
+            key='cs',
+            task=TaskDDT(),
+            params=['tau', 'r', 's'],
+            constraint={
+                'tau': const_positive,
+                'r': const_positive,
+                's': const_positive,
+            })
+        super(ModelCOS, self).__init__(**args)
+
+    def compute(cls, d_soon, d_late, a_soon, a_late, tau, r, s):
+        def discount(delay):
+            return np.exp(-np.power(delay * r, s))
 
         v_ss = a_soon * discount(d_soon)
         v_ll = a_late * discount(d_late)
@@ -191,32 +217,6 @@ class ModelDE(Model):
         return p_obs
 
 
-class ModelCOS(Model):
-    def __init__(self):
-        args = dict(
-            name='Constant Sensitivity',
-            key='cs',
-            task=TaskDDT(),
-            params=['tau', 'r', 's'],
-            constraint={
-                'tau': const_positive,
-                'r': const_positive,
-                's': const_positive,
-            })
-        super(ModelCOS, self).__init__(**args)
-
-    def compute(cls, d_soon, d_late, a_soon, a_late, tau, r, s):
-        def discount(delay):
-            return np.exp(-np.power(delay * r, s))
-
-        v_ss = a_soon * discount(d_soon)
-        v_ll = a_late * discount(d_late)
-
-        # Probability to choose an option with late and large rewards.
-        p_obs = inv_logit(tau * (v_ll - v_ss))
-        return p_obs
-
-
 class EngineDDT(Engine):
     """ADO engine for delayed discounting task"""
 
@@ -225,7 +225,7 @@ class EngineDDT(Engine):
             ModelExp(),
             ModelHyp(),
             ModelQH(),
-            ModelGH(),
+            ModelHPB(),
             ModelDE(),
             ModelCOS()
         ]

@@ -3,7 +3,7 @@ from __future__ import absolute_import, division, print_function
 import numpy as np
 import pytest
 
-from adopy.tasks.ddt import (ModelExp, ModelHyp, ModelGH, ModelQH,
+from adopy.tasks.ddt import (ModelExp, ModelHyp, ModelHPB, ModelQH,
                              ModelDE, ModelCOS, EngineDDT)
 
 N_GRID = 7
@@ -35,8 +35,8 @@ def designs():
 @pytest.mark.parametrize('model, params', [
     (ModelExp, dict(tau=make_grid(0, 5, N_GRID), r=make_grid(0, 2, N_GRID))),
     (ModelHyp, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID))),
-    (ModelGH, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID),
-                   s=make_grid(-1, 1, N_GRID))),
+    (ModelHPB, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID),
+                    s=make_grid(-1, 1, N_GRID))),
     (ModelQH, dict(tau=make_grid(0, 5, N_GRID), beta=make_grid(0, 1, N_GRID),
                    delta=make_grid(0, 1, N_GRID))),
     (ModelDE, dict(tau=make_grid(0, 5, N_GRID), omega=make_grid(0, 1, N_GRID),
@@ -57,8 +57,8 @@ def test_calculate_psi(model, designs, params):
 @pytest.mark.parametrize('model, params', [
     (ModelExp, dict(tau=make_grid(0, 5, N_GRID), r=make_grid(0, 2, N_GRID))),
     (ModelHyp, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID))),
-    (ModelGH, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID),
-                   s=make_grid(-1, 1, N_GRID))),
+    (ModelHPB, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID),
+                    s=make_grid(-1, 1, N_GRID))),
     (ModelQH, dict(tau=make_grid(0, 5, N_GRID), beta=make_grid(0, 1, N_GRID),
                    delta=make_grid(0, 1, N_GRID))),
     (ModelDE, dict(tau=make_grid(0, 5, N_GRID), omega=make_grid(0, 1, N_GRID),
