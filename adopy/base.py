@@ -15,7 +15,9 @@ from scipy.special import logsumexp
 from scipy.stats import norm, multivariate_normal as mvnm
 import pandas as pd
 
-from adopy.types import TYPE_DATA, TYPE_ARRAY, TYPE_VECTOR, TYPE_MATRIX
+from adopy.types import (
+    TYPE_NUMBER, TYPE_DATA, TYPE_ARRAY, TYPE_VECTOR, TYPE_MATRIX
+)
 from adopy.functions import (
     extract_vars_from_data,
     expand_multiple_dims,
@@ -89,13 +91,13 @@ class Task(MetaInterface):
     Parameters
     ----------
     name : str
-        aewf
+        Name of the task.
     designs : Iterable[str]
-        a
-    responses : Iterable[Any]
-        awef
-    keys : Optional[str]
-        awefw
+        Labels for design variables of the task.
+    responses : Iterable[TYPE_NUMBER]
+        Possible values for the response variable of the task.
+    key : Optional[str]
+        A hash key for the task.
 
     Examples
     --------
@@ -113,7 +115,7 @@ class Task(MetaInterface):
     def __init__(self,
                  name: str,
                  designs: Iterable[str],
-                 responses: Iterable[Any],
+                 responses: Iterable[TYPE_NUMBER],
                  key: str = None,
                  ):
         super(Task, self).__init__(name, key)
