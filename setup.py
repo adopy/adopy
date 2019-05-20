@@ -11,8 +11,8 @@ if sys.version_info[:2] < (3, 5):
     raise RuntimeError("Python version >= 3.5 required.")
 
 MAJOR = 0
-MINOR = 2
-MICRO = 1
+MINOR = 3
+MICRO = 0
 ISRELEASED = False
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 

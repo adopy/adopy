@@ -30,7 +30,8 @@ class Engine(object):
                  task: Task,
                  model: Model,
                  designs: Dict[str, Any],
-                 params: Dict[str, Any]):
+                 params: Dict[str, Any],
+                 lambda_et: Optional[float] = None):
         super(Engine, self).__init__()
 
         if model.task is not task:
@@ -60,6 +61,9 @@ class Engine(object):
         self.ent_marg = None
         self.ent_cond = None
         self.mutual_info = None
+
+        self.lambda_et = lambda_et
+        self.eligibility_trace = np.zeros(self.grid_design.shape[0])
 
         self.flag_update_mutual_info = True
 
@@ -130,6 +134,21 @@ class Engine(object):
         distribution. Its length is ``num_params``.
         """
         return np.sqrt(np.diag(self.post_cov))
+
+    @property
+    def lambda_et(self):
+        """
+        Lambda value for eligibility traces. If it equals to None, eligibility
+        traces do not affect choices of the optimal designs.
+        """
+        return self._lambda_et
+
+    @lambda_et.setter
+    def lambda_et(self, v):
+        if v and not (0 <= v <= 1):
+            raise AssertionError('Invalid value for lambda_et')
+
+        self._lambda_et = v
 
     ###########################################################################
     # Methods
@@ -223,11 +242,13 @@ class Engine(object):
 
         if kind == 'optimal':
             self._update_mutual_info()
-            return self.grid_design.iloc[np.argmax(self.mutual_info)]
+            idx_design = np.argmax(
+                self.mutual_info * (1 - self.eligibility_trace))
 
         if kind == 'random':
-            return self.grid_design.iloc[get_random_design_index(
-                self.grid_design)]
+            idx_design = get_random_design_index(self.grid_design)
+
+        return self.grid_design.iloc[idx_design]
 
         raise AssertionError('An invalid kind of design: "{}".'.format(type))
 
@@ -257,5 +278,9 @@ class Engine(object):
 
         self.log_post += self.log_lik[idx_design, :, idx_response].flatten()
         self.log_post -= logsumexp(self.log_post)
+
+        if self.lambda_et:
+            self.eligibility_trace *= self.lambda_et
+            self.eligibility_trace[idx_design] += 1
 
         self.flag_update_mutual_info = True
