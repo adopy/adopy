@@ -61,14 +61,6 @@ class Engine(object):
         self.ent_cond = None
         self.mutual_info = None
 
-        # For dynamic gridding
-        self.dg_memory = []  # [(design, response), ...]
-        self.dg_grid_params = []
-        self.dg_means = []
-        self.dg_covs = []
-        self.dg_priors = []
-        self.dg_posts = []
-
         self.flag_update_mutual_info = True
 
     ###########################################################################
@@ -239,7 +231,7 @@ class Engine(object):
 
         raise AssertionError('An invalid kind of design: "{}".'.format(type))
 
-    def update(self, design, response, store=True):
+    def update(self, design, response):
         r"""
         Update the posterior :math:`p(\theta | y_\text{obs}(t), d^*)` for
         all discretized values of :math:`\theta`.
@@ -255,12 +247,7 @@ class Engine(object):
             Design vector for given response
         response
             Any kinds of observed response
-        store : bool
-            Whether to store observations of (design, response).
         """
-        if store:
-            self.dg_memory.append((design, response))
-
         if not isinstance(design, pd.Series):
             design = pd.Series(design, index=self.task.designs)
 
