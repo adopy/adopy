@@ -81,7 +81,7 @@ class ModelExp(Model):
         v_ll = a_late * discount(d_late)
 
         # Probability to choose an option with late and large rewards.
-        p_obs = inv_logit(tau * (v_ll - v_ss))
+        p_obs = inv_logit(tau * (v_ss - v_ll))
         return p_obs
 
 
@@ -106,7 +106,7 @@ class ModelHyp(Model):
         v_ll = a_late * discount(d_late)
 
         # Probability to choose an option with late and large rewards.
-        p_obs = inv_logit(tau * (v_ll - v_ss))
+        p_obs = inv_logit(tau * (v_ss - v_ll))
         return p_obs
 
 
@@ -131,7 +131,7 @@ class ModelHPB(Model):
         v_ll = a_late * discount(d_late)
 
         # Probability to choose an option with late and large rewards.
-        p_obs = inv_logit(tau * (v_ll - v_ss))
+        p_obs = inv_logit(tau * (v_ss - v_ll))
         return p_obs
 
 
@@ -157,7 +157,7 @@ class ModelCOS(Model):
         v_ll = a_late * discount(d_late)
 
         # Probability to choose an option with late and large rewards.
-        p_obs = inv_logit(tau * (v_ll - v_ss))
+        p_obs = inv_logit(tau * (v_ss - v_ll))
         return p_obs
 
 
@@ -185,7 +185,7 @@ class ModelQH(Model):
         v_ll = a_late * discount(d_late)
 
         # Probability to choose an option with late and large rewards.
-        p_obs = inv_logit(tau * (v_ll - v_ss))
+        p_obs = inv_logit(tau * (v_ss - v_ll))
         return p_obs
 
 
@@ -213,7 +213,7 @@ class ModelDE(Model):
         v_ll = a_late * discount(d_late)
 
         # Probability to choose an option with late and large rewards.
-        p_obs = inv_logit(tau * (v_ll - v_ss))
+        p_obs = inv_logit(tau * (v_ss - v_ll))
         return p_obs
 
 
