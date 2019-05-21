@@ -218,7 +218,7 @@ class EnginePsi(Engine):
 
         return ret
 
-    def update(self, design, response, store=True):
+    def update(self, design, response):
         r"""
         Update the posterior distribution for model parameters.
 
@@ -234,11 +234,8 @@ class EnginePsi(Engine):
             Design vector for given response
         response
             Any kinds of observed response
-        store : bool
-            Whether to store observations of (design, response).
-
         """
-        super(EnginePsi, self).update(design, response, store)
+        super(EnginePsi, self).update(design, response)
 
         # Store the previous response for staircase
         self.y_obs_prev = response
