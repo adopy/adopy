@@ -9,7 +9,7 @@ from adopy.functions import inv_logit
 
 @pytest.fixture()
 def task():
-    return Task(name='Psi', key='psi', designs=['stimulus'], responses=[0, 1])
+    return Task(name='Psi', designs=['stimulus'], responses=[0, 1])
 
 
 @pytest.fixture()
@@ -20,7 +20,6 @@ def model(task):
 
     return Model(
         name='Logistic',
-        key='log',
         task=task,
         params=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
         func=func_logistic)

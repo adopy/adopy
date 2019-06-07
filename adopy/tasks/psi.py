@@ -29,17 +29,15 @@ class Task2AFC(Task):
     def __init__(self):
         super(Task2AFC, self).__init__(
             name='Psi',
-            key='psi',
             designs=['stimulus'],
             responses=[0, 1]  # binary responses
         )
 
 
 class _ModelPsi(Model):
-    def __init__(self, name, key):
+    def __init__(self, name):
         args = dict(
             name=name,
-            key=key,
             task=Task2AFC(),
             params=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
             constraint={
@@ -56,7 +54,7 @@ class _ModelPsi(Model):
 
 class ModelLogistic(_ModelPsi):
     def __init__(self):
-        super(ModelLogistic, self).__init__(name='Logistic', key='logi')
+        super(ModelLogistic, self).__init__(name='Logistic')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
         r"""
@@ -86,7 +84,7 @@ class ModelLogistic(_ModelPsi):
 
 class ModelWeibull(_ModelPsi):
     def __init__(self):
-        super(ModelWeibull, self).__init__(name='Weibull', key='weib')
+        super(ModelWeibull, self).__init__(name='Weibull')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
         r"""
@@ -116,7 +114,7 @@ class ModelWeibull(_ModelPsi):
 
 class ModelNormal(_ModelPsi):
     def __init__(self):
-        super(ModelNormal, self).__init__(name='Normal', key='norm')
+        super(ModelNormal, self).__init__(name='Normal')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
         r"""

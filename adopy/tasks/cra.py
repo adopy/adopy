@@ -36,7 +36,6 @@ class TaskCRA(Task):
     def __init__(self):
         super(TaskCRA, self).__init__(
             name='CRA',
-            key='cra',
             designs=['prob', 'ambig', 'r_var', 'r_fix'],
             responses=[0, 1]  # binary response
         )
@@ -46,7 +45,6 @@ class ModelLinear(Model):
     def __init__(self):
         super(ModelLinear, self).__init__(
             name='Linear',
-            key='lin',
             task=TaskCRA(),
             params=['alpha', 'beta', 'gamma'],
             constraint={
@@ -65,7 +63,6 @@ class ModelExp(Model):
     def __init__(self):
         super(ModelExp, self).__init__(
             name='Exponential',
-            key='exp',
             task=TaskCRA(),
             params=['alpha', 'beta', 'gamma'],
             constraint={

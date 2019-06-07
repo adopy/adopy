@@ -54,7 +54,6 @@ class TaskDDT(Task):
     def __init__(self):
         super(TaskDDT, self).__init__(
             name='DDT',
-            key='ddt',
             designs=['d_soon', 'd_late', 'a_soon', 'a_late'],
             responses=[0, 1]  # Binary response
         )
@@ -64,7 +63,6 @@ class ModelExp(Model):
     def __init__(self):
         args = dict(
             name='Exponential',
-            key='exp',
             task=TaskDDT(),
             params=['tau', 'r'],
             constraint={
@@ -89,7 +87,6 @@ class ModelHyp(Model):
     def __init__(self):
         args = dict(
             name='Hyperbolic',
-            key='hyp',
             task=TaskDDT(),
             params=['tau', 'k'],
             constraint={
@@ -114,7 +111,6 @@ class ModelHPB(Model):
     def __init__(self):
         args = dict(
             name='Hyperboloid',
-            key='hpb',
             task=TaskDDT(),
             params=['tau', 'k', 's'],
             constraint={
@@ -139,7 +135,6 @@ class ModelCOS(Model):
     def __init__(self):
         args = dict(
             name='Constant Sensitivity',
-            key='cs',
             task=TaskDDT(),
             params=['tau', 'r', 's'],
             constraint={
@@ -165,7 +160,6 @@ class ModelQH(Model):
     def __init__(self):
         args = dict(
             name='Quasi-Hyperbolic',
-            key='qhyp',
             task=TaskDDT(),
             params=['tau', 'beta', 'delta'],
             constraint={
@@ -193,7 +187,6 @@ class ModelDE(Model):
     def __init__(self):
         args = dict(
             name='Double Exponential',
-            key='dexp',
             task=TaskDDT(),
             params=['tau', 'omega', 'r', 's'],
             constraint={

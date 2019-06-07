@@ -31,13 +31,13 @@ class Model(MetaInterface):
     """
 
     def __init__(self,
-                 name: str,
                  task: Task,
                  params: Iterable[str],
-                 key: str = None,
                  func: Optional[Callable] = None,
-                 constraint: Optional[Dict[str, Callable]] = None):
-        super(Model, self).__init__(name, key)
+                 constraint: Optional[Dict[str, Callable]] = None,
+                 name: Optional[str] = None,
+                 ):
+        super(Model, self).__init__(name)
 
         self._task = task  # type: Task
         self._params = tuple(params)  # type: Tuple[str, ...]

@@ -1,9 +1,3 @@
-import re
-from typing import (
-    Any, Callable, Dict, Iterable, Optional, List, Tuple,
-    TypeVar
-)
-
 __all__ = ['MetaInterface']
 
 
@@ -20,21 +14,13 @@ class MetaInterface(object):
 
     Parameters
     ----------
-    name : str
+    name
         Name value of the class.
-    key : Optional[str]
-        Key value for the class. Should be an alphanumeric string that may
-        contain ``-`` (hyphen) or ``_`` (underscore).
     """
     _instance = None  # type: object
 
-    def __init__(self, name: str, key: Optional[str] = None):
+    def __init__(self, name: str):
         self._name = name  # type: str
-        if not key:
-            new_key = re.sub(r'\s+', '_', name)
-            self._key = re.sub(r'[^a-zA-Z0-9_\-]+', '', new_key)
-        else:
-            self._key = key  # type: str
 
     def __new__(cls, *args, **kwargs):  # pylint: disable=unused-argument
         # Create new instance if and only if there is no instance created
@@ -47,13 +33,3 @@ class MetaInterface(object):
     def name(self) -> str:
         """Name value of the class."""
         return self._name
-
-    @property
-    def key(self) -> str:
-        """
-        Key value for the class. If no value is passed, the key will be created
-        as an alphanumeric string including ``-`` (hyphen) and ``_``
-        (underscore) from the given name. This value is used to check if the
-        instance is from the same class.
-        """
-        return self._key

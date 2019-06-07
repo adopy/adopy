@@ -16,14 +16,12 @@ class Task(MetaInterface):
 
     Parameters
     ----------
-    name : str
-        Name of the task.
     designs : Iterable[str]
         Labels for design variables of the task.
     responses : Iterable[TYPE_NUMBER]
         Possible values for the response variable of the task.
-    key : Optional[str]
-        A hash key for the task.
+    name : Optional[str]
+        Name of the task.
 
     Examples
     --------
@@ -39,12 +37,11 @@ class Task(MetaInterface):
     """
 
     def __init__(self,
-                 name: str,
                  designs: Iterable[str],
                  responses: Iterable[TYPE_NUMBER],
-                 key: str = None,
+                 name: Optional[str] = None,
                  ):
-        super(Task, self).__init__(name, key)
+        super(Task, self).__init__(name)
         self._designs = tuple(designs)  # type: Tuple[str, ...]
         self._responses = np.array(responses)  # type: TYPE_VECTOR
 
