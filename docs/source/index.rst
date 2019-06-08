@@ -47,7 +47,7 @@ with a following style (pseudo-code):
 Dependencies
 ------------
 
-- Python 3.5+ (no support for Python 2)
+- Python 3.6 or above
 - `NumPy <http://www.numpy.org/>`_
 - `SciPy <https://www.scipy.org/>`_
 - `Pandas <https://pandas.pydata.org/>`_
