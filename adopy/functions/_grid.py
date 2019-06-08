@@ -17,7 +17,7 @@ GV = TypeVar('GV', Iterable, np.ndarray)
 def marginalize(post, grid_param, axis):
     """Return marginal distributions from grid-shaped posteriors"""
     mp = {}
-    for value, p in zip(grid_param[:, axis], post):
+    for value, p in zip(np.array(grid_param)[:, axis], post):
         k = value if np.isscalar(value) else tuple(value)
         mp[k] = mp.get(k, 0) + p
     return mp
