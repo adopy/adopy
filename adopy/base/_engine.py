@@ -39,33 +39,14 @@ class Engine(object):
 
         self._task = task  # type: Task
         self._model = model  # type: Model
+        self.lambda_et = lambda_et
 
         self.grid_design = make_grid_matrix(designs)[task.designs]
         self.grid_param = make_grid_matrix(params)[model.params]
         self.grid_response = pd.DataFrame(
             np.array(task.responses), columns=['y_obs'])
 
-        self.y_obs = np.array(task.responses)
-        self.p_obs = self._compute_p_obs()
-        self.log_lik = ll = self._compute_log_lik()
-
-        lp = np.ones(self.grid_param.shape[0])
-        self.log_prior = lp - logsumexp(lp)
-        self.log_post = self.log_prior.copy()
-
-        lp = expand_multiple_dims(self.log_post, 1, 1)
-        mll = logsumexp(self.log_lik + lp, axis=1)
-        self.marg_log_lik = mll  # shape (num_design, num_response)
-
-        self.ent_obs = -np.multiply(np.exp(ll), ll).sum(-1)
-        self.ent_marg = None
-        self.ent_cond = None
-        self.mutual_info = None
-
-        self.lambda_et = lambda_et
-        self.eligibility_trace = np.zeros(self.grid_design.shape[0])
-
-        self.flag_update_mutual_info = True
+        self.reset()
 
     ###########################################################################
     # Properties
@@ -102,12 +83,12 @@ class Engine(object):
         return np.exp(self.log_post)
 
     @property
-    def marg_post(self) -> TYPE_VECTOR:
+    def marg_post(self) -> Dict[str, TYPE_VECTOR]:
         """Marginal posterior distributions for each parameter"""
-        return np.array([
-            marginalize(self.post, self.grid_param, i)
-            for i in range(self.num_param)
-        ])
+        return {
+            param: marginalize(self.post, self.grid_param, i)
+            for i, param in enumerate(self.model.params)
+        }
 
     @property
     def post_mean(self) -> TYPE_VECTOR:
@@ -154,14 +135,30 @@ class Engine(object):
     # Methods
     ###########################################################################
 
-    def _initialize(self):
+    def reset(self):
+        """
+        Reset the engine as in the initial state.
+        """
+        self.y_obs = np.array(self.task.responses)
         self.p_obs = self._compute_p_obs()
         self.log_lik = ll = self._compute_log_lik()
-        self.ent_obs = -np.multiply(np.exp(ll), ll).sum(-1)
 
         lp = np.ones(self.grid_param.shape[0])
         self.log_prior = lp - logsumexp(lp)
         self.log_post = self.log_prior.copy()
+
+        lp = expand_multiple_dims(self.log_post, 1, 1)
+        mll = logsumexp(self.log_lik + lp, axis=1)
+        self.marg_log_lik = mll  # shape (num_design, num_response)
+
+        self.ent_obs = -np.multiply(np.exp(ll), ll).sum(-1)
+        self.ent_marg = None
+        self.ent_cond = None
+        self.mutual_info = None
+
+        self.eligibility_trace = np.zeros(self.grid_design.shape[0])
+
+        self.flag_update_mutual_info = True
 
     def _compute_p_obs(self):
         """Compute the probability of getting observed response."""
