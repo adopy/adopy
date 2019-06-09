@@ -64,14 +64,14 @@ class ModelExp(Model):
         args = dict(
             name='Exponential',
             task=TaskDDT(),
-            params=['tau', 'r'],
+            params=['r', 'tau'],
             constraint={
-                'tau': const_positive,
                 'r': const_positive,
+                'tau': const_positive,
             })
         super(ModelExp, self).__init__(**args)
 
-    def compute(cls, d_soon, d_late, a_soon, a_late, tau, r):
+    def compute(cls, d_soon, d_late, a_soon, a_late, r, tau):
         def discount(delay):
             return np.exp(-delay * r)
 
@@ -88,14 +88,14 @@ class ModelHyp(Model):
         args = dict(
             name='Hyperbolic',
             task=TaskDDT(),
-            params=['tau', 'k'],
+            params=['k', 'tau'],
             constraint={
-                'tau': const_positive,
                 'k': const_positive,
+                'tau': const_positive,
             })
         super(ModelHyp, self).__init__(**args)
 
-    def compute(cls, d_soon, d_late, a_soon, a_late, tau, k):
+    def compute(cls, d_soon, d_late, a_soon, a_late, k, tau):
         def discount(delay):
             return np.divide(1, 1 + k * delay)
 
@@ -112,14 +112,14 @@ class ModelHPB(Model):
         args = dict(
             name='Hyperboloid',
             task=TaskDDT(),
-            params=['tau', 'k', 's'],
+            params=['k', 's', 'tau'],
             constraint={
-                'tau': const_positive,
                 'k': const_positive,
+                'tau': const_positive,
             })
         super(ModelHPB, self).__init__(**args)
 
-    def compute(cls, d_soon, d_late, a_soon, a_late, tau, k, s):
+    def compute(cls, d_soon, d_late, a_soon, a_late, k, s, tau):
         def discount(delay):
             return np.divide(1, np.power(1 + k * delay, s))
 
@@ -136,15 +136,15 @@ class ModelCOS(Model):
         args = dict(
             name='Constant Sensitivity',
             task=TaskDDT(),
-            params=['tau', 'r', 's'],
+            params=['r', 's', 'tau'],
             constraint={
-                'tau': const_positive,
                 'r': const_positive,
                 's': const_positive,
+                'tau': const_positive,
             })
         super(ModelCOS, self).__init__(**args)
 
-    def compute(cls, d_soon, d_late, a_soon, a_late, tau, r, s):
+    def compute(cls, d_soon, d_late, a_soon, a_late, r, s, tau):
         def discount(delay):
             return np.exp(-np.power(delay * r, s))
 
@@ -161,15 +161,15 @@ class ModelQH(Model):
         args = dict(
             name='Quasi-Hyperbolic',
             task=TaskDDT(),
-            params=['tau', 'beta', 'delta'],
+            params=['beta', 'delta', 'tau'],
             constraint={
-                'tau': const_positive,
                 'beta': const_01,
                 'delta': const_01,
+                'tau': const_positive,
             })
         super(ModelQH, self).__init__(**args)
 
-    def compute(cls, d_soon, d_late, a_soon, a_late, tau, beta, delta):
+    def compute(cls, d_soon, d_late, a_soon, a_late, beta, delta, tau):
         def discount(delay):
             return np.where(delay == 0,
                             np.ones_like(beta * delta * delay),
@@ -188,16 +188,16 @@ class ModelDE(Model):
         args = dict(
             name='Double Exponential',
             task=TaskDDT(),
-            params=['tau', 'omega', 'r', 's'],
+            params=['omega', 'r', 's', 'tau'],
             constraint={
-                'tau': const_positive,
                 'omega': const_01,
                 'r': const_positive,
                 's': const_positive,
+                'tau': const_positive,
             })
         super(ModelDE, self).__init__(**args)
 
-    def compute(cls, d_soon, d_late, a_soon, a_late, tau, omega, r, s):
+    def compute(cls, d_soon, d_late, a_soon, a_late, omega, r, s, tau):
         def discount(delay):
             return omega * np.exp(-delay * r) + \
                 (1 - omega) * np.exp(-delay * s)
