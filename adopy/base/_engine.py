@@ -35,7 +35,7 @@ class Engine(object):
         super(Engine, self).__init__()
 
         if model.task != task:
-            raise AssertionError('Given task and model are not matched.')
+            raise ValueError('Given task and model are not matched.')
 
         self._task = task  # type: Task
         self._model = model  # type: Model
@@ -127,7 +127,7 @@ class Engine(object):
     @lambda_et.setter
     def lambda_et(self, v):
         if v and not (0 <= v <= 1):
-            raise AssertionError('Invalid value for lambda_et')
+            raise ValueError('Invalid value for lambda_et')
 
         self._lambda_et = v
 
@@ -233,21 +233,20 @@ class Engine(object):
         design : array_like
             A chosen design vector
         """
-        if kind not in {'optimal', 'random'}:
-            raise AssertionError(
-                'The argument kind should be "optimal" or "random".')
 
         if kind == 'optimal':
             self._update_mutual_info()
             idx_design = np.argmax(
                 self.mutual_info * (1 - self.eligibility_trace))
 
-        if kind == 'random':
+        elif kind == 'random':
             idx_design = get_random_design_index(self.grid_design)
 
-        return self.grid_design.iloc[idx_design]
+        else:
+            raise ValueError(
+                'The argument kind should be "optimal" or "random".')
 
-        raise AssertionError('An invalid kind of design: "{}".'.format(type))
+        return self.grid_design.iloc[idx_design]
 
     def update(self, design, response):
         r"""
