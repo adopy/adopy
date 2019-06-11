@@ -71,7 +71,7 @@ class ModelExp(Model):
             })
         super(ModelExp, self).__init__(**args)
 
-    def compute(cls, d_soon, d_late, a_soon, a_late, r, tau):
+    def compute(self, d_soon, d_late, a_soon, a_late, r, tau):
         def discount(delay):
             return np.exp(-delay * r)
 
@@ -95,7 +95,7 @@ class ModelHyp(Model):
             })
         super(ModelHyp, self).__init__(**args)
 
-    def compute(cls, d_soon, d_late, a_soon, a_late, k, tau):
+    def compute(self, d_soon, d_late, a_soon, a_late, k, tau):
         def discount(delay):
             return np.divide(1, 1 + k * delay)
 
@@ -119,7 +119,7 @@ class ModelHPB(Model):
             })
         super(ModelHPB, self).__init__(**args)
 
-    def compute(cls, d_soon, d_late, a_soon, a_late, k, s, tau):
+    def compute(self, d_soon, d_late, a_soon, a_late, k, s, tau):
         def discount(delay):
             return np.divide(1, np.power(1 + k * delay, s))
 
@@ -144,7 +144,7 @@ class ModelCOS(Model):
             })
         super(ModelCOS, self).__init__(**args)
 
-    def compute(cls, d_soon, d_late, a_soon, a_late, r, s, tau):
+    def compute(self, d_soon, d_late, a_soon, a_late, r, s, tau):
         def discount(delay):
             return np.exp(-np.power(delay * r, s))
 
@@ -169,7 +169,7 @@ class ModelQH(Model):
             })
         super(ModelQH, self).__init__(**args)
 
-    def compute(cls, d_soon, d_late, a_soon, a_late, beta, delta, tau):
+    def compute(self, d_soon, d_late, a_soon, a_late, beta, delta, tau):
         def discount(delay):
             return np.where(delay == 0,
                             np.ones_like(beta * delta * delay),
@@ -197,7 +197,7 @@ class ModelDE(Model):
             })
         super(ModelDE, self).__init__(**args)
 
-    def compute(cls, d_soon, d_late, a_soon, a_late, omega, r, s, tau):
+    def compute(self, d_soon, d_late, a_soon, a_late, omega, r, s, tau):
         def discount(delay):
             return omega * np.exp(-delay * r) + \
                 (1 - omega) * np.exp(-delay * s)

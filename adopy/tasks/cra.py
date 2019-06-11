@@ -52,7 +52,7 @@ class ModelLinear(Model):
             }
         )
 
-    def compute(cls, prob, ambig, r_var, r_fix, alpha, beta, gamma):
+    def compute(self, prob, ambig, r_var, r_fix, alpha, beta, gamma):
         sv_var = np.power(r_var, alpha)
         sv_var = (prob - beta * np.divide(ambig, 2)) * sv_var
         sv_fix = .5 * np.power(r_fix, alpha)
@@ -70,7 +70,7 @@ class ModelExp(Model):
             }
         )
 
-    def compute(cls, prob, ambig, r_var, r_fix, alpha, beta, gamma):
+    def compute(self, prob, ambig, r_var, r_fix, alpha, beta, gamma):
         sv_var = np.power(r_var, alpha)
         sv_var = np.power(prob, 1 + beta * ambig) * sv_var
         sv_fix = .5 * np.power(r_fix, alpha)
