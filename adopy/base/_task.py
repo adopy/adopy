@@ -2,7 +2,7 @@ from typing import Any, Callable, Dict, Iterable, Optional, List, Tuple
 
 import numpy as np
 
-from adopy.types import TYPE_NUMBER, TYPE_DATA, TYPE_VECTOR
+from adopy.types import number_like, data_like, vector_like
 from adopy.functions import extract_vars_from_data
 
 from ._meta import MetaInterface
@@ -17,8 +17,7 @@ class Task(MetaInterface):
     Parameters
     ----------
     designs : Iterable[str]
-        Labels for design variables of the task.
-    responses : Iterable[TYPE_NUMBER]
+    responses : Iterable[number_like]
         Possible values for the response variable of the task.
     name : Optional[str]
         Name of the task.
@@ -38,12 +37,12 @@ class Task(MetaInterface):
 
     def __init__(self,
                  designs: Iterable[str],
-                 responses: Iterable[TYPE_NUMBER],
+                 responses: Iterable[number_like],
                  name: Optional[str] = None,
                  ):
         super(Task, self).__init__(name)
         self._designs = tuple(designs)  # type: Tuple[str, ...]
-        self._responses = np.array(responses)  # type: TYPE_VECTOR
+        self._responses = np.array(responses)  # type: vector_like
 
     @property
     def designs(self) -> List[str]:
@@ -55,7 +54,7 @@ class Task(MetaInterface):
         """Possible values for the response variable of the task."""
         return list(self._responses)
 
-    def extract_designs(self, data: TYPE_DATA) -> Dict[str, Any]:
+    def extract_designs(self, data: data_like) -> Dict[str, Any]:
         """
         Extract design grids from the given data.
 

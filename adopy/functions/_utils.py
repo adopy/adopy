@@ -4,7 +4,7 @@ from collections import OrderedDict
 import numpy as np
 import pandas as pd
 
-from adopy.types import TYPE_DATA
+from adopy.types import data_like
 
 __all__ = [
     'extract_vars_from_data',
@@ -13,7 +13,7 @@ __all__ = [
 ]
 
 
-def extract_vars_from_data(data: TYPE_DATA,
+def extract_vars_from_data(data: data_like,
                            keys: Iterable[str]) -> 'OrderedDict[str, Any]':
     """
     Extract variables corresponding to given keys from the data. The data can

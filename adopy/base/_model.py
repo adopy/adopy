@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, Iterable, Optional, List, Tuple
 
 import numpy as np
 
-from adopy.types import TYPE_DATA
+from adopy.types import data_like
 from adopy.functions import extract_vars_from_data
 
 from ._meta import MetaInterface
@@ -63,7 +63,7 @@ class Model(MetaInterface):
         """Contraints on model parameters"""
         return self._constraint
 
-    def extract_params(self, data: TYPE_DATA) -> Dict[str, Any]:
+    def extract_params(self, data: data_like) -> Dict[str, Any]:
         """
         Extract parameter grids from the given data.
 

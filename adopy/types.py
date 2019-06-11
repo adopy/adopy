@@ -7,36 +7,36 @@ from typing import (
 import numpy as np
 import pandas as pd
 
-TYPE_DATA = TypeVar(
-    'DATA',
+data_like = TypeVar(
+    'data_like',
     Dict[str, Any],
     'OrderedDict[str, Any]',
     pd.DataFrame
 )
 
-TYPE_NUMBER = TypeVar(
-    'Number_like',
+number_like = TypeVar(
+    'number_like',
     float,
     int,
     np.float,
     np.int
 )
 
-TYPE_ARRAY = TypeVar(
+array_like = TypeVar(
     'array_like',
-    TYPE_NUMBER,
+    number_like,
     Iterable[Any],
     np.ndarray
 )
 
-TYPE_VECTOR = TypeVar(
+vector_like = TypeVar(
     'vector_like',
-    Iterable[TYPE_NUMBER],
+    Iterable[number_like],
     np.ndarray
 )
 
-TYPE_MATRIX = TypeVar(
+matrix_like = TypeVar(
     'matrix_like',
-    Iterable[Iterable[TYPE_NUMBER]],
+    Iterable[Iterable[number_like]],
     np.ndarray
 )

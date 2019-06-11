@@ -13,7 +13,7 @@ from adopy.functions import (
     make_vector_shape,
     log_lik_bernoulli
 )
-from adopy.types import TYPE_ARRAY, TYPE_VECTOR, TYPE_MATRIX
+from adopy.types import array_like, vector_like, matrix_like
 
 from ._task import Task
 from ._model import Model
@@ -34,7 +34,7 @@ class Engine(object):
                  lambda_et: Optional[float] = None):
         super(Engine, self).__init__()
 
-        if model.task is not task:
+        if model.task != task:
             raise AssertionError('Given task and model are not matched.')
 
         self._task = task  # type: Task
@@ -73,17 +73,17 @@ class Engine(object):
         return len(self.model.params)
 
     @property
-    def prior(self) -> TYPE_ARRAY:
+    def prior(self) -> array_like:
         """Prior distributions of joint parameter space"""
         return np.exp(self.log_prior)
 
     @property
-    def post(self) -> TYPE_ARRAY:
+    def post(self) -> array_like:
         """Posterior distributions of joint parameter space"""
         return np.exp(self.log_post)
 
     @property
-    def marg_post(self) -> Dict[str, TYPE_VECTOR]:
+    def marg_post(self) -> Dict[str, vector_like]:
         """Marginal posterior distributions for each parameter"""
         return {
             param: marginalize(self.post, self.grid_param, i)
@@ -91,7 +91,7 @@ class Engine(object):
         }
 
     @property
-    def post_mean(self) -> TYPE_VECTOR:
+    def post_mean(self) -> vector_like:
         """
         A vector of estimated means for the posterior distribution.
         Its length is ``num_params``.
@@ -109,7 +109,7 @@ class Engine(object):
         return np.dot(d.T, d * self.post.reshape(-1, 1))
 
     @property
-    def post_sd(self) -> TYPE_VECTOR:
+    def post_sd(self) -> vector_like:
         """
         A vector of estimated standard deviations for the posterior
         distribution. Its length is ``num_params``.
