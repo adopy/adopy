@@ -214,13 +214,13 @@ class EngineDDT(Engine):
     """ADO engine for delayed discounting task"""
 
     def __init__(self, model, designs, params):
-        assert model in [
-            ModelExp(),
-            ModelHyp(),
-            ModelQH(),
-            ModelHPB(),
-            ModelDE(),
-            ModelCOS()
+        assert type(model) in [
+            type(ModelExp()),
+            type(ModelHyp()),
+            type(ModelQH()),
+            type(ModelHPB()),
+            type(ModelDE()),
+            type(ModelCOS()),
         ]
 
         super(EngineDDT, self).__init__(

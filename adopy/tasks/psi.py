@@ -143,7 +143,11 @@ class ModelNormal(_ModelPsi):
 
 class EnginePsi(Engine):
     def __init__(self, model, designs, params):
-        assert model in [ModelLogistic(), ModelWeibull(), ModelNormal()]
+        assert type(model) in [
+            type(ModelLogistic()),
+            type(ModelWeibull()),
+            type(ModelNormal()),
+        ]
 
         super(EnginePsi, self).__init__(
             task=Task2AFC(),

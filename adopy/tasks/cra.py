@@ -81,10 +81,10 @@ class EngineCRA(Engine):
     """ADO implementations for the choice under risk and ambiguity task"""
 
     def __init__(self, model, designs, params):
-        if model not in [ModelLinear(), ModelExp()]:
-            raise AssertionError(
-                'Model should be adopy.tasks.cra.ModelLinear or '
-                'adopy.tasks.cra.ModelExp.')
+        assert type(model) in [
+            type(ModelLinear()),
+            type(ModelExp()),
+        ]
 
         super(EngineCRA, self).__init__(
             task=TaskCRA(),
