@@ -5,18 +5,19 @@ import numpy as np
 from adopy.types import number_like, data_like, vector_like
 from adopy.functions import extract_vars_from_data
 
-from ._meta import MetaInterface
-
 __all__ = ['Task']
 
 
-class Task(MetaInterface):
+class Task(object):
     """
-    A base class for a task in the ADOpy package.
+    A task object stores information for a specific experimental task,
+    including labels of design variables (``designs``), possible responses
+    (``responses``) and its name (``name``).
 
     Parameters
     ----------
     designs : Iterable[str]
+        Labels of design variables in the task.
     responses : Iterable[number_like]
         Possible values for the response variable of the task.
     name : Optional[str]
@@ -40,9 +41,16 @@ class Task(MetaInterface):
                  responses: Iterable[number_like],
                  name: Optional[str] = None,
                  ):
-        super(Task, self).__init__(name)
+        self._name = name
         self._designs = tuple(designs)  # type: Tuple[str, ...]
         self._responses = np.array(responses)  # type: vector_like
+
+    @property
+    def name(self) -> Optional[str]:
+        """
+        Name of the task. If it has no name, returns ``None``.
+        """
+        return self._name
 
     @property
     def designs(self) -> List[str]:
@@ -72,7 +80,16 @@ class Task(MetaInterface):
         return extract_vars_from_data(data, self.designs)
 
     def __repr__(self) -> str:
-        return 'Task({name}, designs={designs}, responses={responses})'.format(
-            name=repr(self.name),
-            designs=repr(self.designs),
-            responses=repr(self.responses))
+        strs = []
+        strs += 'Task('
+        if self.name:
+            strs += '{}, '.format(repr(self.name))
+        strs += 'designs={}, '.format(repr(self.designs))
+        strs += 'responses={})'.format(repr(self.responses))
+        return ''.join(strs)
+
+    def __eq__(self, other) -> bool:
+        return isinstance(other, Task) and \
+            self.name == other.name and \
+            self.designs == other.designs and \
+            self.responses == other.responses

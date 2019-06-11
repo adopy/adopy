@@ -6,15 +6,26 @@ import numpy as np
 from adopy.types import data_like
 from adopy.functions import extract_vars_from_data
 
-from ._meta import MetaInterface
 from ._task import Task
 
 __all__ = ['Model']
 
 
-class Model(MetaInterface):
+class Model(object):
     """
     A base class for a model in the ADOpy package.
+
+    Parameters
+    ----------
+    task : Task
+        Task object that this model object is for.
+    params : Iterable[str]
+        Labels of model parameters in the model.
+    func : Optional[Callable]
+        A function to calculate the probability of the observation.
+        Currently, it does nothing.
+    name : Optional[str]
+        Name of the task.
 
     Examples
     --------
@@ -37,8 +48,7 @@ class Model(MetaInterface):
                  constraint: Optional[Dict[str, Callable]] = None,
                  name: Optional[str] = None,
                  ):
-        super(Model, self).__init__(name)
-
+        self._name = name  # type: Optional[str]
         self._task = task  # type: Task
         self._params = tuple(params)  # type: Tuple[str, ...]
 
@@ -47,6 +57,13 @@ class Model(MetaInterface):
         self._constraint = {}  # type: Dict[str, Callable]
         if constraint is not None:
             self._constraint.update(constraint)
+
+    @property
+    def name(self) -> Optional[str]:
+        """
+        Name of the model. If it has no name, returns ``None``.
+        """
+        return self._name
 
     @property
     def task(self) -> Task:
@@ -80,16 +97,19 @@ class Model(MetaInterface):
         """
         return extract_vars_from_data(data, self.params)
 
-    def compute(self, **kargs):
+    def compute(self, *args, **kargs):
         """
         Compute the likelihood of data given model parameters.
         """
         if self._func is not None:
-            return self._func(**kargs)
+            return self._func(*args, **kargs)
         obj = reduce(lambda x, y: x * y, kargs.values())
         return np.ones_like(obj) / 2
 
     def __repr__(self) -> str:
-        return 'Model({name}, params={params})'.format(
-            name=repr(self.name),
-            params=repr(self.params))
+        strs = []
+        strs += 'Model('
+        if self.name:
+            strs += '{}, '.format(repr(self.name))
+        strs += 'params={})'.format(repr(self.params))
+        return ''.join(strs)
