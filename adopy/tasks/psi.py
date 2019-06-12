@@ -19,15 +19,15 @@ from adopy.functions import (inv_logit, get_random_design_index,
                              get_nearest_grid_index, const_positive, const_01)
 
 __all__ = [
-    'Task2AFC', 'ModelLogistic', 'ModelWeibull', 'ModelNormal', 'EnginePsi'
+    'TaskPsi', 'ModelLogistic', 'ModelWeibull', 'ModelNormal', 'EnginePsi'
 ]
 
 
-class Task2AFC(Task):
+class TaskPsi(Task):
     """Task class for a simple 2-alternative forced choice task"""
 
     def __init__(self):
-        super(Task2AFC, self).__init__(
+        super(TaskPsi, self).__init__(
             name='Psi',
             designs=['stimulus'],
             responses=[0, 1]  # binary responses
@@ -38,7 +38,7 @@ class _ModelPsi(Model):
     def __init__(self, name):
         args = dict(
             name=name,
-            task=Task2AFC(),
+            task=TaskPsi(),
             params=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
             constraint={
                 'guess_rate': const_01,
@@ -150,7 +150,7 @@ class EnginePsi(Engine):
         ]
 
         super(EnginePsi, self).__init__(
-            task=Task2AFC(),
+            task=TaskPsi(),
             model=model,
             designs=designs,
             params=params
