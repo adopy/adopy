@@ -27,30 +27,45 @@ integration into existing experimentation code. Specific features include:
   model can be used for any 2AFC task with the independent variable on a
   continuous scale.
 
-The adaptive design optimization (ADO) consist of three steps [Myung2013]_:
+The adaptive design optimization (ADO) consist of three steps:
 (1) design optimization, (2) experimentation, and (3) Bayesian
 updating. Using adopy, you can easily utilize ADO for your experimentations,
-with a following style (pseudo-code):
+with a following style:
 
 .. code::
 
-   for trial in trials:
-       design = engine.get_design()
-       response = get_response(design)
-       engine.update(design, response)
+    for trial in trials:
+        # Compute an optimal design
+        design = engine.get_design()
 
-.. [Myung2013]
-   Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
-   A tutorial on adaptive design optimization.
-   *Journal of Mathematical Psychology, 57*, 53–67.
+        # Get a response using the design (pseudo-function)
+        response = get_response(design)
 
-Dependencies
+        # Update ADOpy engine
+        engine.update(design, response)
+
+ADOpy supports for Python 3.5 or above using NumPy, SciPy, and Pandas.
+
+Installation
 ------------
 
-- Python 3.5 or above
-- `NumPy <http://www.numpy.org/>`_
-- `SciPy <https://www.scipy.org/>`_
-- `Pandas <https://pandas.pydata.org/>`_
+.. code:: bash
+
+   pip install adopy
+
+Instead, you can install it from source in the GitHub repository.
+
+.. code-block:: bash
+
+    # Clone the repository from Github.
+    $ git clone https://github.com/adopy/adopy.git
+
+    # Set the working directory to the cloned repository.
+    $ cd adopy
+
+    # Install ADOpy with pip
+    $ pip install .
+
 
 Citation
 --------
@@ -60,6 +75,14 @@ It greatly encourages contributors to continue supporting ADOpy.
 
    To be announced.
 
+References
+----------
+
+.. [Myung2013]
+   Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
+   A tutorial on adaptive design optimization.
+   *Journal of Mathematical Psychology, 57*, 53–67.
+
 Content
 -------
 
@@ -67,10 +90,22 @@ Content
    :maxdepth: 1
    :glob:
 
-   install.rst
-   examples/index.rst
    contributing.rst
-   api/index.rst
+
+.. toctree::
+   :maxdepth: 0
+   :glob:
+   :caption: Examples
+
+   examples/*
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+   :caption: API Reference
+
+   api/base.rst
+   api/tasks/*
 
 Indices and tables
 ------------------
