@@ -1,4 +1,4 @@
-Psychometric function estimation
+Psychometric Function Estimation
 ================================
 
 Let’s start with psychometric functions as an example. The goal of the function

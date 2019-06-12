@@ -90,7 +90,8 @@ Content
    :maxdepth: 1
    :glob:
 
-   contributing.rst
+   getting-started.rst
+   how-to-contribute.rst
 
 .. toctree::
    :maxdepth: 0

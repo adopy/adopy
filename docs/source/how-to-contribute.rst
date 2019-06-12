@@ -1,5 +1,5 @@
-Contributing
-============
+How to Contribute
+=================
 
 The basic process of ADOpy development follows the `Gitflow workflow by Vincent
 Driessen`_, which holds two main branches: ``master`` and ``develop``.
