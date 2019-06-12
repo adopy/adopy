@@ -19,6 +19,6 @@ lint:
 
 docs-travis:
 	pipenv run travis-sphinx build
-	pipenv run travis-sphinx deploy
+	pipenv run travis-sphinx deploy -b master,develop
 
 .PHONY: init test test-travis lint docs-travis
