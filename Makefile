@@ -7,10 +7,10 @@ endif
 	pipenv install --dev --skip-lock
 
 test:
-	pipenv run py.test --doctest-modules
+	pipenv run py.test
 
 test-travis:
-	pipenv run py.test --doctest-modules --cov=adopy
+	pipenv run py.test --cov=adopy
 	pipenv run codecov --token $(CODECOV_TOKEN)
 
 lint:
