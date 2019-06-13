@@ -17,6 +17,19 @@ It supports for Python 3.5 or above and largely based on NumPy, SciPy, and Panda
 
 ## Quick-start guides
 
+### Step 0. Install ADOpy on the terminal
+
+```bash
+# Install the stable version from PyPI
+pip install adopy
+
+# Or install the developmental version from GitHub
+git clone https://github.com/adopy/adopy.git
+cd adopy
+git checkout develop
+pip install -e .
+```
+
 ### Step 1. Define a task
 
 ```python
@@ -75,7 +88,7 @@ engine = Engine(model=model,      # a Model object
                 params=params)    # a grid for model parameters
 ```
 
-### Step 5. Compute a design to use from the engine
+### Step 5. Compute a design using the engine
 
 ```python
 # Compute an optimal design using the Adaptive Design Optimization
@@ -91,14 +104,15 @@ design = engine.get_design('random')
 # Get a response from a real experiment using your own codes,
 response = ...
 
+
 # Or simulate a response using the model object.
 from scipy.stats import bernoulli
 
 def get_simulated_response(model, design):
     """Simulate a response using b0 = 1.2, b1 = 3.7 and b2 = -2.5."""
-    # Compute the likelihood to report as 1
-    p_obs = model.compute(x1=design['x1'], x2=design['x2'],
-                          b0=1.2, b1=3.7, b2=-2.5)
+    # Compute the likelihood to get a positive response of 1.
+    p_obs = model.compute(x1=design['x1'], x2=design['x2'], b0=1.2, b1=3.7, b2=-2.5)
+
     # Returns a binary response using Bernoulli distribution
     return bernoulli.rvs(p_obs)
 
@@ -111,7 +125,7 @@ response = get_simulated_response(model, design)
 engine.update(design, response)
 ```
 
-### Step 8. Repeat Step 5 to Step 7
+### Step 8. Repeat from Step 5 to Step 7 until the end
 
 ## Citation
 
