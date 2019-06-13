@@ -14,6 +14,12 @@ data_like = TypeVar(
     pd.DataFrame
 )
 
+integer_like = TypeVar(
+    'integer_like',
+    int,
+    np.int
+)
+
 number_like = TypeVar(
     'number_like',
     float,
