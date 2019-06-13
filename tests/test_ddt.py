@@ -21,12 +21,12 @@ def designs():
                          for ams in am_soon for aml in am_late if ams < aml])
 
     # Delays
-    d_soon = [0, 1, 2, 3, 5, 10, 20, 40]
-    d_late = [1, 2, 3, 5, 10, 20, 40, 80]
+    t_ss = [0, 1, 2, 3, 5, 10, 20, 40]
+    t_ll = [1, 2, 3, 5, 10, 20, 40, 80]
 
-    delays = np.vstack([(ds, dl) for ds in d_soon for dl in d_late if ds < dl])
+    delays = np.vstack([(ds, dl) for ds in t_ss for dl in t_ll if ds < dl])
 
-    designs = {('d_soon', 'd_late'): delays, ('a_soon', 'a_late'): amounts}
+    designs = {('t_ss', 't_ll'): delays, ('r_ss', 'r_ll'): amounts}
     return designs
 
 

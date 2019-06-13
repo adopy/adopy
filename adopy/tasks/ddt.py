@@ -54,7 +54,7 @@ class TaskDDT(Task):
     def __init__(self):
         super(TaskDDT, self).__init__(
             name='DDT',
-            designs=['d_soon', 'd_late', 'a_soon', 'a_late'],
+            designs=['t_ss', 't_ll', 'r_ss', 'r_ll'],
             responses=[0, 1]  # Binary response
         )
 
@@ -71,12 +71,12 @@ class ModelExp(Model):
             })
         super(ModelExp, self).__init__(**args)
 
-    def compute(self, d_soon, d_late, a_soon, a_late, r, tau):
+    def compute(self, t_ss, t_ll, r_ss, r_ll, r, tau):
         def discount(delay):
             return np.exp(-delay * r)
 
-        v_ss = a_soon * discount(d_soon)
-        v_ll = a_late * discount(d_late)
+        v_ss = r_ss * discount(t_ss)
+        v_ll = r_ll * discount(t_ll)
 
         # Probability to choose an option with late and large rewards.
         p_obs = inv_logit(tau * (v_ll - v_ss))
@@ -95,12 +95,12 @@ class ModelHyp(Model):
             })
         super(ModelHyp, self).__init__(**args)
 
-    def compute(self, d_soon, d_late, a_soon, a_late, k, tau):
+    def compute(self, t_ss, t_ll, r_ss, r_ll, k, tau):
         def discount(delay):
             return np.divide(1, 1 + k * delay)
 
-        v_ss = a_soon * discount(d_soon)
-        v_ll = a_late * discount(d_late)
+        v_ss = r_ss * discount(t_ss)
+        v_ll = r_ll * discount(t_ll)
 
         # Probability to choose an option with late and large rewards.
         p_obs = inv_logit(tau * (v_ll - v_ss))
@@ -119,12 +119,12 @@ class ModelHPB(Model):
             })
         super(ModelHPB, self).__init__(**args)
 
-    def compute(self, d_soon, d_late, a_soon, a_late, k, s, tau):
+    def compute(self, t_ss, t_ll, r_ss, r_ll, k, s, tau):
         def discount(delay):
             return np.divide(1, np.power(1 + k * delay, s))
 
-        v_ss = a_soon * discount(d_soon)
-        v_ll = a_late * discount(d_late)
+        v_ss = r_ss * discount(t_ss)
+        v_ll = r_ll * discount(t_ll)
 
         # Probability to choose an option with late and large rewards.
         p_obs = inv_logit(tau * (v_ll - v_ss))
@@ -144,12 +144,12 @@ class ModelCOS(Model):
             })
         super(ModelCOS, self).__init__(**args)
 
-    def compute(self, d_soon, d_late, a_soon, a_late, r, s, tau):
+    def compute(self, t_ss, t_ll, r_ss, r_ll, r, s, tau):
         def discount(delay):
             return np.exp(-np.power(delay * r, s))
 
-        v_ss = a_soon * discount(d_soon)
-        v_ll = a_late * discount(d_late)
+        v_ss = r_ss * discount(t_ss)
+        v_ll = r_ll * discount(t_ll)
 
         # Probability to choose an option with late and large rewards.
         p_obs = inv_logit(tau * (v_ll - v_ss))
@@ -169,14 +169,14 @@ class ModelQH(Model):
             })
         super(ModelQH, self).__init__(**args)
 
-    def compute(self, d_soon, d_late, a_soon, a_late, beta, delta, tau):
+    def compute(self, t_ss, t_ll, r_ss, r_ll, beta, delta, tau):
         def discount(delay):
             return np.where(delay == 0,
                             np.ones_like(beta * delta * delay),
                             beta * np.power(delta, delay))
 
-        v_ss = a_soon * discount(d_soon)
-        v_ll = a_late * discount(d_late)
+        v_ss = r_ss * discount(t_ss)
+        v_ll = r_ll * discount(t_ll)
 
         # Probability to choose an option with late and large rewards.
         p_obs = inv_logit(tau * (v_ll - v_ss))
@@ -197,13 +197,13 @@ class ModelDE(Model):
             })
         super(ModelDE, self).__init__(**args)
 
-    def compute(self, d_soon, d_late, a_soon, a_late, omega, r, s, tau):
+    def compute(self, t_ss, t_ll, r_ss, r_ll, omega, r, s, tau):
         def discount(delay):
             return omega * np.exp(-delay * r) + \
                 (1 - omega) * np.exp(-delay * s)
 
-        v_ss = a_soon * discount(d_soon)
-        v_ll = a_late * discount(d_late)
+        v_ss = r_ss * discount(t_ss)
+        v_ll = r_ll * discount(t_ll)
 
         # Probability to choose an option with late and large rewards.
         p_obs = inv_logit(tau * (v_ll - v_ss))
