@@ -22,8 +22,8 @@ import adopy  # noqa: E402
 # -- Project information -----------------------------------------------------
 
 project = 'ADOpy'
-copyright = '2019, Jaeyeong Yang'  # pylint: disable=W0622
-author = 'Jaeyeong Yang'
+copyright = '2019, ADOpy developers'  # pylint: disable=W0622
+author = 'ADOpy developers'
 
 # The short X.Y version
 version = adopy.__version__
