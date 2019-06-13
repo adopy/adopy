@@ -1,6 +1,4 @@
-# ADOpy: A Python Package for Adaptive Design Optimization
-
-<img src="https://adopy.github.io/logo/adopy-logo.svg" align="right" width="300px">
+# ADOpy <img src="https://adopy.github.io/logo/adopy-logo.svg" align="right" width="300px">
 
 [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 [![Travid CI](https://travis-ci.com/adopy/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master)](https://travis-ci.com/adopy/adopy)
@@ -27,7 +25,7 @@ pip install adopy
 git clone https://github.com/adopy/adopy.git
 cd adopy
 git checkout develop
-pip install -e .
+pip install .
 ```
 
 ### Step 1. Define a task
@@ -119,9 +117,10 @@ def get_simulated_response(model, design):
 response = get_simulated_response(model, design)
 ```
 
-### Step 7. Update engine using the design and the response
+### Step 7. Update the engine from the observation
 
 ```python
+# Update the engine with the design and the corresponding response
 engine.update(design, response)
 ```
 
