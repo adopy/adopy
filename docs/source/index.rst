@@ -73,7 +73,9 @@ Citation
 If you use ADOpy, please cite this package along with the specific version.
 It greatly encourages contributors to continue supporting ADOpy.
 
-   To be announced.
+   Yang, J., Ahn, W.-Y., Pitt., M. A., & Myung, J. I. (in preparation).
+   ADOpy: A Python Package for Adaptive Design Optimization.
+   Retrieved from https://adopy.org
 
 References
 ----------
