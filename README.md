@@ -127,6 +127,20 @@ engine.update(design, response)
 
 ### Step 8. Repeat from Step 5 to Step 7 until the end
 
+```python
+NUM_TRIAL = 100  # number of trials
+
+for trial in range(NUM_TRIAL):
+    # Compute an optimal design for the current trial
+    design = engine.get_design('optimal')
+
+    # Get a simulated response
+    response = get_simulated_response(model, design)
+
+    # Update the engine
+    engine.update(design, response)
+```
+
 ## Citation
 
 If you use ADOpy, please cite this package along with the specific version.
