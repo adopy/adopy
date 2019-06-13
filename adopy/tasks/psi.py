@@ -17,6 +17,7 @@ from scipy.stats import norm, gumbel_l
 from adopy.base import Engine, Task, Model
 from adopy.functions import (inv_logit, get_random_design_index,
                              get_nearest_grid_index, const_positive, const_01)
+from adopy.types import integer_like
 
 __all__ = [
     'TaskPsi', 'ModelLogistic', 'ModelWeibull', 'ModelNormal', 'EnginePsi'
@@ -142,7 +143,7 @@ class ModelNormal(_ModelPsi):
 
 
 class EnginePsi(Engine):
-    def __init__(self, model, designs, params):
+    def __init__(self, model, designs, params, d_step: int = 1):
         assert type(model) in [
             type(ModelLogistic()),
             type(ModelWeibull()),
@@ -158,7 +159,20 @@ class EnginePsi(Engine):
 
         self.idx_opt = get_random_design_index(self.grid_design)
         self.y_obs_prev = 1
-        self.d_step = 1
+        self.d_step = d_step
+
+    @property
+    def d_step(self) -> int:
+        r"""
+        Step size on index to compute :math:`\Delta` for the staircase method.
+        """
+        return self._d_step
+
+    @d_step.setter
+    def d_step(self, value: integer_like):
+        if not isinstance(value, (int, np.int)) or value <= 0:
+            raise ValueError('d_step should be an positive integer.')
+        self._d_step = int(value)
 
     def get_design(self, kind='optimal'):
         r"""Choose a design with a given type.
