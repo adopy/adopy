@@ -92,8 +92,9 @@ Content
    :maxdepth: 1
    :glob:
 
+   install.rst
    getting-started.rst
-   how-to-contribute.rst
+   dev-guide.rst
 
 .. toctree::
    :maxdepth: 0
