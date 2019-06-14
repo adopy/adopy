@@ -40,16 +40,16 @@ class _ModelPsi(Model):
         args = dict(
             name=name,
             task=TaskPsi(),
-            params=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
+            params=['threshold', 'slope', 'guess_rate', 'lapse_rate'],
             constraint={
-                'guess_rate': const_01,
-                'lapse_rate': const_01,
                 'threshold': const_positive,
                 'slope': const_positive,
+                'guess_rate': const_01,
+                'lapse_rate': const_01,
             })
         super(_ModelPsi, self).__init__(**args)
 
-    def _compute(self, func, st, gr, lr, th, sl):
+    def _compute(self, func, st, th, sl, gr, lr):
         return gr + (1 - gr - lr) * func(sl * (st - th))
 
 
@@ -80,7 +80,7 @@ class ModelLogistic(_ModelPsi):
         numpy.ndarray
         """
         return self._compute(inv_logit, stimulus,
-                             guess_rate, lapse_rate, threshold, slope)
+                             threshold, slope, guess_rate, lapse_rate)
 
 
 class ModelWeibull(_ModelPsi):
@@ -110,7 +110,7 @@ class ModelWeibull(_ModelPsi):
         numpy.ndarray
         """
         return self._compute(gumbel_l.cdf, stimulus,
-                             guess_rate, lapse_rate, threshold, slope)
+                             threshold, slope, guess_rate, lapse_rate)
 
 
 class ModelNormal(_ModelPsi):
