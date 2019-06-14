@@ -134,6 +134,10 @@ grid_designs = {
 
 ### Step 4. Initialize an engine using `adopy.Engine`
 
+Using the objects created so far, an engine should be initialized using
+`adopy.Engine`. It contains built-in functions to compute an optimal design
+based on the Adaptive Design Optimization.
+
 ```python
 from adopy import Engine
 
