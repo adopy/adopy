@@ -46,27 +46,6 @@ with a following style:
 
 ADOpy supports for Python 3.5 or above using NumPy, SciPy, and Pandas.
 
-Installation
-------------
-
-.. code:: bash
-
-   pip install adopy
-
-Instead, you can install it from source in the GitHub repository.
-
-.. code-block:: bash
-
-    # Clone the repository from Github.
-    $ git clone https://github.com/adopy/adopy.git
-
-    # Set the working directory to the cloned repository.
-    $ cd adopy
-
-    # Install ADOpy with pip
-    $ pip install .
-
-
 Citation
 --------
 
@@ -92,12 +71,11 @@ Content
    :maxdepth: 1
    :glob:
 
-   install.rst
-   getting-started.rst
+   getting-started.md
    dev-guide.rst
 
 .. toctree::
-   :maxdepth: 0
+   :maxdepth: 1
    :glob:
    :caption: Examples
 

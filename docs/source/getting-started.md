@@ -1,44 +1,23 @@
-# ADOpy <img src="https://adopy.github.io/logo/adopy-logo.svg" align="right" width="300px">
+# Getting Started
 
-[![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![Travid CI](https://travis-ci.com/adopy/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master)](https://travis-ci.com/adopy/adopy)
-[![CodeCov](https://codecov.io/gh/adopy/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k)](https://codecov.io/gh/adopy/adopy)
+## Installation
 
-**ADOpy** is a Python package for the Adaptive Design Optimization (ADO; Myung, Cavagnaro, & Pitt, 2013) to compute optimal designs dynamically in an experiment.
-Its modular design and simple structure permit easy use and integration into existing experimentation code.
-
-It provides specific features:
-
-- **Three basic classes to compute Grid-based ADO**: `adopy.Task`, `adopy.Model`, and `adopy.Engine`.
-- **Customizable for your own tasks and models**
-- **Pre-implemented Task and Model classes including**:
-  - Psychometric function estimation (`adopy.tasks.psi`)
-  - Delay discounting task (`adopy.tasks.ddt`)
-  - Choice under risk and ambiguity task (`adopy.tasks.cra`)
-- **[Example codes][example-code] for experiments using PsychoPy**
-
-[example-code]: https://github.com/adopy/adopy/tree/master/examples
-
-ADOpy supports for Python 3.5 or above and largely based on NumPy, SciPy, and Pandas.
-
-- [**Getting started**](https://adopy.org/getting-started.html)
-- [**Documentation**](https://adopy.org)
-- [**Bug reports**](https://github.com/adopy/adopy/issues)
-
-## Quick-start guides
-
-### Step 0. Install ADOpy on the terminal
+Using pip, you can install adopy from PyPI.
 
 ```bash
-# Install the stable version from PyPI
 pip install adopy
+```
 
-# Or install the developmental version from GitHub
+Instead, you can install the developmental version in the GitHub repository.
+
+```python
 git clone https://github.com/adopy/adopy.git
 cd adopy
 git checkout develop
 pip install .
 ```
+
+## Quick-start guides
 
 ### Step 1. Define a task using `adopy.Task`
 
@@ -201,18 +180,3 @@ for trial in range(NUM_TRIAL):
     # Update the engine
     engine.update(design, response)
 ```
-
-## Citation
-
-If you use ADOpy, please cite this package along with the specific version.
-It greatly encourages contributors to continue supporting ADOpy.
-
-> Yang, J., Ahn, W.-Y., Pitt., M. A., & Myung, J. I. (in preparation).
-> *ADOpy: A Python Package for Adaptive Design Optimization*.
-> Retrieved from https://adopy.org
-
-## References
-
-- Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
-  A tutorial on adaptive design optimization.
-  *Journal of Mathematical Psychology, 57*, 53–67.
