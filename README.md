@@ -60,7 +60,7 @@ To predict partipants' choices, here we assume a logistic regression model
 that calculates the probability to make a positive response using three model
 parameters (`b0`, `b1`, and `b2`) as an equation below:
 
-<img src="http://www.sciweavers.org/tex2img.php?eq=p%20%3D%20%5Cfrac%7B1%7D%7B1%20%2B%20%5Cexp%5Cleft%5B-%20%28b_0%20%2B%20b_1%20%5Ccdot%20x_1%20%2B%20b_2%20%5Ccdot%20x_2%29%5Cright%5D%7D&bc=White&fc=Black&im=png&fs=18&ff=txfonts&edit=0" align="center" border="0" alt="p = \frac{1}{1 + \exp\left[- (b_0 + b_1 \cdot x_1 + b_2 \cdot x_2)\right]}" width="377" height="60" />
+<img src="https://user-images.githubusercontent.com/11037140/59533069-5f7b7880-8f25-11e9-8440-4d31fb6ac260.png" align="center">
 
 Then, how to compute the probabilty should be defined as a function:
 
