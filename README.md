@@ -15,7 +15,7 @@ It provides specific features:
   - Psychometric function estimation (`adopy.tasks.psi`)
   - Delay discounting task (`adopy.tasks.ddt`)
   - Choice under risk and ambiguity task (`adopy.tasks.cra`)
-- **Example codes using [PsychoPy][psychopy]** ([link](./examples))
+- **[Example codes](./examples) for experiments using PsychoPy**
 
 [psychopy]: https://www.psychopy.org/
 
