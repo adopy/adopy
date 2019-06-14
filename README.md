@@ -45,7 +45,7 @@ import numpy as np
 
 def calculate_likelihood(x1, x2, b0, b1, b2):
     """A function to compute likelihood for getting a positive response."""
-    logit = b0 + x1 * param1 + x1 * b2
+    logit = b0 + x1 * b1 + x1 * b2
     p_obs = 1. / (1 + np.exp(-logit))
     return p_obs
 ```
