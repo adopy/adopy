@@ -237,7 +237,7 @@ class EnginePsi(Engine):
                 \end{cases}
 
           where :math:`\Delta` is determined by ``d_step`` which is the
-          incremental change on the grid index.
+          step-size change on the grid index.
 
         3. :code:`random`: a design randomly chosen.
 
