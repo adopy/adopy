@@ -9,13 +9,13 @@ Its modular design and simple structure permit easy use and integration into exi
 
 It provides specific features:
 
-- **Three basic classes to compute Grid-based ADO**: `adopy.Task`, `adopy.Model`, and `adopy.Engine`.
-- **Customizable for your own tasks and models**
+- **Grid-based computation of optimal designs based on three basic classes**: `adopy.Task`, `adopy.Model`, and `adopy.Engine`.
+- **Easily customizable for your own tasks and models**
 - **Pre-implemented Task and Model classes including**:
-  - Psychometric function estimation (`adopy.tasks.psi`)
+  - Psychometric function estimation for 2AFC tasks (`adopy.tasks.psi`)
   - Delay discounting task (`adopy.tasks.ddt`)
   - Choice under risk and ambiguity task (`adopy.tasks.cra`)
-- **[Example codes][example-code] for experiments using PsychoPy**
+- **Example codes for experiments using PsychoPy** ([link][example-code])
 
 [example-code]: https://github.com/adopy/adopy/tree/master/examples
 
