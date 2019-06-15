@@ -1,0 +1,4 @@
+.rst-content ul li p,
+.rst-content ol li p {
+    margin-bottom: 0 !important;
+}

@@ -41,8 +41,8 @@ release = adopy.__version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
+    'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
     'sphinxcontrib.rawfiles',
@@ -197,3 +197,8 @@ napoleon_use_rtype = False
 
 # Sphinx-contrib-rawfiles
 rawfiles = ['CNAME']
+
+
+def setup(app):
+    app.add_stylesheet('css/custom.css')
+    app.add_javascript('js/custom.js')
