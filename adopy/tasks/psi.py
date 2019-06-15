@@ -4,12 +4,6 @@ signal with varying levels of magnitude. The function has one design variable
 for the *intensity* of a stimulus, :math:`x`; the model has four model
 parameters: *guess rate* :math:`\gamma`, *lapse rate* :math:`\delta`,
 *threshold* :math:`\alpha`, and *slope* :math:`\beta`.
-
-.. figure:: ../../_static/images/Psychometricfn.svg
-    :width: 70%
-    :align: center
-
-    A simple diagram for the Psychometric function.
 """
 import numpy as np
 from scipy.stats import norm, gumbel_l

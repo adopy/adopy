@@ -1,23 +1,10 @@
 :mod:`adopy.base`
 =================
 
-Task
-----
+.. automodule:: adopy.base
 
 .. autoclass:: adopy.Task
-   :members:
-   :undoc-members:
-
-Model
------
 
 .. autoclass:: adopy.Model
-   :members:
-   :undoc-members:
-
-Engine
-------
 
 .. autoclass:: adopy.Engine
-   :members:
-   :undoc-members:

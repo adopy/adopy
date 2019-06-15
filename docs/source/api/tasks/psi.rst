@@ -1,7 +1,26 @@
 :mod:`adopy.tasks.psi`
 ======================
 
+.. figure:: ../../_static/images/Psychometricfn.svg
+   :width: 50%
+   :align: center
+
 .. automodule:: adopy.tasks.psi
-   :synopsis: Psychometric function
-   :members:
-   :undoc-members:
+   :no-members:
+
+Task
+----
+
+.. autoclass:: TaskPsi
+
+Model
+-----
+
+.. autoclass:: ModelLogistic
+.. autoclass:: ModelWeibull
+.. autoclass:: ModelNormal
+
+Engine
+------
+
+.. autoclass:: EnginePsi

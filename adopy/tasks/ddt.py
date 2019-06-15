@@ -11,12 +11,12 @@ a larger-longer (LL) option (e.g., 50 dollars in two weeks)
 We provides six models that had been compared in a previous paper
 [Cavagnaro2016]_:
 
-1. Exponential (`adopy.tasks.ddt.ModelExp`)
-2. Hyperbolic (`adopy.tasks.ddt.ModelHyp`)
-3. Hyperboloid (`adopy.tasks.ddt.ModelHPB`)
-4. Quasi-hyperbolic (`adopy.tasks.ddt.ModelQH`)
-5. Double exponential (`adopy.tasks.ddt.ModelDE`)
-6. Constant sensitivity (`adopy.tasks.ddt.ModelCOS`)
+1. Exponential (`ModelExp`)
+2. Hyperbolic (`ModelHyp`)
+3. Hyperboloid (`ModelHPB`)
+4. Quasi-hyperbolic (`ModelQH`)
+5. Double exponential (`ModelDE`)
+6. Constant sensitivity (`ModelCOS`)
 
 .. [Green2004]
    Green, L. and Myerson, J. (2004). A discounting framework for choice with

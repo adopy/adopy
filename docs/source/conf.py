@@ -45,7 +45,6 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
-    'sphinx_autodoc_typehints',
     'sphinxcontrib.rawfiles',
     'recommonmark',
 ]
@@ -74,7 +73,7 @@ language = None
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'default'
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -178,9 +177,11 @@ show_authors = True
 autoclass_content = 'both'
 autodoc_member_order = 'bysource'
 autodoc_default_options = {
+    'members': True,
     'undoc-members': True,
     'show-inheritance': False,
 }
+autodoc_typehints = 'none'
 
 # Napoleon settings
 napoleon_numpy_docstring = True
@@ -192,6 +193,7 @@ napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
 napoleon_use_ivar = False
 napoleon_use_param = False
+napoleon_use_rtype = False
 
 # Sphinx-contrib-rawfiles
 rawfiles = ['CNAME']

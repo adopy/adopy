@@ -22,6 +22,11 @@ Instead, you can install the developmental version in the GitHub repository.
 Quick-start guides
 ------------------
 
+Here, we present how to use ADOpy to compute optimal designs for an experiment.
+Assuming an arbitrary task and a model, this section shows how users can apply
+the Adaptive Design Optimization procedure into their own tasks and models
+from the start.
+
 .. figure:: ./_static/images/ado-figure.png
     :width: 100%
     :align: center
@@ -130,8 +135,8 @@ Step 4. Initialize an engine using :py:class:`adopy.Engine`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using the objects created so far, an engine should be initialized using
-`adopy.Engine`. It contains built-in functions to compute an optimal design
-based on the Adaptive Design Optimization.
+:py:class:`adopy.Engine`. It contains built-in functions to compute an
+optimal design based on the Adaptive Design Optimization.
 
 .. code:: python
 

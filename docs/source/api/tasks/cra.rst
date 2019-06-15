@@ -1,8 +1,25 @@
 :mod:`adopy.tasks.cra`
 ======================
 
-.. automodule:: adopy.tasks.cra
-   :synopsis: Choice under Risk and Ambiguity Task.
-   :members:
-   :undoc-members:
+.. figure:: ../../_static/images/choice-under-risk-and-ambiguity-task.png
+    :width: 100%
+    :align: center
 
+.. automodule:: adopy.tasks.cra
+   :no-members:
+
+Task
+----
+
+.. autoclass:: TaskCRA
+
+Model
+-----
+
+.. autoclass:: ModelLinear
+.. autoclass:: ModelExp
+
+Engine
+------
+
+.. autoclass:: EngineCRA

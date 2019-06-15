@@ -9,38 +9,37 @@ __all__ = ['Task']
 
 
 class Task(object):
-    """
-    A task object stores information for a specific experimental task,
-    including labels of design variables (``designs``), possible responses
-    (``responses``) and its name (``name``).
-
-    Parameters
-    ----------
-    designs : Iterable[str]
-        Labels of design variables in the task.
-    responses : Iterable[number_like]
-        Possible values for the response variable of the task.
-    name : Optional[str]
-        Name of the task.
-
-    Examples
-    --------
-    >>> task = Task(name='Task A', designs=['d1', 'd2'], responses=[0, 1])
-    >>> task
-    Task('Task A', designs=['d1', 'd2'], responses=[0, 1])
-    >>> task.name
-    'Task A'
-    >>> task.designs
-    ['d1', 'd2']
-    >>> task.responses
-    [0, 1]
-    """
-
     def __init__(self,
                  designs: Iterable[str],
                  responses: Iterable[number_like],
                  name: Optional[str] = None,
                  ):
+        """
+        A task object stores information for a specific experimental task,
+        including labels of design variables (``designs``), possible responses
+        (``responses``) and its name (``name``).
+
+        Parameters
+        ----------
+        designs
+            Labels of design variables in the task.
+        responses
+            Possible values for the response variable of the task.
+        name
+            Name of the task.
+
+        Examples
+        --------
+        >>> task = Task(name='Task A', designs=['d1', 'd2'], responses=[0, 1])
+        >>> task
+        Task('Task A', designs=['d1', 'd2'], responses=[0, 1])
+        >>> task.name
+        'Task A'
+        >>> task.designs
+        ['d1', 'd2']
+        >>> task.responses
+        [0, 1]
+        """
         self._name = name
         self._designs = tuple(designs)  # type: Tuple[str, ...]
         self._responses = np.array(responses)  # type: vector_like
