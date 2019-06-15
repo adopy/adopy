@@ -66,6 +66,13 @@ Content
 .. toctree::
    :maxdepth: 1
    :glob:
+   :caption: examples
+
+   examples/*
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
    :caption: API Reference
 
    api/base.rst
