@@ -5,5 +5,4 @@
    :synopsis: Delayed discounting task
    :members:
    :undoc-members:
-   :show-inheritance:
 

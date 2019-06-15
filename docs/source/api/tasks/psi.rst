@@ -5,4 +5,3 @@
    :synopsis: Psychometric function
    :members:
    :undoc-members:
-   :show-inheritance:

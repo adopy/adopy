@@ -90,6 +90,7 @@ html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
     # 'logo_only': True,
     'analytics_id': 'UA-71789812-2',
+    'navigation_depth': 2,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -174,9 +175,11 @@ show_authors = True
 
 # Autodoc settings
 
+autoclass_content = 'both'
 autodoc_member_order = 'bysource'
 autodoc_default_options = {
-    'show-inheritance': True
+    'undoc-members': True,
+    'show-inheritance': False,
 }
 
 # Napoleon settings

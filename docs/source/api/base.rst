@@ -4,24 +4,20 @@
 Task
 ----
 
-.. autoclass:: adopy.base.Task
+.. autoclass:: adopy.Task
    :members:
    :undoc-members:
-   :show-inheritance:
 
 Model
 -----
 
-.. autoclass:: adopy.base.Model
+.. autoclass:: adopy.Model
    :members:
    :undoc-members:
-   :show-inheritance:
 
 Engine
 ------
 
-.. autoclass:: adopy.base.Engine
+.. autoclass:: adopy.Engine
    :members:
    :undoc-members:
-   :exclude-members: update_grid
-   :show-inheritance:

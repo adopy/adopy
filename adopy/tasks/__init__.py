@@ -1,3 +1,0 @@
-"""
-Already implemented tasks
-"""
