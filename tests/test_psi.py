@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from adopy.tasks.psi import ModelLogistic, ModelWeibull, ModelNormal, EnginePsi
+from adopy.tasks.psi import ModelLogistic, ModelWeibull, ModelProbit, EnginePsi
 
 
 @pytest.fixture()
@@ -22,7 +22,7 @@ def params():
     return params
 
 
-@pytest.mark.parametrize('model', [ModelLogistic, ModelWeibull, ModelNormal])
+@pytest.mark.parametrize('model', [ModelLogistic, ModelWeibull, ModelProbit])
 def test_calculate_psi(model, designs, params):
     psi = EnginePsi(model=model(), designs=designs, params=params)
 
@@ -33,7 +33,7 @@ def test_calculate_psi(model, designs, params):
 
 
 @pytest.mark.parametrize('design_type', ['optimal', 'staircase', 'random'])
-@pytest.mark.parametrize('model', [ModelLogistic, ModelWeibull, ModelNormal])
+@pytest.mark.parametrize('model', [ModelLogistic, ModelWeibull, ModelProbit])
 @pytest.mark.parametrize('response', [0, 1])
 def test_classes(design_type, model, designs, params, response):
     psi = EnginePsi(model=model(), designs=designs, params=params)

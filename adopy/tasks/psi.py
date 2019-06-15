@@ -14,16 +14,34 @@ from adopy.functions import (inv_logit, get_random_design_index,
 from adopy.types import integer_like
 
 __all__ = [
-    'TaskPsi', 'ModelLogistic', 'ModelWeibull', 'ModelNormal', 'EnginePsi'
+    'Task2AFC', 'ModelLogistic', 'ModelWeibull', 'ModelProbit', 'EnginePsi'
 ]
 
 
-class TaskPsi(Task):
-    """Task class for a simple 2-alternative forced choice task"""
+class Task2AFC(Task):
+    """
+    The Task class for a simple 2-Alternative Forced Choice (2AFC) task
+    with a single design variable, the magnitude of a stimulus.
+
+    Design variables
+        - ``stimulus`` (:math:`x`) - magnitude of a stimulus
+
+    Responses
+        0 (negative response) or 1 (positive response)
+
+    Examples
+    --------
+    >>> from adopy.tasks.psi import Task2AFC
+    >>> task = Task2AFC()
+    >>> task.designs
+    ['stimulus']
+    >>> task.responses
+    [0, 1]
+    """
 
     def __init__(self):
-        super(TaskPsi, self).__init__(
-            name='Psi',
+        super(Task2AFC, self).__init__(
+            name='2AFC',
             designs=['stimulus'],
             responses=[0, 1]  # binary responses
         )
@@ -33,10 +51,9 @@ class _ModelPsi(Model):
     def __init__(self, name):
         args = dict(
             name=name,
-            task=TaskPsi(),
+            task=Task2AFC(),
             params=['threshold', 'slope', 'guess_rate', 'lapse_rate'],
             constraint={
-                'threshold': const_positive,
                 'slope': const_positive,
                 'guess_rate': const_01,
                 'lapse_rate': const_01,
@@ -48,104 +65,141 @@ class _ModelPsi(Model):
 
 
 class ModelLogistic(_ModelPsi):
+    r"""
+    The psychometric function using logistic function.
+
+    .. math::
+
+        \begin{align}
+            F(x; \alpha, \beta) &= \frac{1}{1 + \exp\left(-\beta (x - \mu) \right)} \\
+            \Psi \left( x \mid \alpha, \beta, \gamma, \delta \right)
+                &= \gamma + (1 - \gamma - \delta) \cdot F(x; \alpha, \beta)
+        \end{align}
+
+    Model parameters
+        - ``threshold`` (:math:`\alpha`) - indifference point where the probability
+          of a positive response equals to 0.5.
+        - ``slope`` (:math:`\beta`) - slope of a tangent line on the threshold point
+          (:math:`\beta > 0`)
+        - ``guess_rate`` (:math:`\gamma`) - leftward asymptote of the psychometric
+          function (:math:`0 < \gamma < 1`)
+        - ``lapse_rate`` (:math:`\delta`) - rightward asymptote of the psychometric
+          function(:math:`0 < \delta < 1`)
+
+    Examples
+    --------
+    >>> from adopy.tasks.psi import ModelLogistic
+    >>> model = ModelLogistic()
+    >>> model.task
+    Task('2AFC', designs=['stimulus'], responses=[0, 1])
+    >>> model.params
+    ['threshold', 'slope', 'guess_rate', 'lapse_rate']
+    """
+
     def __init__(self):
         super(ModelLogistic, self).__init__(name='Logistic')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
-        r"""
-        Calculate the psychometric function using logistic function.
-
-        .. math::
-
-            F(x; \mu, \beta) = \left[
-                1 + \exp\left(-\beta (x - \mu) \right)
-            \right]^{-1}
-
-        Parameters
-        ----------
-        stimulus : numpy.ndarray or array_like
-        guess_rate : numpy.ndarray or array_like
-        lapse_rate : numpy.ndarray or array_like
-        threshold : numpy.ndarry or array_like
-        slope : numpy.ndarray or array_like
-
-        Returns
-        -------
-        numpy.ndarray
-        """
         return self._compute(inv_logit, stimulus,
                              threshold, slope, guess_rate, lapse_rate)
 
 
 class ModelWeibull(_ModelPsi):
+    r"""
+    The psychometric function using log Weibull (Gumbel) cumulative distribution function.
+
+    .. math::
+
+        \begin{align}
+            F(x; \mu, \beta) &= CDF_\text{Gumbel_l}
+                \left( \beta (x - \mu) \right) \\
+            \Psi \left( x \mid \alpha, \beta, \gamma, \delta \right)
+                &= \gamma + (1 - \gamma - \delta) \cdot F(x; \alpha, \beta)
+        \end{align}
+
+    Model parameters
+        - ``threshold`` (:math:`\alpha`) - indifference point where the probability
+          of a positive response equals to 0.5.
+        - ``slope`` (:math:`\beta`) - slope of a tangent line on the threshold point
+          (:math:`\beta > 0`)
+        - ``guess_rate`` (:math:`\gamma`) - leftward asymptote of the psychometric
+          function (:math:`0 < \gamma < 1`)
+        - ``lapse_rate`` (:math:`\delta`) - rightward asymptote of the psychometric
+          function(:math:`0 < \delta < 1`)
+
+    Examples
+    --------
+    >>> from adopy.tasks.psi import ModelLogistic
+    >>> model = ModelLogistic()
+    >>> model.task
+    Task('2AFC', designs=['stimulus'], responses=[0, 1])
+    >>> model.params
+    ['threshold', 'slope', 'guess_rate', 'lapse_rate']
+    """
     def __init__(self):
         super(ModelWeibull, self).__init__(name='Weibull')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
-        r"""
-        Calculate the psychometric function using log Weibull (Gumbel)
-        cumulative distribution function.
-
-        .. math::
-
-            F(x; \mu, \beta) = CDF_\text{Gumbel_l}
-                \left( \beta (x - \mu) \right) \\
-
-        Parameters
-        ----------
-        stimulus : numpy.ndarray or array_like
-        guess_rate : numpy.ndarray or array_like
-        lapse_rate : numpy.ndarray or array_like
-        threshold : numpy.ndarry or array_like
-        slope : numpy.ndarray or array_like
-
-        Returns
-        -------
-        numpy.ndarray
-        """
         return self._compute(gumbel_l.cdf, stimulus,
                              threshold, slope, guess_rate, lapse_rate)
 
 
-class ModelNormal(_ModelPsi):
+class ModelProbit(_ModelPsi):
+    r"""
+    The psychometric function using Probit function
+    (Normal cumulative distribution function).
+
+    .. math::
+
+        \begin{align}
+            F(x; \mu, \beta) &= CDF_\text{Normal}
+                \left( \beta (x - \mu) \right) \\
+            \Psi \left( x \mid \alpha, \beta, \gamma, \delta \right)
+                &= \gamma + (1 - \gamma - \delta) \cdot F(x; \alpha, \beta)
+        \end{align}
+
+    Model parameters
+        - ``threshold`` (:math:`\alpha`) - indifference point where the probability
+          of a positive response equals to 0.5.
+        - ``slope`` (:math:`\beta`) - slope of a tangent line on the threshold point
+          (:math:`\beta > 0`)
+        - ``guess_rate`` (:math:`\gamma`) - leftward asymptote of the psychometric
+          function (:math:`0 < \gamma < 1`)
+        - ``lapse_rate`` (:math:`\delta`) - rightward asymptote of the psychometric
+          function(:math:`0 < \delta < 1`)
+
+    Examples
+    --------
+    >>> from adopy.tasks.psi import ModelProbit
+    >>> model = ModelProbit()
+    >>> model.task
+    Task('2AFC', designs=['stimulus'], responses=[0, 1])
+    >>> model.params
+    ['threshold', 'slope', 'guess_rate', 'lapse_rate']
+    """
     def __init__(self):
-        super(ModelNormal, self).__init__(name='Normal')
+        super(ModelProbit, self).__init__(name='Normal')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
-        r"""
-        Calculate the psychometric function with the Normal cumulative
-        distribution function.
-
-        .. math::
-
-            F(x; \mu, \beta) = CDF_\text{Normal}\left( \beta (x - \mu) \right)
-
-        Parameters
-        ----------
-        stimulus : numpy.ndarray or array_like
-        guess_rate : numpy.ndarray or array_like
-        lapse_rate : numpy.ndarray or array_like
-        threshold : numpy.ndarry or array_like
-        slope : numpy.ndarray or array_like
-
-        Returns
-        -------
-        numpy.ndarray
-        """
         return self._compute(norm.cdf, stimulus,
                              guess_rate, lapse_rate, threshold, slope)
 
 
 class EnginePsi(Engine):
+    """
+    The Engine class for the psychometric function estimation.
+    It can be only used for :py:class:`Task2AFC`.
+    """
+
     def __init__(self, model, designs, params, d_step: int = 1):
         assert type(model) in [
             type(ModelLogistic()),
             type(ModelWeibull()),
-            type(ModelNormal()),
+            type(ModelProbit()),
         ]
 
         super(EnginePsi, self).__init__(
-            task=TaskPsi(),
+            task=Task2AFC(),
             model=model,
             designs=designs,
             params=params
@@ -172,22 +226,18 @@ class EnginePsi(Engine):
         r"""Choose a design with a given type.
 
         1. :code:`optimal`: an optimal design :math:`d^*` that maximizes
-        the mutual information.
-
-            .. math::
-                \begin{align*}
-                    p(y | d) &= \sum_\theta p(y | \theta, d) p_t(\theta) \\
-                    I(Y(d); \Theta) &= H(Y(d)) - H(Y(d) | \Theta) \\
-                    d^* &= \operatorname*{argmax}_d I(Y(d); |Theta) \\
-                \end{align*}
+        the information for fitting model parameters.
 
         2. :code:`staircase`: Choose the stimulus :math:`s` as below:
 
             .. math::
-                s_t = \begin{cases}
-                    s_{t-1} - 1 & \text{if } y_{t-1} = 1 \\
-                    s_{t-1} + 2 & \text{if } y_{t-1} = 0
+                x_t = \begin{cases}
+                    x_{t-1} - \Delta & \text{if } y_{t-1} = 1 \\
+                    x_{t-1} + 2 \Delta & \text{if } y_{t-1} = 0
                 \end{cases}
+
+          where :math:`\Delta` is determined by ``d_step`` which is the
+          incremental change on the grid index.
 
         3. :code:`random`: a design randomly chosen.
 
@@ -198,7 +248,7 @@ class EnginePsi(Engine):
 
         Returns
         -------
-        design : array_like
+        design
             A chosen design vector
         """
         assert kind in {'optimal', 'staircase', 'random'}
@@ -229,22 +279,6 @@ class EnginePsi(Engine):
         return ret
 
     def update(self, design, response):
-        r"""
-        Update the posterior distribution for model parameters.
-
-        .. math::
-
-            p(\theta | y_\text{obs}(t), d^*) =
-                \frac{ p( y_\text{obs}(t) | \theta, d^*) p_t(\theta) }
-                    { p( y_\text{obs}(t) | d^* ) }
-
-        Parameters
-        ----------
-        design
-            Design vector for given response
-        response
-            Any kinds of observed response
-        """
         super(EnginePsi, self).update(design, response)
 
         # Store the previous response for staircase

@@ -17,8 +17,8 @@ Home
    :alt: CodeCov
    :target: https://codecov.io/gh/adopy/adopy
 
-**ADOpy** is a Python implementation of adaptive design optimization
-[Myung2013]_. Its modular design and simple structure permit easy use and
+**ADOpy** is a Python implementation of adaptive design optimization (Myung, Cavagnaro, & Pitt, 2013).
+Its modular design and simple structure permit easy use and
 integration into existing experimentation code. Specific features include:
 
 - Choice under risk and ambiguity task (:py:mod:`adopy.tasks.cra`)
@@ -58,11 +58,9 @@ It greatly encourages contributors to continue supporting ADOpy.
 
 References
 ----------
-
-.. [Myung2013]
-   Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
-   A tutorial on adaptive design optimization.
-   *Journal of Mathematical Psychology, 57*, 53–67.
+Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
+A tutorial on adaptive design optimization.
+*Journal of Mathematical Psychology, 57*, 53–67.
 
 Content
 -------

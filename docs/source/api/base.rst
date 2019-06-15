@@ -2,9 +2,10 @@
 =================
 
 .. automodule:: adopy.base
+   :no-members:
 
-.. autoclass:: adopy.Task
+.. autoclass:: Task
 
-.. autoclass:: adopy.Model
+.. autoclass:: Model
 
-.. autoclass:: adopy.Engine
+.. autoclass:: Engine

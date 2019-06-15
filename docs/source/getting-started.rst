@@ -211,3 +211,10 @@ Step 8. Repeat from Step 5 to Step 7 until the end
         # Bayesian updating
         # - Update the engine based on the observation
         engine.update(design, response)
+
+More examples
+-------------
+
+There are `more examples`_ on how to use ADOpy for other experimental tasks.
+
+.. _more examples: https://github.com/adopy/adopy/tree/master/examples

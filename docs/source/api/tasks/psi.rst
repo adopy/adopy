@@ -11,16 +11,18 @@
 Task
 ----
 
-.. autoclass:: TaskPsi
+.. autoclass:: Task2AFC
 
 Model
 -----
 
 .. autoclass:: ModelLogistic
 .. autoclass:: ModelWeibull
-.. autoclass:: ModelNormal
+.. autoclass:: ModelProbit
 
 Engine
 ------
 
 .. autoclass:: EnginePsi
+   :no-members:
+   :members: d_step, get_design

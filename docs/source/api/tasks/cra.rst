@@ -2,7 +2,7 @@
 ======================
 
 .. figure:: ../../_static/images/choice-under-risk-and-ambiguity-task.png
-    :width: 100%
+    :width: 80%
     :align: center
 
 .. automodule:: adopy.tasks.cra

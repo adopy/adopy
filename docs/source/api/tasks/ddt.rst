@@ -19,9 +19,9 @@ Model
 .. autoclass:: ModelExp
 .. autoclass:: ModelHyp
 .. autoclass:: ModelHPB
+.. autoclass:: ModelCOS
 .. autoclass:: ModelQH
 .. autoclass:: ModelDE
-.. autoclass:: ModelCOS
 
 Engine
 ------

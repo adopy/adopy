@@ -77,7 +77,7 @@ class Model(object):
 
     @property
     def constraint(self) -> Dict[str, Callable]:
-        """Contraints on model parameters"""
+        """Contraints on model parameters. This do not work yet."""
         return self._constraint
 
     def extract_params(self, data: data_like) -> Dict[str, Any]:
@@ -98,8 +98,8 @@ class Model(object):
         return extract_vars_from_data(data, self.params)
 
     def compute(self, *args, **kargs):
-        """
-        Compute the likelihood of data given model parameters.
+        """Compute the probability of choosing a certain response given
+        values of design variables and model parameters.
         """
         if self._func is not None:
             return self._func(*args, **kargs)
