@@ -1,5 +1,4 @@
 import random
-from enum import Enum
 from pathlib import Path
 
 import numpy as np
@@ -85,7 +84,7 @@ def show_instruction(caption):
     global window
 
     text = visual.TextStim(window, caption, font=TEXT_FONT,
-        pos=(0, 0), bold=True, height=0.7, wrapWidth=30)
+                           pos=(0, 0), bold=True, height=0.7, wrapWidth=30)
     text.draw()
     window.flip()
 
