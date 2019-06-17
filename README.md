@@ -4,11 +4,19 @@
 [![Travid CI](https://travis-ci.com/adopy/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master)](https://travis-ci.com/adopy/adopy)
 [![CodeCov](https://codecov.io/gh/adopy/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k)](https://codecov.io/gh/adopy/adopy)
 
-**ADOpy** is a Python implementation of adaptive design optimization (Myung, Cavagnaro, & Pitt, 2013).
-Its modular design and simple structure permit easy use and integration into existing experimentation code.
+**ADOpy** is a Python implementation of adaptive design optimization (ADO; Myung, Cavagnaro, & Pitt, 2013).
+Its modular design and simple structure permit easy integration into existing experimentation code.
 
-It supports only for Python 3.5+ using NumPy, SciPy, and Pandas.
-You can read the full documentation for details [here](https://adopy.org).
+ADOpy supports Python 3.5+ using NumPy, SciPy, and Pandas.
+
+## Implemented tasks
+ADO versions of the following tasks are currently implemented. Models available for each task are listed. Users can also provide their own model. Additional tasks will be added in future releases.
+
+[Insert table?]
+
+## (Not so quick) Start GUide
+
+**Full documentation is found  [here](https://adopy.org)**
 
 ## Citation
 
