@@ -421,7 +421,7 @@ class EngineDD(Engine):
     It can be only used for :py:class:`TaskDD`.
     """
 
-    def __init__(self, model, designs, params):
+    def __init__(self, model, grid_design, grid_param):
         assert type(model) in [
             type(ModelExp()),
             type(ModelHyp()),
@@ -434,6 +434,6 @@ class EngineDD(Engine):
         super(EngineDD, self).__init__(
             task=TaskDD(),
             model=model,
-            designs=designs,
-            params=params
+            grid_design=grid_design,
+            grid_param=grid_param
         )

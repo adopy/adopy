@@ -5,7 +5,7 @@ from adopy.tasks.cra import ModelLinear, ModelExp, EngineCRA
 
 
 @pytest.fixture()
-def designs():
+def grid_design():
     # Define grids for the probability for rewarding and the ambiguity level
     # For risky conditions
     pr_risky = np.linspace(0.0, 0.5, 5)
@@ -33,7 +33,7 @@ def designs():
 
 
 @pytest.fixture()
-def params():
+def grid_param():
     alp = np.linspace(0.0, 2.0, 5)
     bet = np.linspace(-1.0, 2.0, 5)
     gam = np.linspace(0.0, 5.0, 5)
@@ -42,11 +42,14 @@ def params():
 
 
 @pytest.mark.parametrize('model', [ModelLinear, ModelExp])
-def test_calculate_psi(model, designs, params):
-    cra = EngineCRA(model=model(), designs=designs, params=params)
+def test_calculate_psi(model, grid_design, grid_param):
+    cra = EngineCRA(model=model(),
+                    grid_design=grid_design,
+                    grid_param=grid_param)
 
-    len_design = int(np.prod([np.shape(des)[0] for des in designs.values()]))
-    len_param = int(np.prod([np.shape(par)[0] for par in params.values()]))
+    len_design = int(np.prod([np.shape(des)[0]
+                              for des in grid_design.values()]))
+    len_param = int(np.prod([np.shape(par)[0] for par in grid_param.values()]))
 
     assert cra.p_obs.shape == (len_design, len_param)
 
@@ -54,8 +57,10 @@ def test_calculate_psi(model, designs, params):
 @pytest.mark.parametrize('design_type', ['optimal', 'random'])
 @pytest.mark.parametrize('model', [ModelLinear, ModelExp])
 @pytest.mark.parametrize('response', [0, 1])
-def test_classes(design_type, model, designs, params, response):
-    cra = EngineCRA(model=model(), designs=designs, params=params)
+def test_classes(design_type, model, grid_design, grid_param, response):
+    cra = EngineCRA(model=model(),
+                    grid_design=grid_design,
+                    grid_param=grid_param)
     d = cra.get_design(design_type)
     cra.update(d, response)
 

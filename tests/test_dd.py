@@ -12,7 +12,7 @@ def make_grid(start, end, n):
 
 
 @pytest.fixture()
-def designs():
+def grid_design():
     # Amounts of rewards
     am_soon = [8, 12, 15, 17, 19, 22]
     am_late = [12, 15, 17, 19, 22, 23]
@@ -30,29 +30,8 @@ def designs():
     return designs
 
 
-@pytest.mark.parametrize('model, params', [
-    (ModelExp, dict(tau=make_grid(0, 5, N_GRID), r=make_grid(0, 2, N_GRID))),
-    (ModelHyp, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID))),
-    (ModelHPB, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID),
-                    s=make_grid(-1, 1, N_GRID))),
-    (ModelQH, dict(tau=make_grid(0, 5, N_GRID), beta=make_grid(0, 1, N_GRID),
-                   delta=make_grid(0, 1, N_GRID))),
-    (ModelDE, dict(tau=make_grid(0, 5, N_GRID), omega=make_grid(0, 1, N_GRID),
-                   r=make_grid(0, 2, N_GRID), s=make_grid(0, 2, N_GRID))),
-    (ModelCOS, dict(tau=np.linspace(0, 5, N_GRID), r=np.linspace(0, 2, N_GRID),
-                    s=np.linspace(0, 2, N_GRID))),
-])
-def test_calculate_psi(model, designs, params):
-    ddt = EngineDD(model=model(), designs=designs, params=params)
-
-    len_design = int(np.prod([np.shape(des)[0] for des in designs.values()]))
-    len_param = int(np.prod([np.shape(par)[0] for par in params.values()]))
-
-    assert ddt.p_obs.shape == (len_design, len_param)
-
-
 @pytest.mark.parametrize('design_type', ['optimal', 'random'])
-@pytest.mark.parametrize('model, params', [
+@pytest.mark.parametrize('model, grid_param', [
     (ModelExp, dict(tau=make_grid(0, 5, N_GRID), r=make_grid(0, 2, N_GRID))),
     (ModelHyp, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID))),
     (ModelHPB, dict(tau=make_grid(0, 5, N_GRID), k=make_grid(0, 2, N_GRID),
@@ -65,8 +44,9 @@ def test_calculate_psi(model, designs, params):
                     s=np.linspace(0, 2, N_GRID))),
 ])
 @pytest.mark.parametrize('response', [0, 1])
-def test_classes(design_type, model, designs, params, response):
-    ddt = EngineDD(model=model(), designs=designs, params=params)
+def test_classes(design_type, model, grid_design, grid_param, response):
+    ddt = EngineDD(model=model(),
+                   grid_design=grid_design, grid_param=grid_param)
     d = ddt.get_design(design_type)
     ddt.update(d, response)
 

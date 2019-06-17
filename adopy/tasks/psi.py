@@ -136,6 +136,7 @@ class ModelWeibull(_ModelPsi):
     >>> model.params
     ['threshold', 'slope', 'guess_rate', 'lapse_rate']
     """
+
     def __init__(self):
         super(ModelWeibull, self).__init__(name='Weibull')
 
@@ -177,6 +178,7 @@ class ModelProbit(_ModelPsi):
     >>> model.params
     ['threshold', 'slope', 'guess_rate', 'lapse_rate']
     """
+
     def __init__(self):
         super(ModelProbit, self).__init__(name='Normal')
 
@@ -191,7 +193,7 @@ class EnginePsi(Engine):
     It can be only used for :py:class:`Task2AFC`.
     """
 
-    def __init__(self, model, designs, params, d_step: int = 1):
+    def __init__(self, model, grid_design, grid_param, d_step: int = 1):
         assert type(model) in [
             type(ModelLogistic()),
             type(ModelWeibull()),
@@ -201,8 +203,8 @@ class EnginePsi(Engine):
         super(EnginePsi, self).__init__(
             task=Task2AFC(),
             model=model,
-            designs=designs,
-            params=params
+            grid_design=grid_design,
+            grid_param=grid_param
         )
 
         self.idx_opt = get_random_design_index(self.grid_design)

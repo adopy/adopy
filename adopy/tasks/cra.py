@@ -57,6 +57,7 @@ class TaskCRA(Task):
     >>> task.responses
     [0, 1]
     """
+
     def __init__(self):
         super(TaskCRA, self).__init__(
             name='CRA',
@@ -97,6 +98,7 @@ class ModelLinear(Model):
     >>> model.params
     ['alpha', 'beta', 'gamma']
     """
+
     def __init__(self):
         super(ModelLinear, self).__init__(
             name='Linear',
@@ -148,6 +150,7 @@ class ModelExp(Model):
     >>> model.params
     ['alpha', 'beta', 'gamma']
     """
+
     def __init__(self):
         super(ModelExp, self).__init__(
             name='Exponential',
@@ -171,7 +174,7 @@ class EngineCRA(Engine):
     The Engine class for the CRA task. It can be only used for :py:class:`TaskCRA`.
     """
 
-    def __init__(self, model, designs, params):
+    def __init__(self, model, grid_design, grid_param):
         assert type(model) in [
             type(ModelLinear()),
             type(ModelExp()),
@@ -180,6 +183,6 @@ class EngineCRA(Engine):
         super(EngineCRA, self).__init__(
             task=TaskCRA(),
             model=model,
-            designs=designs,
-            params=params
+            grid_design=grid_design,
+            grid_param=grid_param
         )

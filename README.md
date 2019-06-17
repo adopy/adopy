@@ -96,12 +96,12 @@ as its value.
 ```python
 import numpy as np
 
-grid_designs = {
+grid_design = {
     'x1': np.linspace(0, 50, 100),    # 100 grid points within [0, 50]
     'x2': np.linspace(-20, 30, 100),  # 100 grid points within [-20, 30]
 }
 
-grid_params = {
+grid_param = {
     'b0': np.linspace(-5, 5, 100),  # 100 grid points within [-5, 5]
     'b1': np.linspace(-5, 5, 100),  # 100 grid points within [-5, 5]
     'b2': np.linspace(-5, 5, 100),  # 100 grid points within [-5, 5]
@@ -127,7 +127,7 @@ for x1 in np.linspace(0, 50, 101):        # 101 grid points within [0, 50]
 #  [50, 29.5],
 #  [50, 30  ]]
 
-grid_designs = {
+grid_design = {
     ('x1', 'x2'): x_joint
 }
 ```
@@ -141,10 +141,10 @@ based on the Adaptive Design Optimization.
 ```python
 from adopy import Engine
 
-engine = Engine(model=model,           # a Model object
-                task=task,             # a Task object
-                designs=grid_designs,  # a grid for design variables
-                params=grid_params)    # a grid for model parameters
+engine = Engine(model=model,              # a Model object
+                task=task,                # a Task object
+                grid_design=grid_design,  # a grid for design variables
+                grid_param=grid_param)    # a grid for model parameters
 ```
 
 ### Step 5. Compute a design using the engine

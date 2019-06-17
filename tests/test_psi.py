@@ -5,14 +5,14 @@ from adopy.tasks.psi import ModelLogistic, ModelWeibull, ModelProbit, EnginePsi
 
 
 @pytest.fixture()
-def designs():
+def grid_design():
     stimulus = np.linspace(20 * np.log10(.05), 20 * np.log10(400), 20)
     designs = dict(stimulus=stimulus)
     return designs
 
 
 @pytest.fixture()
-def params():
+def grid_param():
     guess_rate = [0.5]
     lapse_rate = [0.05]
     threshold = np.linspace(20 * np.log10(.1), 20 * np.log10(200), 20)
@@ -22,21 +22,12 @@ def params():
     return params
 
 
-@pytest.mark.parametrize('model', [ModelLogistic, ModelWeibull, ModelProbit])
-def test_calculate_psi(model, designs, params):
-    psi = EnginePsi(model=model(), designs=designs, params=params)
-
-    len_design = int(np.prod([np.shape(des)[0] for des in designs.values()]))
-    len_param = int(np.prod([np.shape(par)[0] for par in params.values()]))
-
-    assert psi.p_obs.shape == (len_design, len_param)
-
-
 @pytest.mark.parametrize('design_type', ['optimal', 'staircase', 'random'])
 @pytest.mark.parametrize('model', [ModelLogistic, ModelWeibull, ModelProbit])
 @pytest.mark.parametrize('response', [0, 1])
-def test_classes(design_type, model, designs, params, response):
-    psi = EnginePsi(model=model(), designs=designs, params=params)
+def test_classes(design_type, model, grid_design, grid_param, response):
+    psi = EnginePsi(model=model(),
+                    grid_design=grid_design, grid_param=grid_param)
     d = psi.get_design(design_type)
     psi.update(d, response)
 
