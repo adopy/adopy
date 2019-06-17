@@ -9,12 +9,6 @@ Its modular design and simple structure permit easy integration into existing ex
 
 ADOpy supports Python 3.5+ using NumPy, SciPy, and Pandas.
 
-## Citation
-If you use ADOpy, please cite this package along with the specific version.
-It greatly encourages contributors to continue supporting ADOpy.
-
-> To be announced.
-
 ## Implemented tasks
 ADO versions of the following tasks are currently implemented. Models available for each task are listed. Users can also provide their own model. Additional tasks will be added in future releases.
 
@@ -24,6 +18,13 @@ ADO versions of the following tasks are currently implemented. Models available 
 
 **Full documentation is found  [here](https://adopy.org)**
 
+
+
+## Citation
+If you use ADOpy, please cite this package along with the specific version.
+It greatly encourages contributors to continue supporting ADOpy.
+
+> To be announced.
 
 ## References
 - Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
