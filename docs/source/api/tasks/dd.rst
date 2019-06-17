@@ -1,17 +1,17 @@
-:mod:`adopy.tasks.ddt`
+:mod:`adopy.tasks.dd`
 ======================
 
 .. figure:: ../../_static/images/delay-discounting-task.png
     :width: 100%
     :align: center
 
-.. automodule:: adopy.tasks.ddt
+.. automodule:: adopy.tasks.dd
    :no-members:
 
 Task
 ----
 
-.. autoclass:: TaskDDT
+.. autoclass:: TaskDD
 
 Model
 -----
@@ -26,4 +26,4 @@ Model
 Engine
 ------
 
-.. autoclass:: EngineDDT
+.. autoclass:: EngineDD

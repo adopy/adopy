@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from adopy.tasks.ddt import (ModelExp, ModelHyp, ModelHPB, ModelQH,
-                             ModelDE, ModelCOS, EngineDDT)
+from adopy.tasks.dd import (ModelExp, ModelHyp, ModelHPB, ModelQH,
+                            ModelDE, ModelCOS, EngineDD)
 
 N_GRID = 7
 
@@ -43,7 +43,7 @@ def designs():
                     s=np.linspace(0, 2, N_GRID))),
 ])
 def test_calculate_psi(model, designs, params):
-    ddt = EngineDDT(model=model(), designs=designs, params=params)
+    ddt = EngineDD(model=model(), designs=designs, params=params)
 
     len_design = int(np.prod([np.shape(des)[0] for des in designs.values()]))
     len_param = int(np.prod([np.shape(par)[0] for par in params.values()]))
@@ -66,7 +66,7 @@ def test_calculate_psi(model, designs, params):
 ])
 @pytest.mark.parametrize('response', [0, 1])
 def test_classes(design_type, model, designs, params, response):
-    ddt = EngineDDT(model=model(), designs=designs, params=params)
+    ddt = EngineDD(model=model(), designs=designs, params=params)
     d = ddt.get_design(design_type)
     ddt.update(d, response)
 
