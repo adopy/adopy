@@ -165,12 +165,12 @@ def draw_option(window, lr, is_top, prob, ambig, reward):
     else:
         r_top, r_bottom = 0, reward
 
-    text_top = visual.TextStim(window, text=r_top,
+    text_top = visual.TextStim(window, text='{:.0f}'.format(r_top),
                                pos=(x_center, y_top + TEXT_MARGIN))
     text_top.size = TEXT_SIZE
     text_top.draw()
 
-    text_bottom = visual.TextStim(window, text=r_bottom,
+    text_bottom = visual.TextStim(window, text='{:.0f}'.format(r_bottom),
                                   pos=(x_center, y_bottom - TEXT_MARGIN))
     text_bottom.size = TEXT_SIZE
     text_bottom.draw()
@@ -215,7 +215,7 @@ def run_trial(design):
 
     # Show a variable option
     draw_option(window, 1 * lr, is_top,
-                design['prob'], design['ambig'], design['r_var'])
+                design['p_var'], design['a_var'], design['r_var'])
 
     # Show a fixed option (a reference option)
     draw_option(window, -1 * lr, is_top, 0.5, 0, design['r_fix'])
@@ -278,7 +278,7 @@ def generate_fixed_designs():
     np.random.shuffle(designs)
 
     return pd.DataFrame(designs[:, :4],
-                        columns=['prob', 'ambig', 'r_var', 'r_fix'])
+                        columns=['p_var', 'a_var', 'r_var', 'r_fix'])
 
 ###############################################################################
 # Start PsychoPy
@@ -324,37 +324,35 @@ event.globalKeys.add(key='escape', func=core.quit, name='shutdown')
 task = TaskCRA()
 model = ModelLinear()
 
-# Generate grid for design variables and model parameters
-r_var = np.round(np.logspace(np.log10(10), np.log10(250), 11))
-r_fix = np.round(np.logspace(np.log10(10), np.log10(125), 11))
-rewards = np.array([
-    [rv, rf] for rv in r_var for rf in r_fix if rv > rf
-])
+# p_var & a_var for risky & ambiguous trials
+pval = [.05, .10, .15, .20, .25, .30, .35, .40, .45]
+aval = [.125, .25, .375, .5, .625, .75]
 
-prob_risky = np.linspace(0, 0.5, 6)[1:]
-ambig_risky = [0]
-pr_am_risky = np.array([
-    [pr, am] for pr in prob_risky for am in ambig_risky
-])
+# risky trials: a_var fixed to 0
+pa_risky = [[p, 0] for p in pval]
+# ambiguous trials: p_var fixed to 0.5
+pa_ambig = [[0.5, a] for a in aval]
+pr_am = np.array(pa_risky + pa_ambig)
 
-prob_ambig = [0.5]
-ambig_ambig = np.linspace(0, 0.75, 7)[1:]
-pr_am_ambig = np.array([
-    [pr, am] for pr in prob_ambig for am in ambig_ambig
-])
+# r_var & r_fix while r_var > r_fix
+rval = [10, 15, 21, 31, 45, 66, 97, 141, 206, 300]
+rewards = []
+for r_var in rval:
+    for r_fix in rval:
+        if r_var > r_fix:
+            rewards.append([r_var, r_fix])
+rewards = np.array(rewards)
 
-pr_am = np.vstack([pr_am_risky, pr_am_ambig])
+grid_design = {('p_var', 'a_var'): pr_am, ('r_var', 'r_fix'): rewards}
 
-designs = {('prob', 'ambig'): pr_am, ('r_var', 'r_fix'): rewards}
-
-params = {
-    'alpha': np.linspace(0, 3, 16),
-    'beta': np.linspace(-1, 2, 16),
+grid_param = {
+    'alpha': np.linspace(0, 3, 11),
+    'beta': np.linspace(-3, 3, 11),
     'gamma': np.linspace(0, 5, 11)
 }
 
 # Create an Engine object
-engine = Engine(task, model, designs, params)
+engine = Engine(task, model, grid_design, grid_param)
 
 ###############################################################################
 # Main codes
@@ -366,8 +364,7 @@ df_fixed = generate_fixed_designs()
 # Make an empty DataFrame to store trial-by-trial information
 df_data = pd.DataFrame(
     None,
-    columns=['block', 'trial',
-             'prob', 'ambig', 'r_var', 'r_fix',
+    columns=['block', 'trial', 'p_var', 'a_var', 'r_var', 'r_fix',
              'response', 'rt'])
 
 # Show instructions
@@ -391,8 +388,8 @@ for trial in range(n_prac):
     df_data = df_data.append(pd.Series({
         'block': 'prac',
         'trial': trial + 1,
-        'prob': design['prob'],
-        'ambig': design['ambig'],
+        'p_var': design['p_var'],
+        'a_var': design['a_var'],
         'r_var': design['r_var'],
         'r_fix': design['r_fix'],
         'response': response,
@@ -426,8 +423,8 @@ for trial in range(n_trial):
     df_data = df_data.append(pd.Series({
         'block': 'main',
         'trial': trial + 1,
-        'prob': design['prob'],
-        'ambig': design['ambig'],
+        'p_var': design['p_var'],
+        'a_var': design['a_var'],
         'r_var': design['r_var'],
         'r_fix': design['r_fix'],
         'response': response,
@@ -458,7 +455,7 @@ df_main_var = df_main.loc[df_main['response'] == 1, :]
 num_resp_var = len(df_main_var)
 
 if num_resp_var > 0:
-    earn = bernoulli.rvs(df_main_var['prob'])
+    earn = bernoulli.rvs(df_main_var['p_var'])
     total_reward += np.dot(earn, df_main_var['r_var'])
 
 # Show the final instruction

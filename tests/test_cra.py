@@ -6,37 +6,33 @@ from adopy.tasks.cra import ModelLinear, ModelExp, EngineCRA
 
 @pytest.fixture()
 def grid_design():
-    # Define grids for the probability for rewarding and the ambiguity level
-    # For risky conditions
-    pr_risky = np.linspace(0.0, 0.5, 5)
-    am_risky = np.array(0).reshape(-1)
+    # p_var & a_var for risky & ambiguous trials
+    pval = [.05, .10, .15, .20, .25, .30, .35, .40, .45]
+    aval = [.125, .25, .375, .5, .625, .75]
 
-    # For ambiguous conditions
-    pr_ambig = np.array(0.5).reshape(-1)
-    am_ambig = np.linspace(0.0, 0.75, 5)
+    # risky trials: a_var fixed to 0
+    pa_risky = [[p, 0] for p in pval]
+    # ambiguous trials: p_var fixed to 0.5
+    pa_ambig = [[0.5, a] for a in aval]
+    pr_am = np.array(pa_risky + pa_ambig)
 
-    # Make cartesian products for each condition
-    pr_am_risky = np.squeeze(np.stack(np.meshgrid(pr_risky, am_risky), -1))
-    pr_am_ambig = np.squeeze(np.stack(np.meshgrid(pr_ambig, am_ambig), -1))
+    # r_var & r_fix while r_var > r_fix
+    rval = [10, 15, 21, 31, 45, 66, 97, 141, 206, 300]
+    rewards = []
+    for r_var in rval:
+        for r_fix in rval:
+            if r_var > r_fix:
+                rewards.append([r_var, r_fix])
+    rewards = np.array(rewards)
 
-    # Merge two grids into one object
-    pr_am = np.vstack([pr_am_risky[:-1, :], pr_am_ambig])
-
-    # Define grids for rewards on each option
-    r_var = np.round(np.logspace(np.log10(10), np.log10(250), 5, base=10))
-    r_fix = np.round(np.logspace(np.log10(10), np.log10(125), 5, base=10))
-
-    rs = np.vstack([(rv, rf) for rv in r_var for rf in r_fix if rv > rf])
-
-    designs = {('prob', 'ambig'): pr_am, ('r_var', 'r_fix'): rs}
-    return designs
+    return {('p_var', 'a_var'): pr_am, ('r_var', 'r_fix'): rewards}
 
 
 @pytest.fixture()
 def grid_param():
-    alp = np.linspace(0.0, 2.0, 5)
-    bet = np.linspace(-1.0, 2.0, 5)
-    gam = np.linspace(0.0, 5.0, 5)
+    alp = np.linspace(0, 3, 11)
+    bet = np.linspace(-3, 3, 11)
+    gam = np.linspace(0, 5, 11)
     params = dict(alpha=alp, beta=bet, gamma=gam)
     return params
 
