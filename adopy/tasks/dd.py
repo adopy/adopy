@@ -23,18 +23,18 @@ from adopy.base import Engine, Task, Model
 from adopy.functions import inv_logit, const_positive, const_01
 
 __all__ = [
-    'TaskDDT',
+    'TaskDD',
     'ModelExp',
     'ModelHyp',
     'ModelHPB',
     'ModelCOS',
     'ModelQH',
     'ModelDE',
-    'EngineDDT'
+    'EngineDD'
 ]
 
 
-class TaskDDT(Task):
+class TaskDD(Task):
     """
     The Task class for the delay discounting task.
 
@@ -49,8 +49,8 @@ class TaskDDT(Task):
 
     Examples
     --------
-    >>> from adopy.tasks.ddt import TaskDDT
-    >>> task = TaskDDT()
+    >>> from adopy.tasks.ddt import TaskDD
+    >>> task = TaskDD()
     >>> task.designs
     ['t_ss', 't_ll', 'r_ss', 'r_ll']
     >>> task.responses
@@ -58,7 +58,7 @@ class TaskDDT(Task):
     """
 
     def __init__(self):
-        super(TaskDDT, self).__init__(
+        super(TaskDD, self).__init__(
             name='DDT',
             designs=['t_ss', 't_ll', 'r_ss', 'r_ll'],
             responses=[0, 1]  # Binary response
@@ -100,7 +100,7 @@ class ModelExp(Model):
     def __init__(self):
         args = dict(
             name='Exponential',
-            task=TaskDDT(),
+            task=TaskDD(),
             params=['r', 'tau'],
             constraint={
                 'r': const_positive,
@@ -155,7 +155,7 @@ class ModelHyp(Model):
     def __init__(self):
         args = dict(
             name='Hyperbolic',
-            task=TaskDDT(),
+            task=TaskDD(),
             params=['k', 'tau'],
             constraint={
                 'k': const_positive,
@@ -212,7 +212,7 @@ class ModelHPB(Model):
     def __init__(self):
         args = dict(
             name='Hyperboloid',
-            task=TaskDDT(),
+            task=TaskDD(),
             params=['k', 's', 'tau'],
             constraint={
                 'k': const_positive,
@@ -270,7 +270,7 @@ class ModelCOS(Model):
     def __init__(self):
         args = dict(
             name='Constant Sensitivity',
-            task=TaskDDT(),
+            task=TaskDD(),
             params=['r', 's', 'tau'],
             constraint={
                 'r': const_positive,
@@ -331,7 +331,7 @@ class ModelQH(Model):
     def __init__(self):
         args = dict(
             name='Quasi-Hyperbolic',
-            task=TaskDDT(),
+            task=TaskDD(),
             params=['beta', 'delta', 'tau'],
             constraint={
                 'beta': const_01,
@@ -392,7 +392,7 @@ class ModelDE(Model):
     def __init__(self):
         args = dict(
             name='Double Exponential',
-            task=TaskDDT(),
+            task=TaskDD(),
             params=['omega', 'r', 's', 'tau'],
             constraint={
                 'omega': const_01,
@@ -415,13 +415,13 @@ class ModelDE(Model):
         return p_obs
 
 
-class EngineDDT(Engine):
+class EngineDD(Engine):
     """
     The Engine class for the delay discounting task.
-    It can be only used for :py:class:`TaskDDT`.
+    It can be only used for :py:class:`TaskDD`.
     """
 
-    def __init__(self, model, designs, params):
+    def __init__(self, model, grid_design, grid_param):
         assert type(model) in [
             type(ModelExp()),
             type(ModelHyp()),
@@ -431,9 +431,9 @@ class EngineDDT(Engine):
             type(ModelCOS()),
         ]
 
-        super(EngineDDT, self).__init__(
-            task=TaskDDT(),
+        super(EngineDD, self).__init__(
+            task=TaskDD(),
             model=model,
-            designs=designs,
-            params=params
+            grid_design=grid_design,
+            grid_param=grid_param
         )

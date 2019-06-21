@@ -29,8 +29,8 @@ class Engine(object):
     def __init__(self,
                  task: Task,
                  model: Model,
-                 designs: Dict[str, Any],
-                 params: Dict[str, Any],
+                 grid_design: Dict[str, Any],
+                 grid_param: Dict[str, Any],
                  lambda_et: Optional[float] = None):
         super(Engine, self).__init__()
 
@@ -41,8 +41,8 @@ class Engine(object):
         self._model = model  # type: Model
         self.lambda_et = lambda_et
 
-        self.grid_design = make_grid_matrix(designs)[task.designs]
-        self.grid_param = make_grid_matrix(params)[model.params]
+        self.grid_design = make_grid_matrix(grid_design)[task.designs]
+        self.grid_param = make_grid_matrix(grid_param)[model.params]
         self.grid_response = pd.DataFrame(
             np.array(task.responses), columns=['y_obs'])
 

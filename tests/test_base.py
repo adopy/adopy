@@ -87,14 +87,14 @@ def test_model(model, model_noname, task):
 
 
 @pytest.fixture()
-def designs():
+def grid_design():
     return {
         'stimulus': np.linspace(20 * np.log10(.05), 20 * np.log10(400), 120)
     }
 
 
 @pytest.fixture()
-def params():
+def grid_param():
     return {
         'threshold': np.linspace(20 * np.log10(.1), 20 * np.log10(200), 100),
         'slope': np.linspace(0, 10, 101)[0:],
@@ -104,8 +104,9 @@ def params():
 
 
 @pytest.fixture()
-def engine(task, model, designs, params):
-    return Engine(task=task, model=model, designs=designs, params=params)
+def engine(task, model, grid_design, grid_param):
+    return Engine(task=task, model=model,
+                  grid_design=grid_design, grid_param=grid_param)
 
 
 def test_engine(engine, task, model):
