@@ -8,7 +8,7 @@
 
 ### Features
 
-- ADOpy supports Python 3.5 or above and is relies on NumPy, SciPy, and Pandas.
+- ADOpy supports Python 3.5 or above and relies on NumPy, SciPy, and Pandas.
 - **Grid-based computation of optimal designs using only three classes**: `adopy.Task`, `adopy.Model`, and `adopy.Engine`.
 - **Easily customizable for your own tasks and models**
 - **Pre-implemented Task and Model classes including**:
