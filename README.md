@@ -21,7 +21,7 @@
 
 
 
-###Resources###
+### Resources
 - [**Getting started**](https://adopy.org/getting-started.html)
 - [**Documentation**](https://adopy.org)
 - [**Bug reports**](https://github.com/adopy/adopy/issues)
