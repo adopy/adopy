@@ -6,9 +6,10 @@
 
 **ADOpy** is a Python implementation of Adaptive Design Optimization (ADO; Myung, Cavagnaro, & Pitt, 2013), which computes optimal designs dynamically in an experiment. Its modular structure permit easy integration into existing experimentation code.
 
+ADOpy supports Python 3.5 or above and relies on NumPy, SciPy, and Pandas.
+
 ### Features
 
-- ADOpy supports Python 3.5 or above and relies on NumPy, SciPy, and Pandas.
 - **Grid-based computation of optimal designs using only three classes**: `adopy.Task`, `adopy.Model`, and `adopy.Engine`.
 - **Easily customizable for your own tasks and models**
 - **Pre-implemented Task and Model classes including**:
@@ -19,9 +20,8 @@
 
 [example-code]: https://github.com/adopy/adopy/tree/master/examples
 
-
-
 ### Resources
+
 - [**Getting started**](https://adopy.org/getting-started.html)
 - [**Documentation**](https://adopy.org)
 - [**Bug reports**](https://github.com/adopy/adopy/issues)
@@ -63,7 +63,7 @@ parameters (`b0`, `b1`, and `b2`):
 
 <img src="https://user-images.githubusercontent.com/11037140/59533069-5f7b7880-8f25-11e9-8440-4d31fb6ac260.png" align="center">
 
-How to compute the probabilty `p`should be defined as a function:
+How to compute the probabilty `p` should be defined as a function:
 
 ```python
 import numpy as np
@@ -109,30 +109,6 @@ grid_param = {
 }
 ```
 
-To place constraints on design variables, pass a joint matrix
-in which each column corresponds to a grid point of a design variable.
-Then, the key on the grid object should be a list of design variables
-with the same order as in the columns of the joint matrix.
-
-```python
-# Define a joint matrix with a constraint, x1 > x2.
-x_joint = []
-for x1 in np.linspace(0, 50, 101):        # 101 grid points within [0, 50]
-    for x2 in np.linspace(-20, 30, 101):  # 101 grid points within [-20, 30]
-        if x1 > x2:
-            x_joint.append([x1, x2])
-#   x1   x2
-# [[0, -20  ],
-#  [0, -19.5],
-#  ...,
-#  [50, 29.5],
-#  [50, 30  ]]
-
-grid_design = {
-    ('x1', 'x2'): x_joint
-}
-```
-
 ### Step 4. Initialize an engine using `adopy.Engine`
 
 Using the objects created so far, an engine should be initialized using
@@ -162,22 +138,8 @@ design = engine.get_design('random')
 ### Step 6. Collect an observation in your experiment
 
 ```python
-# Get a response from a participant using your own code,
+# Get a response from a participant using your own code
 response = ...
-
-
-# Or simulate a response using the model object.
-from scipy.stats import bernoulli
-
-def get_simulated_response(model, design):
-    """Simulate a response using b0 = 1.2, b1 = 3.7 and b2 = -2.5."""
-    # Compute the likelihood to get a positive response of 1.
-    p_obs = model.compute(x1=design['x1'], x2=design['x2'], b0=1.2, b1=3.7, b2=-2.5)
-
-    # Simulate a binary choice response using Bernoulli distribution
-    return bernoulli.rvs(p_obs)
-
-response = get_simulated_response(model, design)
 ```
 
 ### Step 7. Update the engine with the observation
@@ -196,8 +158,8 @@ for trial in range(NUM_TRIAL):
     # Compute an optimal design for the current trial
     design = engine.get_design('optimal')
 
-    # Get a simulated response
-    response = get_simulated_response(model, design)
+    # Get a response using the optimal design
+    response = ...  # Using users' own codes
 
     # Update the engine
     engine.update(design, response)
@@ -217,3 +179,4 @@ It greatly encourages contributors to continue supporting ADOpy.
 - Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
   A tutorial on adaptive design optimization.
   *Journal of Mathematical Psychology, 57*, 53–67.
+

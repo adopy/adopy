@@ -19,8 +19,8 @@ Instead, you can install the developmental version in the GitHub repository.
     git checkout develop
     pip install .
 
-Quick-start guides
-------------------
+Quick-start guide
+-----------------
 
 Here, we present how to use ADOpy to compute optimal designs for an experiment.
 Assuming an arbitrary task and a model, this section shows how users can apply
@@ -53,13 +53,13 @@ Step 2. Define a model using :py:class:`adopy.Model`
 
 To predict partipants' choices, here we assume a logistic regression model
 that calculates the probability to make a positive response using three model
-parameters (``b0``, ``b1``, and ``b2``) as an equation below:
+parameters (``b0``, ``b1``, and ``b2``):
 
 .. math::
 
     p = \frac{1}{1 + \exp\left[ - (b_0 + b_1 x_1 + b_2 x_2) \right]}
 
-Then, how to compute the probabilty should be defined as a function:
+How to compute the probabilty :math:`p` should be defined as a function:
 
 .. code:: python
 
@@ -72,7 +72,7 @@ Then, how to compute the probabilty should be defined as a function:
         return p_obs
 
 Using the information and the function, the model can be defined with
-:py:class:`adopy.Model` as described below:
+:py:class:`adopy.Model`:
 
 .. code:: python
 
@@ -86,8 +86,8 @@ Using the information and the function, the model can be defined with
 Step 3. Define grids for design variables and model parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Since ADOpy uses grid search for the design space and parameter space,
-you should define a grid for design variables and model parameters.
+Since ADOpy uses grid search to search the design space and parameter space,
+you must define a grid for design variables and model parameters.
 The grid can be defined using the labels (of design variables or model
 parameters) as its key and an array of the corresponding grid points
 as its value.
@@ -107,36 +107,12 @@ as its value.
         'b2': np.linspace(-5, 5, 100),  # 100 grid points within [-5, 5]
     }
 
-To make constraints on design variables, you should pass a joint matrix
-of which each column corresponds to a grid point of a design variable.
-Then, the key on the grid object should be a list of design variables
-with the same order as in the columns of the joint matrix.
-
-.. code:: python
-
-    # Define a joint matrix with a constraint, x1 > x2.
-    x_joint = []
-    for x1 in np.linspace(0, 50, 101):        # 101 grid points within [0, 50]
-        for x2 in np.linspace(-20, 30, 101):  # 101 grid points within [-20, 30]
-            if x1 > x2:
-                x_joint.append([x1, x2])
-    #   x1   x2
-    # [[0, -20  ],
-    #  [0, -19.5],
-    #  ...,
-    #  [50, 29.5],
-    #  [50, 30  ]]
-
-    grid_design = {
-        ('x1', 'x2'): x_joint
-    }
-
 Step 4. Initialize an engine using :py:class:`adopy.Engine`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Using the objects created so far, an engine should be initialized using
 :py:class:`adopy.Engine`. It contains built-in functions to compute an
-optimal design based on the Adaptive Design Optimization.
+optimal design using ADO.
 
 .. code:: python
 
@@ -157,33 +133,19 @@ Step 5. Compute a design using the engine
     design = engine.get_design()
     design = engine.get_design('optimal')
 
-    # Compute a randomly chosen design
+    # Compute a randomly chosen design, as is typically done in non-ADO experiments
     design = engine.get_design('random')
 
 
-Step 6. Run an experiment using the design
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 6. Collect an observation in your experiment
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
-    # Get a response from a real experiment using your own codes,
+    # Get a response from a participant using your own code
     response = ...
 
-
-    # Or simulate a response using the model object.
-    from scipy.stats import bernoulli
-
-    def get_simulated_response(model, design):
-        """Simulate a response using b0 = 1.2, b1 = 3.7 and b2 = -2.5."""
-        # Compute the likelihood to get a positive response of 1.
-        p_obs = model.compute(x1=design['x1'], x2=design['x2'], b0=1.2, b1=3.7, b2=-2.5)
-
-        # Simulate a binary choice response using Bernoulli distribution
-        return bernoulli.rvs(p_obs)
-
-    response = get_simulated_response(model, design)
-
-Step 7. Update the engine from the observation
+Step 7. Update the engine with the observation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
@@ -192,24 +154,21 @@ Step 7. Update the engine from the observation
     engine.update(design, response)
 
 
-Step 8. Repeat from Step 5 to Step 7 until the end
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 8. Repeat Step 5 through Step 7 until the experiment is over
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: python
 
     NUM_TRIAL = 100  # number of trials
 
     for trial in range(NUM_TRIAL):
-        # Design optimization
-        # - Compute an optimal design for the current trial
+        # Compute an optimal design for the current trial
         design = engine.get_design('optimal')
 
-        # Experiment
-        # - Get a simulated response
-        response = get_simulated_response(model, design)
+        # Get a response using the optimal design
+        response = ...  # Using users' own codes
 
-        # Bayesian updating
-        # - Update the engine based on the observation
+        # Update the engine
         engine.update(design, response)
 
 More examples

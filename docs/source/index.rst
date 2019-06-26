@@ -17,12 +17,17 @@ Home
    :alt: CodeCov
    :target: https://codecov.io/gh/adopy/adopy
 
-**ADOpy** is a Python package for the Adaptive Design Optimization (Myung, Cavagnaro, & Pitt, 2013) to compute optimal designs dynamically in an experiment.
-Its modular design and simple structure permit easy use and integration into existing experimentation code.
+**ADOpy** is a Python implementation of Adaptive Design Optimization
+(ADO; Myung, Cavagnaro, & Pitt, 2013), which computes optimal designs
+dynamically in an experiment. Its modular structure permit easy integration
+into existing experimentation code.
 
-It provides specific features:
+ADOpy supports Python 3.5 or above and relies on NumPy, SciPy, and Pandas.
 
-- **Grid-based computation of optimal designs based on three basic classes**:
+Features
+--------
+
+- **Grid-based computation of optimal designs using only three classes**:
   :py:class:`adopy.Task`, :py:class:`adopy.Model`, and :py:class:`adopy.Engine`.
 - **Easily customizable for your own tasks and models**
 - **Pre-implemented Task and Model classes including**:
@@ -31,11 +36,9 @@ It provides specific features:
   - Delay discounting task (:py:mod:`adopy.tasks.ddt`)
   - Choice under risk and ambiguity task (:py:mod:`adopy.tasks.cra`)
 
-- **Example codes for experiments using PsychoPy** (`link`_)
+- **Example code for experiments using PsychoPy** (`link`_)
 
 .. _link: https://github.com/adopy/adopy/tree/master/examples
-
-ADOpy supports for Python 3.5 or above and largely based on NumPy, SciPy, and Pandas.
 
 Citation
 --------
