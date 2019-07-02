@@ -6,7 +6,6 @@ import pandas as pd
 from psychopy import core, visual, event, data, gui
 
 from adopy import Engine
-from adopy.tasks.ddt import TaskDDT, ModelHyp
 
 ###############################################################################
 # Global variables
@@ -227,7 +226,7 @@ def run_trial(design):
 # Show an information dialog
 info = {
     'Number of practices': 5,
-    'Number of trials': 20,
+    'Number of trials': 42,
 }
 
 dialog = gui.DlgFromDict(info, title='Task settings')
@@ -256,44 +255,11 @@ window = visual.Window(size=[1440, 900],
 event.globalKeys.add(key='escape', func=core.quit, name='shutdown')
 
 ###############################################################################
-# Prepare ADOpy objects
+# Prepare designs using the staircase method
 ###############################################################################
 
-# Create Task and Model objects for the CRA task
-task = TaskDDT()
-model = ModelHyp()
-
-# Generate grid for design variables and model parameters
 # Delays
-t_ss = [0]
-t_ll = [0.43, 0.714, 1, 2, 3, 4.3, 6.44, 8.6, 10.8, 12.9,
-        17.2, 21.5, 26, 52, 104, 156, 260, 520]
-
-delays = []
-for ts in t_ss:
-    for tl in t_ll:
-        if ts < tl:
-            delays.append([ts, tl])
-# Amounts of rewards
-am_soon = np.arange(10, 800, 10)  # [10, 20, ..., 780, 790]
-am_late = [800]
-
-amounts = np.vstack([
-    (ams, aml) for ams in am_soon for aml in am_late if ams < aml
-])
-
-grid_design = {
-    ('t_ss', 't_ll'): delays,
-    ('r_ss', 'r_ll'): amounts
-}
-
-grid_param = {
-    'k': np.logspace(-5, 0, 50),
-    'tau': np.linspace(0, 5, 50)
-}
-
-# Create an Engine object
-engine = Engine(task, model, grid_design, grid_param)
+delays = [1, 2, 4.3, 26, 52, 156, 520]
 
 ###############################################################################
 # Main codes
@@ -315,10 +281,20 @@ show_instruction(INSTRUCTION[2])
 # Show countdowns before practices
 show_countdown()
 
+# Shuffle the order of delay values
+np.random.shuffle(delays)
+
 # Run practices
 for trial in range(n_prac):
-    # Get a randomly chosen design
-    design = engine.get_design('random')
+    if trial % 6 == 0:  # Use new t_ll value on every 6 trials
+        design = {
+            't_ss': 0,
+            't_ll': delays[trial // 6],
+            'r_ss': 400,
+            'r_ll': 800
+        }
+    else:  # Adjust r_ss based on the previous response
+        design['r_ss'] *= 0.5 if response == 1 else 1.5
 
     # Run a trial using the design
     is_ll_on_left, key_left, response, rt = run_trial(design)
@@ -346,16 +322,23 @@ show_instruction(INSTRUCTION[3])
 # Show countdowns before the main task
 show_countdown()
 
+# Shuffle the order of delay values
+np.random.shuffle(delays)
+
 # Run the main task
 for trial in range(n_trial):
-    # Get a design from the ADOpy Engine
-    design = engine.get_design()
+    if trial % 6 == 0:  # Use new t_ll value on every 6 trials
+        design = {
+            't_ss': 0,
+            't_ll': delays[trial // 6],
+            'r_ss': 400,
+            'r_ll': 800
+        }
+    else:  # Adjust r_ss based on the previous response
+        design['r_ss'] *= 0.5 if response == 1 else 1.5
 
     # Run a trial using the design
     is_ll_on_left, key_left, response, rt = run_trial(design)
-
-    # Update the engine
-    engine.update(design, response)
 
     # Append the current trial into the DataFrame
     df_data = df_data.append(pd.Series({
@@ -369,10 +352,6 @@ for trial in range(n_trial):
         'key_left': key_left,
         'response': response,
         'rt': rt,
-        'mean_k': engine.post_mean[0],
-        'mean_tau': engine.post_mean[1],
-        'sd_k': engine.post_sd[0],
-        'sd_tau': engine.post_sd[1],
     }), ignore_index=True)
 
     # Save the data into a file

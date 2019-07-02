@@ -7,8 +7,8 @@ his/her preference between two options:
    (:math:`R_F`, ``r_fix``) with a fixed probability of 0.5 or
    winning none otherwise; and
 2. **A variable option** of either winning a varying amount of reward
-   (:math:`R_V`, ``r_var``) with a varying probability (:math:`p_V`, ``prob``)
-   and a varying level of ambiguity (:math:`A_V`, ``ambig``) or
+   (:math:`R_V`, ``r_var``) with a varying probability (:math:`p_V`, ``p_var``)
+   and a varying level of ambiguity (:math:`A_V`, ``a_var``) or
    winning none otherwise.
 
 Further, the variable option comes in two types:
@@ -37,11 +37,12 @@ __all__ = ['TaskCRA', 'ModelLinear', 'ModelExp', 'EngineCRA']
 
 class TaskCRA(Task):
     """
-    The Task class for the choice under risk and ambiguity task (Levy et al., 2010).
+    The Task class for the choice under risk and ambiguity task (Levy et al.,
+    2010).
 
     Design variables
-        - ``prob`` (:math:`p_V`) - probability to win of a variable option
-        - ``ambig`` (:math:`A_V`) - level of ambiguity of a variable option
+        - ``p_var`` (:math:`p_V`) - probability to win of a variable option
+        - ``a_var`` (:math:`A_V`) - level of ambiguity of a variable option
         - ``r_var`` (:math:`R_V`) - amount of reward of a variable option
         - ``r_fix`` (:math:`R_F`) - amount of reward of a fixed option
 
@@ -53,14 +54,15 @@ class TaskCRA(Task):
     >>> from adopy.tasks.cra import TaskCRA
     >>> task = TaskCRA()
     >>> task.designs
-    ['prob', 'ambig', 'r_var', 'r_fix']
+    ['p_var', 'a_var', 'r_var', 'r_fix']
     >>> task.responses
     [0, 1]
     """
+
     def __init__(self):
         super(TaskCRA, self).__init__(
-            name='CRA',
-            designs=['prob', 'ambig', 'r_var', 'r_fix'],
+            name='Choice under risk and ambiguity task',
+            designs=['p_var', 'a_var', 'r_var', 'r_fix'],
             responses=[0, 1]  # binary response
         )
 
@@ -93,13 +95,14 @@ class ModelLinear(Model):
     >>> from adopy.tasks.cra import ModelExp
     >>> model = ModelExp()
     >>> model.task
-    Task('CRA', designs=['prob', 'ambig', 'r_var', 'r_fix'], responses=[0, 1])
+    Task('CRA', designs=['p_var', 'a_var', 'r_var', 'r_fix'], responses=[0, 1])
     >>> model.params
     ['alpha', 'beta', 'gamma']
     """
+
     def __init__(self):
         super(ModelLinear, self).__init__(
-            name='Linear',
+            name='Linear model for the CRA task',
             task=TaskCRA(),
             params=['alpha', 'beta', 'gamma'],
             constraint={
@@ -108,9 +111,9 @@ class ModelLinear(Model):
             }
         )
 
-    def compute(self, prob, ambig, r_var, r_fix, alpha, beta, gamma):
+    def compute(self, p_var, a_var, r_var, r_fix, alpha, beta, gamma):
         sv_var = np.power(r_var, alpha)
-        sv_var = (prob - beta * np.divide(ambig, 2)) * sv_var
+        sv_var = (p_var - beta * np.divide(a_var, 2)) * sv_var
         sv_fix = .5 * np.power(r_fix, alpha)
         return inv_logit(gamma * (sv_var - sv_fix))
 
@@ -144,13 +147,14 @@ class ModelExp(Model):
     >>> from adopy.tasks.cra import ModelLinear
     >>> model = ModelLinear()
     >>> model.task
-    Task('CRA', designs=['prob', 'ambig', 'r_var', 'r_fix'], responses=[0, 1])
+    Task('CRA', designs=['p_var', 'a_var', 'r_var', 'r_fix'], responses=[0, 1])
     >>> model.params
     ['alpha', 'beta', 'gamma']
     """
+
     def __init__(self):
         super(ModelExp, self).__init__(
-            name='Exponential',
+            name='Exponential model for the CRA task',
             task=TaskCRA(),
             params=['alpha', 'beta', 'gamma'],
             constraint={
@@ -159,9 +163,9 @@ class ModelExp(Model):
             }
         )
 
-    def compute(self, prob, ambig, r_var, r_fix, alpha, beta, gamma):
+    def compute(self, p_var, a_var, r_var, r_fix, alpha, beta, gamma):
         sv_var = np.power(r_var, alpha)
-        sv_var = np.power(prob, 1 + beta * ambig) * sv_var
+        sv_var = np.power(p_var, 1 + beta * a_var) * sv_var
         sv_fix = .5 * np.power(r_fix, alpha)
         return inv_logit(gamma * (sv_var - sv_fix))
 
@@ -171,7 +175,7 @@ class EngineCRA(Engine):
     The Engine class for the CRA task. It can be only used for :py:class:`TaskCRA`.
     """
 
-    def __init__(self, model, designs, params):
+    def __init__(self, model, grid_design, grid_param):
         assert type(model) in [
             type(ModelLinear()),
             type(ModelExp()),
@@ -180,6 +184,6 @@ class EngineCRA(Engine):
         super(EngineCRA, self).__init__(
             task=TaskCRA(),
             model=model,
-            designs=designs,
-            params=params
+            grid_design=grid_design,
+            grid_param=grid_param
         )

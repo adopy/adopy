@@ -20,10 +20,10 @@ travis-sphinx = "*"
 recommonmark = "*"
 sphinxcontrib-rawfiles = "*"
 # Psychopy (won't be installed for linux)
-wxpython = {version = "*",sys_platform = "!= 'linux'"}
-PyQT5 = {version = "*",sys_platform = "!= 'linux'"}
-requests = {version = "*",sys_platform = "!= 'linux'",extras = ["security"]}
 psychopy = {version = "*",sys_platform = "!= 'linux'"}
+# Jupyter
+jupyter = "*"
+jupyterlab = "*"
 
 [packages]
 pandas = "*"

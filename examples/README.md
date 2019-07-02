@@ -1,13 +1,13 @@
-# Examples using ADOpy
+# Examples of experimentation code using ADOpy
 
-Here, we provides some examples using ADOpy. Two kinds of examples will be uploaded:
-
-1. Jupyter notebooks (`*.ipynb`) with interactive results of using ADOpy, and
+1. Jupyter notebooks (`*.ipynb`) with interactive results using ADOpy
 2. Python scripts for experiments using [PsychoPy][psychopy].
 
 ## Prerequisites
 
-If you want to try by yourself, you should prepare [Jupyter][jupyter-install] for `*.ipynb` or [PsychoPy][psychopy-install] for experimentation codes first.
+Ensure the necessary software is installed as listed below:
+  - [Jupyter][jupyter-install] for `*.ipynb`
+  - [PsychoPy][psychopy-install]
 
 [jupyter-install]: https://jupyter.org/install.html
 [psychopy]: https://www.psychopy.org/
@@ -15,7 +15,8 @@ If you want to try by yourself, you should prepare [Jupyter][jupyter-install] fo
 
 ## Contents
 
-- **Choice under risk and ambiguity task**
-  - [Psychopy code](./cra_psychopy.py)
-- **Delay discounting task**
-  - [Psychopy code](./ddt_psychopy.py)
+- [**Choice under risk and ambiguity task**](./cra)
+  - Jupyter notebook: [link](./cra/cra.ipynb)
+- [**Delay discounting task**](./dd)
+  - Jupyter notebook: [link](./dd/dd.ipynb)
+  - Psychopy code: [ADO version](./dd/dd_psychopy_ado.py), [Non-ADO version](./dd/dd_psychopy_non-ado.py)
