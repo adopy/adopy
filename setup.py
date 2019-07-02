@@ -12,7 +12,7 @@ if sys.version_info[:2] < (3, 5):
 
 MAJOR = 0
 MINOR = 3
-MICRO = 0
+MICRO = 1
 ISRELEASED = True
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 
@@ -104,6 +104,7 @@ setup(
     url='https://adopy.org/',
     description='Adaptive Design Optimization on Experimental Tasks',
     long_description=LONG_DESCRIPTION,
+    long_description_content_type='text/markdown',
     author='Jaeyeong Yang',
     author_email='jaeyeong.yang1125@gmail.com',
     license='GPL-3',
@@ -115,7 +116,7 @@ setup(
         'scipy',
     ],
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
         "Programming Language :: Python :: 3",
