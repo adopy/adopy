@@ -166,7 +166,6 @@ for trial in range(NUM_TRIAL):
 ```
 
 ## Citation
-
 If you use ADOpy, please cite this package along with the specific version.
 It greatly encourages contributors to continue supporting ADOpy.
 
@@ -175,7 +174,6 @@ It greatly encourages contributors to continue supporting ADOpy.
 > Retrieved from https://adopy.org
 
 ## References
-
 - Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
   A tutorial on adaptive design optimization.
   *Journal of Mathematical Psychology, 57*, 53–67.
