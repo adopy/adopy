@@ -37,7 +37,8 @@ __all__ = ['TaskCRA', 'ModelLinear', 'ModelExp', 'EngineCRA']
 
 class TaskCRA(Task):
     """
-    The Task class for the choice under risk and ambiguity task (Levy et al., 2010).
+    The Task class for the choice under risk and ambiguity task (Levy et al.,
+    2010).
 
     Design variables
         - ``p_var`` (:math:`p_V`) - probability to win of a variable option
@@ -60,7 +61,7 @@ class TaskCRA(Task):
 
     def __init__(self):
         super(TaskCRA, self).__init__(
-            name='CRA',
+            name='Choice under risk and ambiguity task',
             designs=['p_var', 'a_var', 'r_var', 'r_fix'],
             responses=[0, 1]  # binary response
         )
@@ -101,7 +102,7 @@ class ModelLinear(Model):
 
     def __init__(self):
         super(ModelLinear, self).__init__(
-            name='Linear',
+            name='Linear model for the CRA task',
             task=TaskCRA(),
             params=['alpha', 'beta', 'gamma'],
             constraint={
@@ -153,7 +154,7 @@ class ModelExp(Model):
 
     def __init__(self):
         super(ModelExp, self).__init__(
-            name='Exponential',
+            name='Exponential model for the CRA task',
             task=TaskCRA(),
             params=['alpha', 'beta', 'gamma'],
             constraint={

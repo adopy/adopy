@@ -59,7 +59,7 @@ class TaskDD(Task):
 
     def __init__(self):
         super(TaskDD, self).__init__(
-            name='DDT',
+            name='Delay discounting task',
             designs=['t_ss', 't_ll', 'r_ss', 'r_ll'],
             responses=[0, 1]  # Binary response
         )
@@ -99,7 +99,7 @@ class ModelExp(Model):
 
     def __init__(self):
         args = dict(
-            name='Exponential',
+            name='Exponential model for the DD task',
             task=TaskDD(),
             params=['r', 'tau'],
             constraint={
@@ -154,7 +154,7 @@ class ModelHyp(Model):
 
     def __init__(self):
         args = dict(
-            name='Hyperbolic',
+            name='Hyperbolic model for the DD task',
             task=TaskDD(),
             params=['k', 'tau'],
             constraint={
@@ -211,7 +211,7 @@ class ModelHPB(Model):
 
     def __init__(self):
         args = dict(
-            name='Hyperboloid',
+            name='Hyperboloid model for the DD task',
             task=TaskDD(),
             params=['k', 's', 'tau'],
             constraint={
@@ -269,7 +269,7 @@ class ModelCOS(Model):
 
     def __init__(self):
         args = dict(
-            name='Constant Sensitivity',
+            name='Constant Sensitivity model for the DD task',
             task=TaskDD(),
             params=['r', 's', 'tau'],
             constraint={
@@ -330,7 +330,7 @@ class ModelQH(Model):
 
     def __init__(self):
         args = dict(
-            name='Quasi-Hyperbolic',
+            name='Quasi-Hyperbolic model for the DD task',
             task=TaskDD(),
             params=['beta', 'delta', 'tau'],
             constraint={
@@ -391,7 +391,7 @@ class ModelDE(Model):
 
     def __init__(self):
         args = dict(
-            name='Double Exponential',
+            name='Double Exponential model for the DD task',
             task=TaskDD(),
             params=['omega', 'r', 's', 'tau'],
             constraint={

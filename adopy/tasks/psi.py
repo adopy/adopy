@@ -41,7 +41,7 @@ class Task2AFC(Task):
 
     def __init__(self):
         super(Task2AFC, self).__init__(
-            name='2AFC',
+            name='2-alternative forced choice task',
             designs=['stimulus'],
             responses=[0, 1]  # binary responses
         )
@@ -97,7 +97,8 @@ class ModelLogistic(_ModelPsi):
     """
 
     def __init__(self):
-        super(ModelLogistic, self).__init__(name='Logistic')
+        super(ModelLogistic, self).__init__(
+            name='Logistic model for 2AFC tasks')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
         return self._compute(inv_logit, stimulus,
@@ -138,7 +139,8 @@ class ModelWeibull(_ModelPsi):
     """
 
     def __init__(self):
-        super(ModelWeibull, self).__init__(name='Weibull')
+        super(ModelWeibull, self).__init__(
+            name='Weibull model for 2AFC tasks')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
         return self._compute(gumbel_l.cdf, stimulus,
@@ -180,7 +182,8 @@ class ModelProbit(_ModelPsi):
     """
 
     def __init__(self):
-        super(ModelProbit, self).__init__(name='Normal')
+        super(ModelProbit, self).__init__(
+            name='Probit model for 2AFC tasks')
 
     def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
         return self._compute(norm.cdf, stimulus,
@@ -227,10 +230,10 @@ class EnginePsi(Engine):
     def get_design(self, kind='optimal'):
         r"""Choose a design with a given type.
 
-        1. :code:`optimal`: an optimal design :math:`d^*` that maximizes
-        the information for fitting model parameters.
+        - :code:`optimal`: an optimal design :math:`d^*` that maximizes
+          the information for fitting model parameters.
 
-        2. :code:`staircase`: Choose the stimulus :math:`s` as below:
+        - :code:`staircase`: Choose the stimulus :math:`s` as below:
 
             .. math::
                 x_t = \begin{cases}
@@ -241,7 +244,7 @@ class EnginePsi(Engine):
           where :math:`\Delta` is determined by ``d_step`` which is the
           step-size change on the grid index.
 
-        3. :code:`random`: a design randomly chosen.
+        - :code:`random`: a design randomly chosen.
 
         Parameters
         ----------
