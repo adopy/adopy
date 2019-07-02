@@ -1,6 +1,5 @@
-=====================
-Psychometric function
-=====================
+Psychometric Function Estimation
+================================
 
 Let’s start with psychometric functions as an example. The goal of the function
 is to figure out whether a subject can perceive a signal with varying levels

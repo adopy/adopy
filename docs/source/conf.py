@@ -22,8 +22,8 @@ import adopy  # noqa: E402
 # -- Project information -----------------------------------------------------
 
 project = 'ADOpy'
-copyright = '2019, Jaeyeong Yang'  # pylint: disable=W0622
-author = 'Jaeyeong Yang'
+copyright = '2019, ADOpy developers'  # pylint: disable=W0622
+author = 'ADOpy developers'
 
 # The short X.Y version
 version = adopy.__version__
@@ -41,12 +41,12 @@ release = adopy.__version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
+    'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
-    'sphinx_autodoc_typehints',
     'sphinxcontrib.rawfiles',
+    'recommonmark',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -55,7 +55,7 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-source_suffix = ['.rst']
+source_suffix = ['.rst', '.md']
 
 # The master toctree document.
 master_doc = 'index'
@@ -73,7 +73,7 @@ language = None
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'default'
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -89,6 +89,7 @@ html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
     # 'logo_only': True,
     'analytics_id': 'UA-71789812-2',
+    'navigation_depth': 2,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -173,10 +174,14 @@ show_authors = True
 
 # Autodoc settings
 
+autoclass_content = 'both'
 autodoc_member_order = 'bysource'
 autodoc_default_options = {
-    'show-inheritance': True
+    'members': True,
+    'undoc-members': True,
+    'show-inheritance': False,
 }
+autodoc_typehints = 'none'
 
 # Napoleon settings
 napoleon_numpy_docstring = True
@@ -188,6 +193,12 @@ napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
 napoleon_use_ivar = False
 napoleon_use_param = False
+napoleon_use_rtype = False
 
 # Sphinx-contrib-rawfiles
 rawfiles = ['CNAME']
+
+
+def setup(app):
+    app.add_stylesheet('css/custom.css')
+    app.add_javascript('js/custom.js')

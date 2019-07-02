@@ -2,6 +2,10 @@
 =================
 
 .. automodule:: adopy.base
-   :members:
-   :undoc-members:
-   :show-inheritance:
+   :no-members:
+
+.. autoclass:: Task
+
+.. autoclass:: Model
+
+.. autoclass:: Engine

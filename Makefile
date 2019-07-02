@@ -7,10 +7,10 @@ endif
 	pipenv install --dev --skip-lock
 
 test:
-	pipenv run py.test tests
+	pipenv run py.test
 
 test-travis:
-	pipenv run py.test tests --doctest-modules --cov=adopy
+	pipenv run py.test --cov=adopy
 	pipenv run codecov --token $(CODECOV_TOKEN)
 
 lint:
@@ -19,6 +19,6 @@ lint:
 
 docs-travis:
 	pipenv run travis-sphinx build
-	pipenv run travis-sphinx deploy
+	pipenv run travis-sphinx deploy -b master
 
 .PHONY: init test test-travis lint docs-travis

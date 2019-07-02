@@ -17,9 +17,13 @@ sphinx = "*"
 sphinx_rtd_theme = "*"
 sphinx-autobuild = "*"
 travis-sphinx = "*"
-sphinx-autodoc-typehints = "*"
 recommonmark = "*"
 sphinxcontrib-rawfiles = "*"
+# Psychopy (won't be installed for linux)
+psychopy = {version = "*",sys_platform = "!= 'linux'"}
+# Jupyter
+jupyter = "*"
+jupyterlab = "*"
 
 [packages]
 pandas = "*"

@@ -17,40 +17,28 @@ Home
    :alt: CodeCov
    :target: https://codecov.io/gh/adopy/adopy
 
-**ADOpy** is a Python implementation of adaptive design optimization
-[Myung2013]_. Its modular design and simple structure permit easy use and
-integration into existing experimentation code. Specific features include:
+**ADOpy** is a Python implementation of Adaptive Design Optimization
+(ADO; Myung, Cavagnaro, & Pitt, 2013), which computes optimal designs
+dynamically in an experiment. Its modular structure permit easy integration
+into existing experimentation code.
 
-- Choice under risk and ambiguity task (:py:mod:`adopy.tasks.cra`)
-- Delayed discounting task (:py:mod:`adopy.tasks.ddt`)
-- Threshold estimation using the psi method (:py:mod:`adopy.tasks.psi`). This
-  model can be used for any 2AFC task with the independent variable on a
-  continuous scale.
+ADOpy supports Python 3.5 or above and relies on NumPy, SciPy, and Pandas.
 
-The adaptive design optimization (ADO) consist of three steps [Myung2013]_:
-(1) design optimization, (2) experimentation, and (3) Bayesian
-updating. Using adopy, you can easily utilize ADO for your experimentations,
-with a following style (pseudo-code):
+Features
+--------
 
-.. code::
+- **Grid-based computation of optimal designs using only three classes**:
+  :py:class:`adopy.Task`, :py:class:`adopy.Model`, and :py:class:`adopy.Engine`.
+- **Easily customizable for your own tasks and models**
+- **Pre-implemented Task and Model classes including**:
 
-   for trial in trials:
-       design = engine.get_design()
-       response = get_response(design)
-       engine.update(design, response)
+  - Psychometric function estimation for 2AFC tasks (:py:mod:`adopy.tasks.psi`)
+  - Delay discounting task (:py:mod:`adopy.tasks.ddt`)
+  - Choice under risk and ambiguity task (:py:mod:`adopy.tasks.cra`)
 
-.. [Myung2013]
-   Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
-   A tutorial on adaptive design optimization.
-   *Journal of Mathematical Psychology, 57*, 53–67.
+- **Example code for experiments using PsychoPy** (`link`_)
 
-Dependencies
-------------
-
-- Python 3.5+ (no support for Python 2)
-- `NumPy <http://www.numpy.org/>`_
-- `SciPy <https://www.scipy.org/>`_
-- `Pandas <https://pandas.pydata.org/>`_
+.. _link: https://github.com/adopy/adopy/tree/master/examples
 
 Citation
 --------
@@ -58,7 +46,15 @@ Citation
 If you use ADOpy, please cite this package along with the specific version.
 It greatly encourages contributors to continue supporting ADOpy.
 
-   To be announced.
+   Yang, J., Ahn, W.-Y., Pitt., M. A., & Myung, J. I. (2019).
+   *ADOpy: A Python Package for Adaptive Design Optimization*.
+   Retrieved from https://adopy.org
+
+References
+----------
+Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
+A tutorial on adaptive design optimization.
+*Journal of Mathematical Psychology, 57*, 53–67.
 
 Content
 -------
@@ -67,10 +63,23 @@ Content
    :maxdepth: 1
    :glob:
 
-   install.rst
-   examples/index.rst
-   contributing.rst
-   api/index.rst
+   getting-started.md
+   dev-guide.rst
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+   :caption: examples
+
+   examples/*
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+   :caption: API Reference
+
+   api/base.rst
+   api/tasks/*
 
 Indices and tables
 ------------------
