@@ -170,9 +170,9 @@ for trial in range(NUM_TRIAL):
 If you use ADOpy, please cite this package along with the specific version.
 It greatly encourages contributors to continue supporting ADOpy.
 
-> Yang, J., Ahn, W.-Y., Pitt., M. A., & Myung, J. I. (2019).
-> *ADOpy: A Python Package for Adaptive Design Optimization*.
-> Retrieved from https://adopy.org
+> Yang, J., Pitt, M. A., Ahn, W., & Myung, J. I. (2019).
+> ADOpy: A Python Package for Adaptive Design Optimization.
+> https://doi.org/10.31234/osf.io/mdu23
 
 ## References
 - Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
