@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Tuple, TypeVar
+from typing import Dict, Iterable, List, Tuple, TypeVar, Optional, Any
 
 import numpy as np
 import pandas as pd
@@ -36,7 +36,9 @@ def get_random_design_index(designs):
     return np.unravel_index(idx, dims_designs)[0]
 
 
-def make_grid_matrix(axes_dict: Dict[GK, GV]) -> pd.DataFrame:
+def make_grid_matrix(axes_dict: Dict[GK, GV],
+                     dtype: Optional[Any] = np.float32,
+                     ) -> pd.DataFrame:
     assert isinstance(axes_dict, dict)
     assert all([len(np.shape(x)) in {1, 2} for x in axes_dict.values()])
 
@@ -56,13 +58,20 @@ def make_grid_matrix(axes_dict: Dict[GK, GV]) -> pd.DataFrame:
             columns.append(k)
         else:
             columns.extend(k)
+
+        # Make a grid as a 2d matrix
         g_2d = np.reshape(g, (-1, 1)) if n_d_each[i] == 1 else g
+
+        # Convert to a given dtype
+        g_2d = g_2d.astype(dtype)
+
         grid = np.pad(g_2d, [
             (0, 0),
             (n_d_prev[i], n_d_total - n_d_prev[i] - n_d_each[i])
         ], 'constant').reshape(dim_grid)
+
         grids.append(grid)
 
     grid_mat = sum(grids, np.zeros_like(grids[0])).reshape(-1, n_d_total)
 
-    return pd.DataFrame(grid_mat, columns=columns)
+    return pd.DataFrame(grid_mat, columns=columns, dtype=dtype)

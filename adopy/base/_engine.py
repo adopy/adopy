@@ -31,7 +31,8 @@ class Engine(object):
                  model: Model,
                  grid_design: Dict[str, Any],
                  grid_param: Dict[str, Any],
-                 lambda_et: Optional[float] = None):
+                 lambda_et: Optional[float] = None,
+                 dtype: Optional[Any] = np.float32):
         super(Engine, self).__init__()
 
         if model.task != task:
@@ -40,11 +41,15 @@ class Engine(object):
         self._task = task  # type: Task
         self._model = model  # type: Model
         self.lambda_et = lambda_et
+        self._dtype = dtype
 
-        self.grid_design = make_grid_matrix(grid_design)[task.designs]
-        self.grid_param = make_grid_matrix(grid_param)[model.params]
-        self.grid_response = pd.DataFrame(
-            np.array(task.responses), columns=['y_obs'])
+        self.grid_design = \
+            make_grid_matrix(grid_design, dtype=dtype)[task.designs]
+        self.grid_param = \
+            make_grid_matrix(grid_param, dtype=dtype)[model.params]
+        self.grid_response = \
+            pd.DataFrame(np.array(task.responses), columns=['y_obs'],
+                         dtype=dtype)
 
         self.reset()
 
@@ -131,6 +136,13 @@ class Engine(object):
 
         self._lambda_et = v
 
+    @property
+    def dtype(self):
+        """
+        Datatype for internal grid objects.
+        """
+        return self._dtype
+
     ###########################################################################
     # Methods
     ###########################################################################
@@ -139,11 +151,11 @@ class Engine(object):
         """
         Reset the engine as in the initial state.
         """
-        self.y_obs = np.array(self.task.responses)
+        self.y_obs = np.array(self.task.responses, dtype=self.dtype)
         self.p_obs = self._compute_p_obs()
         self.log_lik = ll = self._compute_log_lik()
 
-        lp = np.ones(self.grid_param.shape[0])
+        lp = np.ones(self.grid_param.shape[0], dtype=self.dtype)
         self.log_prior = lp - logsumexp(lp)
         self.log_post = self.log_prior.copy()
 
@@ -151,12 +163,13 @@ class Engine(object):
         mll = logsumexp(self.log_lik + lp, axis=1)
         self.marg_log_lik = mll  # shape (num_design, num_response)
 
-        self.ent_obs = -np.multiply(np.exp(ll), ll).sum(-1)
+        self.ent_obs = -np.multiply(np.exp(ll), ll, dtype=self.dtype).sum(-1)
         self.ent_marg = None
         self.ent_cond = None
         self.mutual_info = None
 
-        self.eligibility_trace = np.zeros(self.grid_design.shape[0])
+        self.eligibility_trace = np.zeros(self.grid_design.shape[0],
+                                          dtype=self.dtype)
 
         self.flag_update_mutual_info = True
 
@@ -167,11 +180,11 @@ class Engine(object):
 
         args = {}
         args.update({
-            k: v.reshape(shape_design)
+            k: v.reshape(shape_design).astype(self.dtype)
             for k, v in self.task.extract_designs(self.grid_design).items()
         })
         args.update({
-            k: v.reshape(shape_param)
+            k: v.reshape(shape_param).astype(self.dtype)
             for k, v in self.model.extract_params(self.grid_param).items()
         })
 
@@ -182,8 +195,7 @@ class Engine(object):
         dim_p_obs = len(self.p_obs.shape)
         y = self.y_obs.reshape(make_vector_shape(dim_p_obs + 1, dim_p_obs))
         p = np.expand_dims(self.p_obs, dim_p_obs)
-
-        return log_lik_bernoulli(y, p)
+        return log_lik_bernoulli(y, p, dtype=self.dtype)
 
     def _update_mutual_info(self):
         """
@@ -203,13 +215,14 @@ class Engine(object):
         self.marg_log_lik = mll  # shape (num_design, num_response)
 
         # Calculate the marginal entropy and conditional entropy.
-        self.ent_marg = -np.sum(np.exp(mll) * mll, -1)  # shape (num_designs,)
-        self.ent_cond = np.sum(
-            self.post * self.ent_obs, axis=1)  # shape (num_designs,)
+        self.ent_marg = \
+            -np.sum(np.exp(mll) * mll, -1)  # shape (num_designs,)
+        self.ent_cond = \
+            np.sum(self.post * self.ent_obs, axis=1)  # shape (num_designs,)
 
         # Calculate the mutual information.
-        self.mutual_info = self.ent_marg - \
-            self.ent_cond  # shape (num_designs,)
+        self.mutual_info = \
+            self.ent_marg - self.ent_cond  # shape (num_designs,)
 
         # Flag that there is no need to update mutual information again.
         self.flag_update_mutual_info = False
