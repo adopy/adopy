@@ -113,7 +113,7 @@ setup(
     install_requires=[
         'numpy',
         'pandas',
-        'scipy',
+        'scipy>=1.0.0',
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
