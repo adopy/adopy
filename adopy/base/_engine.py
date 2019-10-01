@@ -2,6 +2,7 @@ from typing import Any, Callable, Dict, Iterable, Optional, List, Tuple
 
 import numpy as np
 import pandas as pd
+from scipy.stats import bernoulli
 from scipy.special import logsumexp
 
 from adopy.functions import (
@@ -11,7 +12,6 @@ from adopy.functions import (
     make_grid_matrix,
     marginalize,
     make_vector_shape,
-    log_lik_bernoulli
 )
 from adopy.types import array_like, vector_like, matrix_like
 
@@ -31,7 +31,6 @@ class Engine(object):
                  model: Model,
                  grid_design: Dict[str, Any],
                  grid_param: Dict[str, Any],
-                 lambda_et: Optional[float] = None,
                  dtype: Optional[Any] = np.float32):
         super(Engine, self).__init__()
 
@@ -40,7 +39,6 @@ class Engine(object):
 
         self._task = task  # type: Task
         self._model = model  # type: Model
-        self.lambda_et = lambda_et
         self._dtype = dtype
 
         self.grid_design = \
@@ -122,21 +120,6 @@ class Engine(object):
         return np.sqrt(np.diag(self.post_cov))
 
     @property
-    def lambda_et(self):
-        """
-        Lambda value for eligibility traces. If it equals to None, eligibility
-        traces do not affect choices of the optimal designs.
-        """
-        return self._lambda_et
-
-    @lambda_et.setter
-    def lambda_et(self, v):
-        if v and not (0 <= v <= 1):
-            raise ValueError('Invalid value for lambda_et')
-
-        self._lambda_et = v
-
-    @property
     def dtype(self):
         """
         Datatype for internal grid objects.
@@ -168,9 +151,6 @@ class Engine(object):
         self.ent_cond = None
         self.mutual_info = None
 
-        self.eligibility_trace = np.zeros(self.grid_design.shape[0],
-                                          dtype=self.dtype)
-
         self.flag_update_mutual_info = True
 
     def _compute_p_obs(self):
@@ -195,7 +175,7 @@ class Engine(object):
         dim_p_obs = len(self.p_obs.shape)
         y = self.y_obs.reshape(make_vector_shape(dim_p_obs + 1, dim_p_obs))
         p = np.expand_dims(self.p_obs, dim_p_obs)
-        return log_lik_bernoulli(y, p, dtype=self.dtype)
+        return bernoulli.pmf(y, p)
 
     def _update_mutual_info(self):
         """
@@ -249,8 +229,7 @@ class Engine(object):
 
         if kind == 'optimal':
             self._update_mutual_info()
-            idx_design = np.argmax(
-                self.mutual_info * (1 - self.eligibility_trace))
+            idx_design = np.argmax(self.mutual_info)
 
         elif kind == 'random':
             idx_design = get_random_design_index(self.grid_design)
@@ -287,9 +266,5 @@ class Engine(object):
 
         self.log_post += self.log_lik[idx_design, :, idx_response].flatten()
         self.log_post -= logsumexp(self.log_post)
-
-        if self.lambda_et:
-            self.eligibility_trace *= self.lambda_et
-            self.eligibility_trace[idx_design] += 1
 
         self.flag_update_mutual_info = True
