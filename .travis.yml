@@ -1,19 +1,43 @@
 dist: xenial
 language: python
 sudo: false
-cache: pip
+
+cache:
+  pip: true
+  directories:
+    - .venv
 
 python:
   - "3.5"
   - "3.6"
   - "3.7"
 
-install: "make"
+before_install:
+  - pip install poetry
+  - poetry config settings.virtualenvs.in-project true
+
+install:
+  - poetry install -E test -E docs
 
 script:
-  - make test-travis
+  - poetry run pytest --cov=adopy
+  - poetry run codecov --token $(CODECOV_TOKEN)
 
 after_success:
-  - make lint
-  - make docs-travis
+  - poetry run flake8 adopy --format=pylint --statistics --exit-zero
+  - poetry run pylint adopy --rcfile=setup.cfg --exit-zero
+  - poetry run travis-sphinx build
+  - poetry run travis-sphinx deploy -b master
 
+before_deploy:
+  - poetry build -f sdist
+
+deploy:
+  provider: releases
+  api_key: $GH_TOKEN
+  file_glob: true
+  file: dist/*
+  skip_cleanup: true
+  on:
+    tags: true
+  draft: true
