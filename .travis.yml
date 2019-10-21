@@ -1,6 +1,5 @@
 dist: xenial
 language: python
-sudo: false
 
 cache:
   pip: true
@@ -37,7 +36,7 @@ deploy:
   api_key: $GH_TOKEN
   file_glob: true
   file: dist/*
-  skip_cleanup: true
+  cleanup: false
   on:
     tags: true
   draft: true
