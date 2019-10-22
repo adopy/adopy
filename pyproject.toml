@@ -30,6 +30,15 @@ autopep8 = "*"
 flake8 = "*"
 pylint = "*"
 mypy = "*"
+pytest = { version = "*", optional = true }
+pytest-cov = { version = "*", optional = true }
+codecov = { version = "*", optional = true }
+sphinx = { version = "*", optional = true }
+sphinx_rtd_theme = { version = "*", optional = true }
+sphinx-autobuild = { version = "*", optional = true }
+travis-sphinx = { version = "*", optional = true }
+recommonmark = { version = "*", optional = true }
+sphinxcontrib-rawfiles = { version = "*", optional = true }
 
 [tool.poetry.extras]
 test = [
