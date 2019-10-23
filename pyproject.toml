@@ -25,20 +25,24 @@ pandas = "*"
 scipy = ">=1.0.0"
 numpy = "*"
 
-[tool.poetry.dev-dependencies]
-autopep8 = "*"
-flake8 = "*"
-pylint = "*"
-mypy = "*"
+# Extra packages for testing
 pytest = { version = "*", optional = true }
 pytest-cov = { version = "*", optional = true }
 codecov = { version = "*", optional = true }
+
+# Extra packages for documentation
 sphinx = { version = "*", optional = true }
 sphinx_rtd_theme = { version = "*", optional = true }
 sphinx-autobuild = { version = "*", optional = true }
 travis-sphinx = { version = "*", optional = true }
 recommonmark = { version = "*", optional = true }
 sphinxcontrib-rawfiles = { version = "*", optional = true }
+
+[tool.poetry.dev-dependencies]
+autopep8 = "*"
+flake8 = "*"
+pylint = "*"
+mypy = "*"
 
 [tool.poetry.extras]
 test = [
