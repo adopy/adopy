@@ -32,7 +32,6 @@ class Engine(object):
                  grid_design: Dict[str, Any],
                  grid_param: Dict[str, Any],
                  grid_response: Dict[str, Any],
-                 lambda_et: Optional[float] = None):
                  dtype: Optional[Any] = np.float32):
         super(Engine, self).__init__()
 
@@ -41,13 +40,11 @@ class Engine(object):
 
         self._task = task  # type: Task
         self._model = model  # type: Model
-        self.lambda_et = lambda_et  # type: Optional[float]
         self._dtype = dtype
 
         self._grid_design = make_grid_matrix(grid_design)[task.designs]
         self._grid_param = make_grid_matrix(grid_param)[model.params]
         self._grid_response = make_grid_matrix(grid_response)[task.responses]
-        # pd.DataFrame(np.array(task.responses), columns=['y_obs'])
 
         self.reset()
 
@@ -206,11 +203,14 @@ class Engine(object):
         self.marg_log_lik = mll  # shape (num_design, num_response)
 
         # Calculate the marginal entropy and conditional entropy.
-        self.ent_marg = -np.sum(np.exp(mll) * mll, -1)  # shape: (num_designs,)
-        self.ent_cond = np.sum(self.post * self.ent_obs, axis=1)  # shape: (num_designs,)
+        self.ent_marg = \
+            -np.sum(np.exp(mll) * mll, -1)  # shape: (num_designs,)
+        self.ent_cond = \
+            np.sum(self.post * self.ent_obs, axis=1)  # shape: (num_designs,)
 
         # Calculate the mutual information.
-        self.mutual_info = self.ent_marg - self.ent_cond  # shape: (num_designs,)
+        self.mutual_info = \
+            self.ent_marg - self.ent_cond  # shape: (num_designs,)
 
         # Flag that there is no need to update mutual information again.
         self.flag_update_mutual_info = False
