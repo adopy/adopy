@@ -45,8 +45,8 @@ def test_task(task, task_noname):
         == "Task('Psychometric function estimation', designs=['stimulus'], responses=['choice'])"
 
 
-def func_logistic_loglik(choice, stimulus,
-                         guess_rate, lapse_rate, threshold, slope):
+def func_logistic_log_lik(choice, stimulus,
+                          guess_rate, lapse_rate, threshold, slope):
     f = inv_logit(slope * (stimulus - threshold))
     p = guess_rate + (1 - guess_rate - lapse_rate) * f
     return bernoulli.logpmf(choice, p)
@@ -57,14 +57,14 @@ def model(task):
     return Model(name='Logistic',
                  task=task,
                  params=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
-                 func=func_logistic_loglik)
+                 func=func_logistic_log_lik)
 
 
 @pytest.fixture()
 def model_noname(task):
     return Model(task=task,
                  params=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
-                 func=func_logistic_loglik)
+                 func=func_logistic_log_lik)
 
 
 def test_model(model, model_noname, task):
@@ -80,12 +80,12 @@ def test_model(model, model_noname, task):
     assert model.params == ['guess_rate', 'lapse_rate', 'threshold', 'slope']
 
     # model.compute()
-    assert (model.compute_loglik(choice=1, stimulus=10, guess_rate=0.5,
-                                 lapse_rate=0.05, threshold=8, slope=2)
-            == func_logistic_loglik(choice=1, stimulus=10, guess_rate=0.5,
-                                    lapse_rate=0.05, threshold=8, slope=2))
-    assert (model.compute_loglik(1, 10, 0.5, 0.05, 8, 2)
-            == func_logistic_loglik(1, 10, 0.5, 0.05, 8, 2))
+    assert (model.compute(choice=1, stimulus=10, guess_rate=0.5,
+                          lapse_rate=0.05, threshold=8, slope=2)
+            == func_logistic_log_lik(choice=1, stimulus=10, guess_rate=0.5,
+                                     lapse_rate=0.05, threshold=8, slope=2))
+    assert (model.compute(1, 10, 0.5, 0.05, 8, 2)
+            == func_logistic_log_lik(1, 10, 0.5, 0.05, 8, 2))
 
     # repr(task)
     assert repr(model) \
@@ -161,4 +161,4 @@ def test_engine_update(engine, choice):
 
 
 if __name__ == '__main__':
-    pytest.main()
+    pytest.main(__file__)

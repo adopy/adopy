@@ -146,7 +146,7 @@ class Engine(object):
         """
         Reset the engine as in the initial state.
         """
-        self.log_lik = ll = self._compute_loglik()
+        self.log_lik = ll = self._compute_log_lik()
 
         lp = np.ones(self.grid_param.shape[0], dtype=self.dtype)
         self.log_prior = lp - logsumexp(lp)
@@ -163,7 +163,7 @@ class Engine(object):
 
         self.flag_update_mutual_info = True
 
-    def _compute_loglik(self):
+    def _compute_log_lik(self):
         """Compute the probability of getting observed response."""
         shape_design = make_vector_shape(3, 0)
         shape_param = make_vector_shape(3, 1)
