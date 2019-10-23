@@ -187,5 +187,6 @@ $RECYCLE.BIN/
 adopy/version.py
 
 Pipfile.lock
+poetry.lock
 
 examples/data/
