@@ -27,7 +27,7 @@ class Task2AFC(Task):
         - ``stimulus`` (:math:`x`) - magnitude of a stimulus
 
     Responses
-        0 (negative response) or 1 (positive response)
+        - ``choice`` (:math:`y`) - index of the chosen option
 
     Examples
     --------
@@ -43,22 +43,17 @@ class Task2AFC(Task):
         super(Task2AFC, self).__init__(
             name='2-alternative forced choice task',
             designs=['stimulus'],
-            responses=[0, 1]  # binary responses
+            responses=['choice']
         )
 
 
 class _ModelPsi(Model):
     def __init__(self, name):
-        args = dict(
+        super(_ModelPsi, self).__init__(
             name=name,
             task=Task2AFC(),
             params=['threshold', 'slope', 'guess_rate', 'lapse_rate'],
-            constraint={
-                'slope': const_positive,
-                'guess_rate': const_01,
-                'lapse_rate': const_01,
-            })
-        super(_ModelPsi, self).__init__(**args)
+        )
 
     def _compute(self, func, st, th, sl, gr, lr):
         return gr + (1 - gr - lr) * func(sl * (st - th))

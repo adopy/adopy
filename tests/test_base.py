@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 import numpy as np
+from scipy.stats import bernoulli
 import pytest
 
 from adopy import Task, Model, Engine
@@ -9,39 +10,46 @@ from adopy.functions import inv_logit
 
 @pytest.fixture()
 def task():
-    return Task(name='Psi',
+    return Task(name='Psychometric function estimation',
                 designs=['stimulus'],
-                responses=[0, 1])
+                responses=['choice'])
 
 
 @pytest.fixture()
 def task_noname():
     return Task(designs=['stimulus'],
-                responses=[0, 1])
+                responses=['choice'])
 
 
 def test_task(task, task_noname):
     # task.name
-    assert task.name == 'Psi'
+    assert task.name == 'Psychometric function estimation'
     assert task_noname.name is None
 
     # task.designs
     assert task.designs == ['stimulus']
 
     # task.responses
-    assert task.responses == [0, 1]
+    assert task.responses == ['choice']
 
     # task.extract_designs()
     data = {'stimulus': [1, 2, 3], 'non-stimulus': [4, 5, 6]}
     assert task.extract_designs(data) == OrderedDict(stimulus=[1, 2, 3])
 
+    # task.extract_responses()
+    data = {'choice': [0, 1], 'non-choice': [2, 3]}
+    assert task.extract_responses(data) == OrderedDict(choice=[0, 1])
+
     # repr(task)
-    assert repr(task) == "Task('Psi', designs=['stimulus'], responses=[0, 1])"
+    assert repr(task) \
+        == "Task('Psychometric function estimation', designs=['stimulus'], responses=['choice'])"
 
 
-def func_logistic(stimulus, guess_rate, lapse_rate, threshold, slope):
-    return guess_rate + (1 - guess_rate - lapse_rate) \
-        * inv_logit(slope * (stimulus - threshold))
+def func_logistic_loglik(choice, stimulus,
+                         guess_rate, lapse_rate, threshold, slope):
+    f = inv_logit(slope * (stimulus - threshold))
+    p = guess_rate + (1 - guess_rate - lapse_rate) * f
+    return bernoulli.logpmf(choice, p)
 
 
 @pytest.fixture()
@@ -49,14 +57,14 @@ def model(task):
     return Model(name='Logistic',
                  task=task,
                  params=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
-                 func=func_logistic)
+                 func=func_logistic_loglik)
 
 
 @pytest.fixture()
 def model_noname(task):
     return Model(task=task,
                  params=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
-                 func=func_logistic)
+                 func=func_logistic_loglik)
 
 
 def test_model(model, model_noname, task):
@@ -72,18 +80,18 @@ def test_model(model, model_noname, task):
     assert model.params == ['guess_rate', 'lapse_rate', 'threshold', 'slope']
 
     # model.compute()
-    assert model.compute(stimulus=10, guess_rate=0.5, lapse_rate=0.05,
-                         threshold=8, slope=2) == \
-        func_logistic(stimulus=10, guess_rate=0.5, lapse_rate=0.05,
-                      threshold=8, slope=2)
-    assert model.compute(10, 0.5, 0.05, 8, 2) == \
-        func_logistic(10, 0.5, 0.05, 8, 2)
+    assert (model.compute_loglik(choice=1, stimulus=10, guess_rate=0.5,
+                                 lapse_rate=0.05, threshold=8, slope=2)
+            == func_logistic_loglik(choice=1, stimulus=10, guess_rate=0.5,
+                                    lapse_rate=0.05, threshold=8, slope=2))
+    assert (model.compute_loglik(1, 10, 0.5, 0.05, 8, 2)
+            == func_logistic_loglik(1, 10, 0.5, 0.05, 8, 2))
 
     # repr(task)
-    assert repr(model) == \
-        "Model('Logistic', params=['guess_rate', 'lapse_rate', 'threshold', 'slope'])"
-    assert repr(model_noname) == \
-        "Model(params=['guess_rate', 'lapse_rate', 'threshold', 'slope'])"
+    assert repr(model) \
+        == "Model('Logistic', params=['guess_rate', 'lapse_rate', 'threshold', 'slope'])"
+    assert repr(model_noname) \
+        == "Model(params=['guess_rate', 'lapse_rate', 'threshold', 'slope'])"
 
 
 @pytest.fixture()
@@ -104,9 +112,17 @@ def grid_param():
 
 
 @pytest.fixture()
-def engine(task, model, grid_design, grid_param):
-    return Engine(task=task, model=model,
-                  grid_design=grid_design, grid_param=grid_param)
+def grid_response():
+    return {'choice': [0, 1]}
+
+
+@pytest.fixture()
+def engine(task, model, grid_design, grid_param, grid_response):
+    return Engine(task=task,
+                  model=model,
+                  grid_design=grid_design,
+                  grid_param=grid_param,
+                  grid_response=grid_response)
 
 
 def test_engine(engine, task, model):
@@ -137,9 +153,10 @@ def test_engine_get_design(engine, design_type):
     _ = engine.get_design(design_type)
 
 
-@pytest.mark.parametrize('response', [0, 1])
-def test_engine_update(engine, response):
+@pytest.mark.parametrize('choice', [0, 1])
+def test_engine_update(engine, choice):
     design = engine.get_design()
+    response = {'choice': choice}
     engine.update(design, response)
 
 

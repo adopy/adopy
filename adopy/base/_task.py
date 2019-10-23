@@ -11,7 +11,7 @@ __all__ = ['Task']
 class Task(object):
     def __init__(self,
                  designs: Iterable[str],
-                 responses: Iterable[number_like],
+                 responses: Iterable[str],
                  name: Optional[str] = None,
                  ):
         """
@@ -24,25 +24,27 @@ class Task(object):
         designs
             Labels of design variables in the task.
         responses
-            Possible values for the response variable of the task.
+            Labels of response variables in the task (e.g., choice, rt).
         name
             Name of the task.
 
         Examples
         --------
-        >>> task = Task(name='Task A', designs=['d1', 'd2'], responses=[0, 1])
+        >>> task = Task(name='Task A',
+        ...             designs=['d1', 'd2'],
+        ...             responses=['choice'])
         >>> task
-        Task('Task A', designs=['d1', 'd2'], responses=[0, 1])
+        Task('Task A', designs=['d1', 'd2'], responses=['choice'])
         >>> task.name
         'Task A'
         >>> task.designs
         ['d1', 'd2']
         >>> task.responses
-        [0, 1]
+        ['choice']
         """
         self._name = name
         self._designs = tuple(designs)  # type: Tuple[str, ...]
-        self._responses = np.array(responses)  # type: vector_like
+        self._responses = tuple(responses)  # type: Tuple[str, ...]
 
     @property
     def name(self) -> Optional[str]:
@@ -58,7 +60,7 @@ class Task(object):
 
     @property
     def responses(self) -> List[str]:
-        """Possible values for the response variable of the task."""
+        """Labels of response variables in the task."""
         return list(self._responses)
 
     def extract_designs(self, data: data_like) -> Dict[str, Any]:
@@ -77,6 +79,23 @@ class Task(object):
             An ordered dictionary of grids for design variables.
         """
         return extract_vars_from_data(data, self.designs)
+
+    def extract_responses(self, data: data_like) -> Dict[str, Any]:
+        """
+        Extract response grids from the given data.
+
+        Parameters
+        ----------
+        data
+            A data object that contains key-value pairs or columns
+            corresponding to design variables.
+
+        Returns
+        -------
+        ret
+            An ordered dictionary of grids for response variables.
+        """
+        return extract_vars_from_data(data, self.responses)
 
     def __repr__(self) -> str:
         strs = []
