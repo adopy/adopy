@@ -20,7 +20,7 @@ install:
 
 script:
   - poetry run pytest --cov=adopy
-  - poetry run codecov --token $(CODECOV_TOKEN)
+  - poetry run codecov
 
 after_success:
   - poetry run flake8 adopy --format=pylint --statistics --exit-zero
