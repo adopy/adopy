@@ -2,6 +2,7 @@ from typing import Any, Callable, Dict, Iterable, Optional, List, Tuple
 
 import numpy as np
 import pandas as pd
+from scipy.stats import bernoulli
 from scipy.special import logsumexp
 
 from adopy.functions import (
@@ -11,7 +12,6 @@ from adopy.functions import (
     make_grid_matrix,
     marginalize,
     make_vector_shape,
-    log_lik_bernoulli
 )
 from adopy.types import array_like, vector_like, matrix_like
 
@@ -31,7 +31,7 @@ class Engine(object):
                  model: Model,
                  grid_design: Dict[str, Any],
                  grid_param: Dict[str, Any],
-                 lambda_et: Optional[float] = None):
+                 dtype: Optional[Any] = np.float32):
         super(Engine, self).__init__()
 
         if model.task != task:
@@ -39,12 +39,15 @@ class Engine(object):
 
         self._task = task  # type: Task
         self._model = model  # type: Model
-        self.lambda_et = lambda_et
+        self._dtype = dtype
 
-        self.grid_design = make_grid_matrix(grid_design)[task.designs]
-        self.grid_param = make_grid_matrix(grid_param)[model.params]
-        self.grid_response = pd.DataFrame(
-            np.array(task.responses), columns=['y_obs'])
+        self.grid_design = \
+            make_grid_matrix(grid_design, dtype=dtype)[task.designs]
+        self.grid_param = \
+            make_grid_matrix(grid_param, dtype=dtype)[model.params]
+        self.grid_response = \
+            pd.DataFrame(np.array(task.responses), columns=['y_obs'],
+                         dtype=dtype)
 
         self.reset()
 
@@ -117,19 +120,11 @@ class Engine(object):
         return np.sqrt(np.diag(self.post_cov))
 
     @property
-    def lambda_et(self):
+    def dtype(self):
         """
-        Lambda value for eligibility traces. If it equals to None, eligibility
-        traces do not affect choices of the optimal designs.
+        Datatype for internal grid objects.
         """
-        return self._lambda_et
-
-    @lambda_et.setter
-    def lambda_et(self, v):
-        if v and not (0 <= v <= 1):
-            raise ValueError('Invalid value for lambda_et')
-
-        self._lambda_et = v
+        return self._dtype
 
     ###########################################################################
     # Methods
@@ -139,11 +134,11 @@ class Engine(object):
         """
         Reset the engine as in the initial state.
         """
-        self.y_obs = np.array(self.task.responses)
+        self.y_obs = np.array(self.task.responses, dtype=self.dtype)
         self.p_obs = self._compute_p_obs()
         self.log_lik = ll = self._compute_log_lik()
 
-        lp = np.ones(self.grid_param.shape[0])
+        lp = np.ones(self.grid_param.shape[0], dtype=self.dtype)
         self.log_prior = lp - logsumexp(lp)
         self.log_post = self.log_prior.copy()
 
@@ -151,12 +146,10 @@ class Engine(object):
         mll = logsumexp(self.log_lik + lp, axis=1)
         self.marg_log_lik = mll  # shape (num_design, num_response)
 
-        self.ent_obs = -np.multiply(np.exp(ll), ll).sum(-1)
+        self.ent_obs = -np.multiply(np.exp(ll), ll, dtype=self.dtype).sum(-1)
         self.ent_marg = None
         self.ent_cond = None
         self.mutual_info = None
-
-        self.eligibility_trace = np.zeros(self.grid_design.shape[0])
 
         self.flag_update_mutual_info = True
 
@@ -167,11 +160,11 @@ class Engine(object):
 
         args = {}
         args.update({
-            k: v.reshape(shape_design)
+            k: v.reshape(shape_design).astype(self.dtype)
             for k, v in self.task.extract_designs(self.grid_design).items()
         })
         args.update({
-            k: v.reshape(shape_param)
+            k: v.reshape(shape_param).astype(self.dtype)
             for k, v in self.model.extract_params(self.grid_param).items()
         })
 
@@ -182,8 +175,7 @@ class Engine(object):
         dim_p_obs = len(self.p_obs.shape)
         y = self.y_obs.reshape(make_vector_shape(dim_p_obs + 1, dim_p_obs))
         p = np.expand_dims(self.p_obs, dim_p_obs)
-
-        return log_lik_bernoulli(y, p)
+        return bernoulli.pmf(y, p)
 
     def _update_mutual_info(self):
         """
@@ -203,13 +195,14 @@ class Engine(object):
         self.marg_log_lik = mll  # shape (num_design, num_response)
 
         # Calculate the marginal entropy and conditional entropy.
-        self.ent_marg = -np.sum(np.exp(mll) * mll, -1)  # shape (num_designs,)
-        self.ent_cond = np.sum(
-            self.post * self.ent_obs, axis=1)  # shape (num_designs,)
+        self.ent_marg = \
+            -np.sum(np.exp(mll) * mll, -1)  # shape (num_designs,)
+        self.ent_cond = \
+            np.sum(self.post * self.ent_obs, axis=1)  # shape (num_designs,)
 
         # Calculate the mutual information.
-        self.mutual_info = self.ent_marg - \
-            self.ent_cond  # shape (num_designs,)
+        self.mutual_info = \
+            self.ent_marg - self.ent_cond  # shape (num_designs,)
 
         # Flag that there is no need to update mutual information again.
         self.flag_update_mutual_info = False
@@ -236,8 +229,7 @@ class Engine(object):
 
         if kind == 'optimal':
             self._update_mutual_info()
-            idx_design = np.argmax(
-                self.mutual_info * (1 - self.eligibility_trace))
+            idx_design = np.argmax(self.mutual_info)
 
         elif kind == 'random':
             idx_design = get_random_design_index(self.grid_design)
@@ -274,9 +266,5 @@ class Engine(object):
 
         self.log_post += self.log_lik[idx_design, :, idx_response].flatten()
         self.log_post -= logsumexp(self.log_post)
-
-        if self.lambda_et:
-            self.eligibility_trace *= self.lambda_et
-            self.eligibility_trace[idx_design] += 1
 
         self.flag_update_mutual_info = True
