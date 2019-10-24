@@ -6,7 +6,7 @@ parameters: *guess rate* :math:`\gamma`, *lapse rate* :math:`\delta`,
 *threshold* :math:`\alpha`, and *slope* :math:`\beta`.
 """
 import numpy as np
-from scipy.stats import norm, gumbel_l
+from scipy.stats import bernoulli, norm, gumbel_l
 
 from adopy.base import Engine, Task, Model
 from adopy.functions import (inv_logit, get_random_design_index,
@@ -55,7 +55,7 @@ class _ModelPsi(Model):
             params=['threshold', 'slope', 'guess_rate', 'lapse_rate'],
         )
 
-    def _compute(self, func, st, th, sl, gr, lr):
+    def _compute_prob(self, func, st, th, sl, gr, lr):
         return gr + (1 - gr - lr) * func(sl * (st - th))
 
 
@@ -95,9 +95,10 @@ class ModelLogistic(_ModelPsi):
         super(ModelLogistic, self).__init__(
             name='Logistic model for 2AFC tasks')
 
-    def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
-        return self._compute(inv_logit, stimulus,
-                             threshold, slope, guess_rate, lapse_rate)
+    def compute(self, choice, stimulus, guess_rate, lapse_rate, threshold, slope):
+        p_obs = self._compute_prob(
+            inv_logit, stimulus, threshold, slope, guess_rate, lapse_rate)
+        return bernoulli.logpmf(choice, p_obs)
 
 
 class ModelWeibull(_ModelPsi):
@@ -137,9 +138,10 @@ class ModelWeibull(_ModelPsi):
         super(ModelWeibull, self).__init__(
             name='Weibull model for 2AFC tasks')
 
-    def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
-        return self._compute(gumbel_l.cdf, stimulus,
-                             threshold, slope, guess_rate, lapse_rate)
+    def compute(self, choice, stimulus, guess_rate, lapse_rate, threshold, slope):
+        p_obs = self._compute_prob(
+            gumbel_l.cdf, stimulus, threshold, slope, guess_rate, lapse_rate)
+        return bernoulli.logpmf(choice, p_obs)
 
 
 class ModelProbit(_ModelPsi):
@@ -180,9 +182,10 @@ class ModelProbit(_ModelPsi):
         super(ModelProbit, self).__init__(
             name='Probit model for 2AFC tasks')
 
-    def compute(self, stimulus, guess_rate, lapse_rate, threshold, slope):
-        return self._compute(norm.cdf, stimulus,
-                             guess_rate, lapse_rate, threshold, slope)
+    def compute(self, choice, stimulus, guess_rate, lapse_rate, threshold, slope):
+        p_obs = self._compute_prob(
+            norm.cdf, stimulus, threshold, slope, guess_rate, lapse_rate)
+        return bernoulli.logpmf(choice, p_obs)
 
 
 class EnginePsi(Engine):
@@ -192,17 +195,18 @@ class EnginePsi(Engine):
     """
 
     def __init__(self, model, grid_design, grid_param, d_step: int = 1):
-        assert type(model) in [
-            type(ModelLogistic()),
-            type(ModelWeibull()),
-            type(ModelProbit()),
-        ]
+        if not isinstance(model.task, Task2AFC):
+            raise RuntimeError(
+                'The model should be implemented for the CRA task.')
+
+        grid_response = {'choice': [0, 1]}
 
         super(EnginePsi, self).__init__(
-            task=Task2AFC(),
+            task=model.task,
             model=model,
             grid_design=grid_design,
-            grid_param=grid_param
+            grid_param=grid_param,
+            grid_response=grid_response
         )
 
         self.idx_opt = get_random_design_index(self.grid_design)
