@@ -31,6 +31,7 @@ class Engine(object):
                  model: Model,
                  grid_design: Dict[str, Any],
                  grid_param: Dict[str, Any],
+                 grid_response: Dict[str, Any],
                  dtype: Optional[Any] = np.float32):
         super(Engine, self).__init__()
 
@@ -41,13 +42,9 @@ class Engine(object):
         self._model = model  # type: Model
         self._dtype = dtype
 
-        self.grid_design = \
-            make_grid_matrix(grid_design, dtype=dtype)[task.designs]
-        self.grid_param = \
-            make_grid_matrix(grid_param, dtype=dtype)[model.params]
-        self.grid_response = \
-            pd.DataFrame(np.array(task.responses), columns=['y_obs'],
-                         dtype=dtype)
+        self._grid_design = make_grid_matrix(grid_design)[task.designs]
+        self._grid_param = make_grid_matrix(grid_param)[model.params]
+        self._grid_response = make_grid_matrix(grid_response)[task.responses]
 
         self.reset()
 
@@ -74,6 +71,21 @@ class Engine(object):
     def num_param(self):
         """Number of parameter grid axes"""
         return len(self.model.params)
+
+    @property
+    def grid_design(self):
+        """Grids for a design space."""
+        return self._grid_design
+
+    @property
+    def grid_param(self):
+        """Grids for a parameter space."""
+        return self._grid_param
+
+    @property
+    def grid_response(self):
+        """Grids for a response space."""
+        return self._grid_response
 
     @property
     def prior(self) -> array_like:
@@ -134,8 +146,6 @@ class Engine(object):
         """
         Reset the engine as in the initial state.
         """
-        self.y_obs = np.array(self.task.responses, dtype=self.dtype)
-        self.p_obs = self._compute_p_obs()
         self.log_lik = ll = self._compute_log_lik()
 
         lp = np.ones(self.grid_param.shape[0], dtype=self.dtype)
@@ -153,10 +163,11 @@ class Engine(object):
 
         self.flag_update_mutual_info = True
 
-    def _compute_p_obs(self):
+    def _compute_log_lik(self):
         """Compute the probability of getting observed response."""
-        shape_design = make_vector_shape(2, 0)
-        shape_param = make_vector_shape(2, 1)
+        shape_design = make_vector_shape(3, 0)
+        shape_param = make_vector_shape(3, 1)
+        shape_response = make_vector_shape(3, 2)
 
         args = {}
         args.update({
@@ -167,15 +178,12 @@ class Engine(object):
             k: v.reshape(shape_param).astype(self.dtype)
             for k, v in self.model.extract_params(self.grid_param).items()
         })
+        args.update({
+            k: v.reshape(shape_response)
+            for k, v in self.task.extract_responses(self.grid_response).items()
+        })
 
         return self.model.compute(**args)
-
-    def _compute_log_lik(self):
-        """Compute the log likelihood."""
-        dim_p_obs = len(self.p_obs.shape)
-        y = self.y_obs.reshape(make_vector_shape(dim_p_obs + 1, dim_p_obs))
-        p = np.expand_dims(self.p_obs, dim_p_obs)
-        return bernoulli.pmf(y, p)
 
     def _update_mutual_info(self):
         """
@@ -196,19 +204,18 @@ class Engine(object):
 
         # Calculate the marginal entropy and conditional entropy.
         self.ent_marg = \
-            -np.sum(np.exp(mll) * mll, -1)  # shape (num_designs,)
+            -np.sum(np.exp(mll) * mll, -1)  # shape: (num_designs,)
         self.ent_cond = \
-            np.sum(self.post * self.ent_obs, axis=1)  # shape (num_designs,)
+            np.sum(self.post * self.ent_obs, axis=1)  # shape: (num_designs,)
 
         # Calculate the mutual information.
         self.mutual_info = \
-            self.ent_marg - self.ent_cond  # shape (num_designs,)
+            self.ent_marg - self.ent_cond  # shape: (num_designs,)
 
         # Flag that there is no need to update mutual information again.
         self.flag_update_mutual_info = False
 
-    def get_design(self, kind='optimal'):
-        # type: (str) -> pd.Series
+    def get_design(self, kind='optimal') -> Dict[str, Any]:
         r"""
         Choose a design with a given type.
 
@@ -223,7 +230,7 @@ class Engine(object):
 
         Returns
         -------
-        design : array_like
+        design : Dict[str, any]
             A chosen design vector
         """
 
@@ -238,7 +245,7 @@ class Engine(object):
             raise ValueError(
                 'The argument kind should be "optimal" or "random".')
 
-        return self.grid_design.iloc[idx_design]
+        return self.grid_design.iloc[idx_design].to_dict()
 
     def update(self, design, response):
         r"""
@@ -260,9 +267,11 @@ class Engine(object):
         if not isinstance(design, pd.Series):
             design = pd.Series(design, index=self.task.designs)
 
+        if not isinstance(response, pd.Series):
+            response = pd.Series(response, index=self.task.responses)
+
         idx_design = get_nearest_grid_index(design, self.grid_design)
-        idx_response = get_nearest_grid_index(
-            pd.Series(response), self.grid_response)
+        idx_response = get_nearest_grid_index(response, self.grid_response)
 
         self.log_post += self.log_lik[idx_design, :, idx_response].flatten()
         self.log_post -= logsumexp(self.log_post)

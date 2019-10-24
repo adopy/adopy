@@ -28,9 +28,10 @@ Neural Representation of Subjective Value Under Risk and Ambiguity.
 *Journal of Neurophysiology, 103* (2), 1036-1047.
 """
 import numpy as np
+from scipy.stats import bernoulli
 
 from adopy.base import Engine, Task, Model
-from adopy.functions import inv_logit, const_positive
+from adopy.functions import inv_logit
 
 __all__ = ['TaskCRA', 'ModelLinear', 'ModelExp', 'EngineCRA']
 
@@ -47,7 +48,8 @@ class TaskCRA(Task):
         - ``r_fix`` (:math:`R_F`) - amount of reward of a fixed option
 
     Responses
-        0 (choosing a fixed option) or 1 (choosing a variable option)
+        - ``choice`` - 0 (choosing a fixed option) or
+          1 (choosing a variable option)
 
     Examples
     --------
@@ -56,14 +58,14 @@ class TaskCRA(Task):
     >>> task.designs
     ['p_var', 'a_var', 'r_var', 'r_fix']
     >>> task.responses
-    [0, 1]
+    ['choice']
     """
 
     def __init__(self):
         super(TaskCRA, self).__init__(
             name='Choice under risk and ambiguity task',
             designs=['p_var', 'a_var', 'r_var', 'r_fix'],
-            responses=[0, 1]  # binary response
+            responses=['choice']  # binary response
         )
 
 
@@ -104,18 +106,15 @@ class ModelLinear(Model):
         super(ModelLinear, self).__init__(
             name='Linear model for the CRA task',
             task=TaskCRA(),
-            params=['alpha', 'beta', 'gamma'],
-            constraint={
-                'alpha': const_positive,
-                'gamma': const_positive,
-            }
+            params=['alpha', 'beta', 'gamma']
         )
 
-    def compute(self, p_var, a_var, r_var, r_fix, alpha, beta, gamma):
+    def compute(self, choice, p_var, a_var, r_var, r_fix, alpha, beta, gamma):
         sv_var = np.power(r_var, alpha)
         sv_var = (p_var - beta * np.divide(a_var, 2)) * sv_var
         sv_fix = .5 * np.power(r_fix, alpha)
-        return inv_logit(gamma * (sv_var - sv_fix))
+        p_obs = inv_logit(gamma * (sv_var - sv_fix))
+        return bernoulli.logpmf(choice, p_obs)
 
 
 class ModelExp(Model):
@@ -156,18 +155,15 @@ class ModelExp(Model):
         super(ModelExp, self).__init__(
             name='Exponential model for the CRA task',
             task=TaskCRA(),
-            params=['alpha', 'beta', 'gamma'],
-            constraint={
-                'alpha': const_positive,
-                'gamma': const_positive,
-            }
+            params=['alpha', 'beta', 'gamma']
         )
 
-    def compute(self, p_var, a_var, r_var, r_fix, alpha, beta, gamma):
+    def compute(self, choice, p_var, a_var, r_var, r_fix, alpha, beta, gamma):
         sv_var = np.power(r_var, alpha)
         sv_var = np.power(p_var, 1 + beta * a_var) * sv_var
         sv_fix = .5 * np.power(r_fix, alpha)
-        return inv_logit(gamma * (sv_var - sv_fix))
+        p_obs = inv_logit(gamma * (sv_var - sv_fix))
+        return bernoulli.logpmf(choice, p_obs)
 
 
 class EngineCRA(Engine):
@@ -176,14 +172,16 @@ class EngineCRA(Engine):
     """
 
     def __init__(self, model, grid_design, grid_param):
-        assert type(model) in [
-            type(ModelLinear()),
-            type(ModelExp()),
-        ]
+        if not isinstance(model.task, TaskCRA):
+            raise RuntimeError(
+                'The model should be implemented for the CRA task.')
+
+        grid_response = {'choice': [0, 1]}
 
         super(EngineCRA, self).__init__(
-            task=TaskCRA(),
+            task=model.task,
             model=model,
             grid_design=grid_design,
-            grid_param=grid_param
+            grid_param=grid_param,
+            grid_response=grid_response
         )
