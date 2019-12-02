@@ -212,7 +212,7 @@ class EnginePsi(Engine):
 
         self.idx_opt = get_random_design_index(self.grid_design)
         self.y_obs_prev = 1
-        self.d_step = d_step
+        self._d_step = d_step
 
     @property
     def d_step(self) -> int:
