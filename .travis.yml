@@ -26,14 +26,14 @@ after_success:
   - poetry run travis-sphinx deploy -b master
 
 before_deploy:
-  - poetry build -f sdist
+  - poetry build
 
 deploy:
   provider: releases
   api_key: $GH_TOKEN
   file_glob: true
-  file: dist/*
-  cleanup: false
+  file: dist/**/*
+  draft: true
+  skip_cleanup: true
   on:
     tags: true
-  draft: true
