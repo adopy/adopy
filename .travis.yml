@@ -26,7 +26,7 @@ after_success:
   - poetry run travis-sphinx deploy -b master
 
 before_deploy:
-  - poetry build -f sdist
+  - poetry build
 
 deploy:
   provider: releases
