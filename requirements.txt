@@ -1,0 +1,9 @@
+pandas
+scipy
+numpy
+sphinx
+sphinx_rtd_theme
+sphinx-autobuild
+travis-sphinx
+recommonmark
+sphinxcontrib-rawfiles
