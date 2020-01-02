@@ -58,6 +58,11 @@ docs = [
   "sphinxcontrib-rawfiles"
 ]
 
+[[tool.poetry.source]]
+name = "test"
+url = "https://test.pypi.org/legacy/"
+secondary = true
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
