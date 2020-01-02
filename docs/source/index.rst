@@ -10,9 +10,9 @@ Home
 .. image:: https://www.repostatus.org/badges/latest/wip.svg
    :alt: Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.
    :target: https://www.repostatus.org/#wip
-.. image:: https://travis-ci.com/adopy/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master
+.. image:: https://travis-ci.org/adopy/adopy.svg?branch=master
    :alt: Travis CI
-   :target: https://travis-ci.com/adopy/adopy
+   :target: https://travis-ci.org/adopy/adopy
 .. image:: https://codecov.io/gh/adopy/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k
    :alt: CodeCov
    :target: https://codecov.io/gh/adopy/adopy
@@ -46,9 +46,9 @@ Citation
 If you use ADOpy, please cite this package along with the specific version.
 It greatly encourages contributors to continue supporting ADOpy.
 
-   Yang, J., Ahn, W.-Y., Pitt., M. A., & Myung, J. I. (2019).
-   *ADOpy: A Python Package for Adaptive Design Optimization*.
-   Retrieved from https://adopy.org
+   Yang, J., Pitt, M. A., Ahn, W., & Myung, J. I. (2019).
+   ADOpy: A Python Package for Adaptive Design Optimization.
+   https://doi.org/10.31234/osf.io/mdu23
 
 References
 ----------
