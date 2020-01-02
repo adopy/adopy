@@ -10,7 +10,7 @@ from adopy import tasks
 
 from adopy.base import Task, Model, Engine
 
-__version__ = '0.4.0'
+__version__ = '0.4.0.rc1'
 
 __all__ = [
     # Submodules
