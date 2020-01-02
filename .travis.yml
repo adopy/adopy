@@ -3,8 +3,6 @@ language: python
 
 cache:
   pip: true
-  directories:
-    - .venv
 
 python:
   - "3.5"
