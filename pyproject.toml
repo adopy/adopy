@@ -36,7 +36,6 @@ sphinx_rtd_theme = { version = "*", optional = true }
 sphinx-autobuild = { version = "*", optional = true }
 travis-sphinx = { version = "*", optional = true }
 recommonmark = { version = "*", optional = true }
-sphinxcontrib-rawfiles = { version = "*", optional = true }
 
 [tool.poetry.dev-dependencies]
 autopep8 = "*"

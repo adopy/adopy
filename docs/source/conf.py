@@ -45,7 +45,6 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
-    'sphinxcontrib.rawfiles',
     'recommonmark',
 ]
 
@@ -194,9 +193,6 @@ napoleon_use_admonition_for_references = False
 napoleon_use_ivar = False
 napoleon_use_param = False
 napoleon_use_rtype = False
-
-# Sphinx-contrib-rawfiles
-rawfiles = ['CNAME']
 
 
 def setup(app):
