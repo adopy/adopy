@@ -22,7 +22,7 @@ import adopy  # noqa: E402
 # -- Project information -----------------------------------------------------
 
 project = 'ADOpy'
-copyright = '2019, ADOpy developers'  # pylint: disable=W0622
+copyright = '2020, ADOpy developers'  # pylint: disable=W0622
 author = 'ADOpy developers'
 
 # The short X.Y version
