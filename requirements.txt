@@ -1,7 +1,7 @@
 pandas
 scipy
 numpy
-sphinx
+sphinx==2.2.2
 sphinx_rtd_theme
 sphinx-autobuild
 travis-sphinx
