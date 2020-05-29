@@ -4,16 +4,17 @@ import numpy as np
 import pandas as pd
 from scipy.stats import bernoulli
 from scipy.special import logsumexp
+from numba import jitclass, types
 
 from adopy.functions import (
     expand_multiple_dims,
-    get_nearest_grid_index,
     get_random_design_index,
     make_grid_matrix,
     marginalize,
     make_vector_shape,
 )
 from adopy.types import array_like, vector_like, matrix_like
+from adopy.cmodules import get_nearest_grid_index
 
 from ._task import Task
 from ._model import Model
@@ -32,6 +33,7 @@ class Engine(object):
                  grid_design: Dict[str, Any],
                  grid_param: Dict[str, Any],
                  grid_response: Dict[str, Any],
+                 noise_ratio: Optional[float] = 1e-3,
                  dtype: Optional[Any] = np.float32):
         super(Engine, self).__init__()
 
@@ -41,6 +43,7 @@ class Engine(object):
         self._task = task  # type: Task
         self._model = model  # type: Model
         self._dtype = dtype
+        self._noise_ratio = noise_ratio
 
         self._grid_design = make_grid_matrix(grid_design)[task.designs].astype(self.dtype)
         self._grid_param = make_grid_matrix(grid_param)[model.params].astype(self.dtype)
@@ -146,7 +149,9 @@ class Engine(object):
         """
         Reset the engine as in the initial state.
         """
-        self.log_lik = ll = self._compute_log_lik()
+        self.log_lik = ll = \
+            (1 - self._noise_ratio) * np.exp(self._compute_log_lik()) + \
+            self._noise_ratio * np.ones(self.grid_response.shape[0]).reshape(1, 1, -1) / self.grid_response.shape[0]
 
         lp = np.ones(self.grid_param.shape[0], dtype=self.dtype)
         self.log_prior = lp - logsumexp(lp)
@@ -270,10 +275,11 @@ class Engine(object):
         if not isinstance(response, pd.Series):
             response = pd.Series(response, index=self.task.responses, dtype=self.dtype)
 
-        idx_design = get_nearest_grid_index(design, self.grid_design)
-        idx_response = get_nearest_grid_index(response, self.grid_response)
+        idx_design = get_nearest_grid_index(design.values, self.grid_design.values)
+        idx_response = get_nearest_grid_index(response.values, self.grid_response.values)
 
         self.log_post += self.log_lik[idx_design, :, idx_response].flatten()
         self.log_post -= logsumexp(self.log_post)
 
         self.flag_update_mutual_info = True
+
