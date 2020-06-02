@@ -33,7 +33,7 @@ class Engine(object):
                  grid_design: Dict[str, Any],
                  grid_param: Dict[str, Any],
                  grid_response: Dict[str, Any],
-                 noise_ratio: Optional[float] = 1e-3,
+                 noise_ratio: Optional[float] = 1e-7,
                  dtype: Optional[Any] = np.float32):
         super(Engine, self).__init__()
 
