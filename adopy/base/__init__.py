@@ -12,11 +12,11 @@ These classes provide built-in functions for the Adaptive Design Optimization.
 """
 from ._task import Task as _Task
 from ._model import Model as _Model
-from ._engine import Engine as _Engine
-from ._engine_opt import Engine as EngineOpt
+from ._engine_v0 import Engine
+from ._engine_v1 import Engine as EngineV1
+from ._engine_v2 import Engine as EngineV2
 
 Task = _Task
 Model = _Model
-Engine = _Engine
 
-__all__ = ['Task', 'Model', 'Engine', 'EngineOpt']
+__all__ = ['Task', 'Model', 'Engine', 'EngineV1', 'EngineV2']
