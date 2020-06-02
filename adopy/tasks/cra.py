@@ -171,7 +171,7 @@ class EngineCRA(Engine):
     The Engine class for the CRA task. It can be only used for :py:class:`TaskCRA`.
     """
 
-    def __init__(self, model, grid_design, grid_param):
+    def __init__(self, model, grid_design, grid_param, **kwargs):
         if not isinstance(model.task, TaskCRA):
             raise RuntimeError(
                 'The model should be implemented for the CRA task.')
@@ -183,5 +183,6 @@ class EngineCRA(Engine):
             model=model,
             grid_design=grid_design,
             grid_param=grid_param,
-            grid_response=grid_response
+            grid_response=grid_response,
+            **kwargs,
         )

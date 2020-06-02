@@ -393,7 +393,7 @@ class EngineDD(Engine):
     It can be only used for :py:class:`TaskDD`.
     """
 
-    def __init__(self, model, grid_design, grid_param):
+    def __init__(self, model, grid_design, grid_param, **kwargs):
         if not isinstance(model.task, TaskDD):
             raise RuntimeError(
                 'The model should be implemented for the DD task.')
@@ -405,5 +405,6 @@ class EngineDD(Engine):
             model=model,
             grid_design=grid_design,
             grid_param=grid_param,
-            grid_response=grid_response
+            grid_response=grid_response,
+            **kwargs
         )

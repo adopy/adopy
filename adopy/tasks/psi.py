@@ -194,7 +194,7 @@ class EnginePsi(Engine):
     It can be only used for :py:class:`Task2AFC`.
     """
 
-    def __init__(self, model, grid_design, grid_param, d_step: int = 1):
+    def __init__(self, model, grid_design, grid_param, d_step: int = 1, **kwargs):
         if not isinstance(model.task, Task2AFC):
             raise RuntimeError(
                 'The model should be implemented for the CRA task.')
@@ -206,7 +206,8 @@ class EnginePsi(Engine):
             model=model,
             grid_design=grid_design,
             grid_param=grid_param,
-            grid_response=grid_response
+            grid_response=grid_response,
+            **kwargs
         )
 
         self.idx_opt = get_random_design_index(self.grid_design)
