@@ -15,8 +15,9 @@ from ._model import Model as _Model
 from ._engine_v0 import Engine
 from ._engine_v1 import Engine as EngineV1
 from ._engine_v2 import Engine as EngineV2
+from ._engine_v3 import Engine as EngineV3
 
 Task = _Task
 Model = _Model
 
-__all__ = ['Task', 'Model', 'Engine', 'EngineV1', 'EngineV2']
+__all__ = ['Task', 'Model', 'Engine', 'EngineV1', 'EngineV2', 'EngineV3']
