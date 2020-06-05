@@ -3,8 +3,6 @@ from typing import Any, Dict, Optional
 import numpy as np
 import pandas as pd
 from scipy.stats import bernoulli
-import numba
-from numba import jit
 
 from adopy.functions import (
     get_random_design_index,
@@ -20,57 +18,6 @@ from ._task import Task
 from ._model import Model
 
 __all__ = ['Engine']
-
-
-spec = [
-    ('n_d', numba.int32),
-    ('n_p', numba.int32),
-    ('n_y', numba.int32),
-    ('log_lik', numba.float32[:, :, :]),
-    ('log_prior', numba.float32[:]),
-    ('log_post', numba.float32[:]),
-    ('marg_log_lik', numba.float32[:, :]),
-    ('ent_obs', numba.float32[:, :, :]),
-    ('ent_marg', numba.float32[:]),
-    ('ent_cond', numba.float32[:]),
-    ('mutual_info', numba.float32[:]),
-]
-
-
-# @numba.jitclass(spec)
-class EngineCore:
-    def __init__(self, n_d, n_p, n_y, log_lik):
-        self.n_d = n_d
-        self.n_p = n_p
-        self.n_y = n_y
-
-        self.log_lik = log_lik
-        self.ent_obs = -np.multiply(np.exp(self.log_lik), self.log_lik).sum(-1)
-        self.log_prior = np.log(np.ones(self.n_p) / self.n_p)
-        self.log_post = np.log(np.ones(self.n_p) / self.n_p)
-
-        self.mll = np.sum(self.log_lik + self.log_post.reshape(1, self.n_p, 1), axis=1)
-        self.ent_marg = -np.sum(np.exp(self.mll) * self.mll, axis=-1)
-        self.ent_cond = np.sum(np.exp(self.log_post) * self.ent_obs, axis=1)
-        self.mutual_info = self.ent_marg - self.ent_cond
-
-    def reset(self):
-        self.log_post = np.log(np.ones(self.n_p) / self.n_p)
-        self.update_mutual_information()
-
-    def update_mutual_information(self):
-        self.mll = np.sum(self.log_lik + self.log_post.reshape(1, self.n_p, 1), axis=1)
-        self.ent_marg = -np.sum(np.exp(self.mll) * self.mll, axis=-1)
-        self.ent_cond = np.sum(np.exp(self.log_post) * self.ent_obs, axis=1)
-        self.mutual_info = self.ent_marg - self.ent_cond
-
-    def update(self, i_d, i_y):
-        self.log_post += self.log_lik[i_d, :, i_y]
-        self.log_post -= logsumexp(self.log_post)
-        self.update_mutual_information()
-
-    def get_optimal_design_index(self):
-        return np.argmax(self.mutual_info)
 
 
 class Engine(object):
@@ -91,24 +38,35 @@ class Engine(object):
         if model.task != task:
             raise ValueError('Given task and model are not matched.')
 
-        self._task = task  # type: Task
-        self._model = model  # type: Model
+        self._task = task
+        self._model = model
+        self._dtype = dtype
         self._noise_ratio = noise_ratio
 
         self._g_d = g_d = make_grid_matrix(grid_design)[task.designs]
         self._g_p = g_p = make_grid_matrix(grid_param)[model.params]
         self._g_y = g_y = make_grid_matrix(grid_response)[task.responses]
 
-        n_d = g_d.shape[0]
-        n_p = g_p.shape[0]
-        n_y = g_y.shape[0]
+        self.n_d = n_d = g_d.shape[0]
+        self.n_p = n_p = g_p.shape[0]
+        self.n_y = n_y = g_y.shape[0]
 
         l_model = np.exp(self._compute_log_lik())
         l_noise = np.repeat(1 / n_y, n_y).reshape(1, 1, -1)
         log_lik = np.log((1 - noise_ratio) * l_model + noise_ratio * l_noise) \
             .astype(dtype)
 
-        self._core = EngineCore(n_d, n_p, n_y, log_lik)
+        self.log_lik = log_lik
+        self.ent_obs = -np.einsum('ijk,ijk->ij', np.exp(log_lik), log_lik)
+        self.log_prior = np.repeat(np.log(1 / self.n_p), self.n_p,
+                                   dtype=self.dtype)
+        self.log_post = np.repeat(np.log(1 / self.n_p), self.n_p,
+                                  dtype=self.dtype)
+
+        self.mll = np.sum(self.log_lik + self.log_post.reshape(1, -1, 1), axis=1)
+        ent_marg = -np.einsum('ij,ij->i', np.exp(self.mll), self.mll)
+        ent_cond = np.einsum('j,ij->i', np.exp(self.log_post), self.ent_obs)
+        self.mutual_info = self.ent_marg - self.ent_cond
 
     ###########################################################################
     # Properties
@@ -123,10 +81,6 @@ class Engine(object):
     def model(self) -> Model:
         """Model instance for the engine"""
         return self._model
-
-    @property
-    def core(self) -> EngineCore:
-        return self._core
 
     @property
     def num_design(self):
@@ -227,7 +181,9 @@ class Engine(object):
         """
         Reset the engine as in the initial state.
         """
-        self._core.reset()
+        self.log_post = np.repeat(np.log(1 / self.n_p), self.n_p,
+                                  dtype=self.dtype)
+        self._update_mutual_info()
 
     def _update_mutual_info(self):
         """
@@ -237,7 +193,12 @@ class Engine(object):
         The flag to update mutual information must be true only when
         posteriors are updated in :code:`update(design, response)` method.
         """
-        self._core.update_mutual_information()
+        self.mll = \
+            np.sum(self.log_lik + self.log_post.reshape(1, self.n_p, 1), axis=1)
+        self.ent_marg = -np.einsum('ij,ij->i', np.exp(self.mll), self.mll)
+        self.ent_cond = \
+            np.einsum('j,ij->i', np.exp(self.log_post), self.ent_obs)
+        self.mutual_info = self.ent_marg - self.ent_cond
 
     def get_design(self, kind='optimal') -> Dict[str, Any]:
         r"""
@@ -259,7 +220,7 @@ class Engine(object):
         """
 
         if kind == 'optimal':
-            idx_design = self._core.get_optimal_design_index()
+            idx_design = np.argmax(self.mutual_info)
 
         elif kind == 'random':
             idx_design = get_random_design_index(self.grid_design)
@@ -288,12 +249,17 @@ class Engine(object):
             Any kinds of observed response
         """
         if not isinstance(design, pd.Series):
-            design = pd.Series(design, index=self.task.designs, dtype=np.float32)
+            design = pd.Series(
+                design, index=self.task.designs, dtype=np.float32)
 
         if not isinstance(response, pd.Series):
-            response = pd.Series(response, index=self.task.responses, dtype=np.float32)
+            response = pd.Series(
+                response, index=self.task.responses, dtype=np.float32)
 
         i_d = get_nearest_grid_index(design.values, self.grid_design.values)
-        i_y = get_nearest_grid_index(response.values, self.grid_response.values)
+        i_y = get_nearest_grid_index(
+            response.values, self.grid_response.values)
 
-        self._core.update(i_d, i_y)
+        self.log_post += self.log_lik[i_d, :, i_y]
+        self.log_post -= logsumexp(self.log_post)
+        self._update_mutual_info()

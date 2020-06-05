@@ -25,7 +25,6 @@ python = ">=3.5"
 pandas = "*"
 scipy = ">=1.0.0"
 numpy = "*"
-Numba = "*"
 Cython = ">=0.29"
 
 # Extra packages for testing
