@@ -47,26 +47,27 @@ class Engine(object):
         self._g_p = g_p = make_grid_matrix(grid_param)[model.params]
         self._g_y = g_y = make_grid_matrix(grid_response)[task.responses]
 
-        self.n_d = n_d = g_d.shape[0]
-        self.n_p = n_p = g_p.shape[0]
-        self.n_y = n_y = g_y.shape[0]
+        self.n_d = g_d.shape[0]
+        self.n_p = g_p.shape[0]
+        self.n_y = g_y.shape[0]
 
         l_model = np.exp(self._compute_log_lik())
-        l_noise = np.repeat(1 / n_y, n_y).reshape(1, 1, -1)
+        l_noise = np.repeat(1 / self.n_y, self.n_y).reshape(1, 1, -1)
         log_lik = np.log((1 - noise_ratio) * l_model + noise_ratio * l_noise) \
             .astype(dtype)
 
         self.log_lik = log_lik
         self.ent_obs = -np.einsum('ijk,ijk->ij', np.exp(log_lik), log_lik)
-        self.log_prior = np.repeat(np.log(1 / self.n_p), self.n_p,
-                                   dtype=self.dtype)
-        self.log_post = np.repeat(np.log(1 / self.n_p), self.n_p,
-                                  dtype=self.dtype)
+        self.log_prior = np.repeat(np.log(1 / self.n_p), self.n_p) \
+            .astype(dtype)
+        self.log_post = np.repeat(np.log(1 / self.n_p), self.n_p) \
+            .astype(dtype)
 
-        self.mll = np.sum(self.log_lik + self.log_post.reshape(1, -1, 1), axis=1)
+        self.mll = np.sum(
+            self.log_lik + self.log_post.reshape(1, -1, 1), axis=1)
         ent_marg = -np.einsum('ij,ij->i', np.exp(self.mll), self.mll)
         ent_cond = np.einsum('j,ij->i', np.exp(self.log_post), self.ent_obs)
-        self.mutual_info = self.ent_marg - self.ent_cond
+        self.mutual_info = ent_marg - ent_cond
 
     ###########################################################################
     # Properties
@@ -110,12 +111,12 @@ class Engine(object):
     @property
     def prior(self) -> array_like:
         """Prior distributions of joint parameter space"""
-        return np.exp(self._core.log_prior)
+        return np.exp(self.log_prior)
 
     @property
     def post(self) -> array_like:
         """Posterior distributions of joint parameter space"""
-        return np.exp(self._core.log_post)
+        return np.exp(self.log_post)
 
     @property
     def marg_post(self) -> Dict[str, vector_like]:
@@ -151,6 +152,10 @@ class Engine(object):
         """
         return np.sqrt(np.diag(self.post_cov))
 
+    @property
+    def dtype(self):
+        return self._dtype
+
     ###########################################################################
     # Methods
     ###########################################################################
@@ -181,8 +186,8 @@ class Engine(object):
         """
         Reset the engine as in the initial state.
         """
-        self.log_post = np.repeat(np.log(1 / self.n_p), self.n_p,
-                                  dtype=self.dtype)
+        self.log_post = np.repeat(np.log(1 / self.n_p), self.n_p) \
+            .astype(self.dtype)
         self._update_mutual_info()
 
     def _update_mutual_info(self):
@@ -193,12 +198,11 @@ class Engine(object):
         The flag to update mutual information must be true only when
         posteriors are updated in :code:`update(design, response)` method.
         """
-        self.mll = \
-            np.sum(self.log_lik + self.log_post.reshape(1, self.n_p, 1), axis=1)
-        self.ent_marg = -np.einsum('ij,ij->i', np.exp(self.mll), self.mll)
-        self.ent_cond = \
-            np.einsum('j,ij->i', np.exp(self.log_post), self.ent_obs)
-        self.mutual_info = self.ent_marg - self.ent_cond
+        self.mll = np.sum(self.log_lik + self.log_post.reshape(1, self.n_p, 1),
+                          axis=1)
+        ent_marg = -np.einsum('ij,ij->i', np.exp(self.mll), self.mll)
+        ent_cond = np.einsum('j,ij->i', np.exp(self.log_post), self.ent_obs)
+        self.mutual_info = ent_marg - ent_cond
 
     def get_design(self, kind='optimal') -> Dict[str, Any]:
         r"""
