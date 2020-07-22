@@ -3,17 +3,16 @@ from typing import Any, Dict, Optional
 import numpy as np
 import pandas as pd
 from scipy.stats import bernoulli
-from scipy.special import logsumexp
 
 from adopy.functions import (
-    expand_multiple_dims,
-    get_nearest_grid_index,
     get_random_design_index,
     make_grid_matrix,
     marginalize,
     make_vector_shape,
+    logsumexp,
 )
 from adopy.types import array_like, vector_like, matrix_like
+from adopy.cmodules import get_nearest_grid_index
 
 from ._task import Task
 from ._model import Model
@@ -32,21 +31,43 @@ class Engine(object):
                  grid_design: Dict[str, Any],
                  grid_param: Dict[str, Any],
                  grid_response: Dict[str, Any],
+                 noise_ratio: Optional[float] = 1e-7,
                  dtype: Optional[Any] = np.float32):
         super(Engine, self).__init__()
 
         if model.task != task:
             raise ValueError('Given task and model are not matched.')
 
-        self._task = task  # type: Task
-        self._model = model  # type: Model
+        self._task = task
+        self._model = model
         self._dtype = dtype
+        self._noise_ratio = noise_ratio
 
-        self._grid_design = make_grid_matrix(grid_design)[task.designs]
-        self._grid_param = make_grid_matrix(grid_param)[model.params]
-        self._grid_response = make_grid_matrix(grid_response)[task.responses]
+        self._g_d = g_d = make_grid_matrix(grid_design)[task.designs]
+        self._g_p = g_p = make_grid_matrix(grid_param)[model.params]
+        self._g_y = g_y = make_grid_matrix(grid_response)[task.responses]
 
-        self.reset()
+        self.n_d = g_d.shape[0]
+        self.n_p = g_p.shape[0]
+        self.n_y = g_y.shape[0]
+
+        l_model = np.exp(self._compute_log_lik())
+        l_noise = np.repeat(1 / self.n_y, self.n_y).reshape(1, 1, -1)
+        log_lik = np.log((1 - noise_ratio) * l_model + noise_ratio * l_noise) \
+            .astype(dtype)
+
+        self.log_lik = log_lik
+        self.ent_obs = -np.einsum('ijk,ijk->ij', np.exp(log_lik), log_lik)
+        self.log_prior = np.repeat(np.log(1 / self.n_p), self.n_p) \
+            .astype(dtype)
+        self.log_post = np.repeat(np.log(1 / self.n_p), self.n_p) \
+            .astype(dtype)
+
+        self.mll = np.sum(
+            self.log_lik + self.log_post.reshape(1, -1, 1), axis=1)
+        ent_marg = -np.einsum('ij,ij->i', np.exp(self.mll), self.mll)
+        ent_cond = np.einsum('j,ij->i', np.exp(self.log_post), self.ent_obs)
+        self.mutual_info = ent_marg - ent_cond
 
     ###########################################################################
     # Properties
@@ -75,17 +96,17 @@ class Engine(object):
     @property
     def grid_design(self):
         """Grids for a design space."""
-        return self._grid_design
+        return self._g_d
 
     @property
     def grid_param(self):
         """Grids for a parameter space."""
-        return self._grid_param
+        return self._g_p
 
     @property
     def grid_response(self):
         """Grids for a response space."""
-        return self._grid_response
+        return self._g_y
 
     @property
     def prior(self) -> array_like:
@@ -133,35 +154,11 @@ class Engine(object):
 
     @property
     def dtype(self):
-        """
-        Datatype for internal grid objects.
-        """
         return self._dtype
 
     ###########################################################################
     # Methods
     ###########################################################################
-
-    def reset(self):
-        """
-        Reset the engine as in the initial state.
-        """
-        self.log_lik = ll = self._compute_log_lik()
-
-        lp = np.ones(self.grid_param.shape[0], dtype=self.dtype)
-        self.log_prior = lp - logsumexp(lp)
-        self.log_post = self.log_prior.copy()
-
-        lp = expand_multiple_dims(self.log_post, 1, 1)
-        mll = logsumexp(self.log_lik + lp, axis=1)
-        self.marg_log_lik = mll  # shape (num_design, num_response)
-
-        self.ent_obs = -np.multiply(np.exp(ll), ll, dtype=self.dtype).sum(-1)
-        self.ent_marg = None
-        self.ent_cond = None
-        self.mutual_info = None
-
-        self.flag_update_mutual_info = True
 
     def _compute_log_lik(self):
         """Compute the probability of getting observed response."""
@@ -171,11 +168,11 @@ class Engine(object):
 
         args = {}
         args.update({
-            k: v.reshape(shape_design).astype(self.dtype)
+            k: v.reshape(shape_design)
             for k, v in self.task.extract_designs(self.grid_design).items()
         })
         args.update({
-            k: v.reshape(shape_param).astype(self.dtype)
+            k: v.reshape(shape_param)
             for k, v in self.model.extract_params(self.grid_param).items()
         })
         args.update({
@@ -185,6 +182,14 @@ class Engine(object):
 
         return self.model.compute(**args)
 
+    def reset(self):
+        """
+        Reset the engine as in the initial state.
+        """
+        self.log_post = np.repeat(np.log(1 / self.n_p), self.n_p) \
+            .astype(self.dtype)
+        self._update_mutual_info()
+
     def _update_mutual_info(self):
         """
         Update mutual information using posterior distributions.
@@ -193,27 +198,11 @@ class Engine(object):
         The flag to update mutual information must be true only when
         posteriors are updated in :code:`update(design, response)` method.
         """
-        # If there is no need to update mutual information, it ends.
-        if not self.flag_update_mutual_info:
-            return
-
-        # Calculate the marginal log likelihood.
-        lp = expand_multiple_dims(self.log_post, 1, 1)
-        mll = logsumexp(self.log_lik + lp, axis=1)
-        self.marg_log_lik = mll  # shape (num_design, num_response)
-
-        # Calculate the marginal entropy and conditional entropy.
-        self.ent_marg = \
-            -np.sum(np.exp(mll) * mll, -1)  # shape: (num_designs,)
-        self.ent_cond = \
-            np.sum(self.post * self.ent_obs, axis=1)  # shape: (num_designs,)
-
-        # Calculate the mutual information.
-        self.mutual_info = \
-            self.ent_marg - self.ent_cond  # shape: (num_designs,)
-
-        # Flag that there is no need to update mutual information again.
-        self.flag_update_mutual_info = False
+        self.mll = np.sum(self.log_lik + self.log_post.reshape(1, self.n_p, 1),
+                          axis=1)
+        ent_marg = -np.einsum('ij,ij->i', np.exp(self.mll), self.mll)
+        ent_cond = np.einsum('j,ij->i', np.exp(self.log_post), self.ent_obs)
+        self.mutual_info = ent_marg - ent_cond
 
     def get_design(self, kind='optimal') -> Dict[str, Any]:
         r"""
@@ -235,7 +224,6 @@ class Engine(object):
         """
 
         if kind == 'optimal':
-            self._update_mutual_info()
             idx_design = np.argmax(self.mutual_info)
 
         elif kind == 'random':
@@ -265,15 +253,17 @@ class Engine(object):
             Any kinds of observed response
         """
         if not isinstance(design, pd.Series):
-            design = pd.Series(design, index=self.task.designs)
+            design = pd.Series(
+                design, index=self.task.designs, dtype=np.float32)
 
         if not isinstance(response, pd.Series):
-            response = pd.Series(response, index=self.task.responses)
+            response = pd.Series(
+                response, index=self.task.responses, dtype=np.float32)
 
-        idx_design = get_nearest_grid_index(design, self.grid_design)
-        idx_response = get_nearest_grid_index(response, self.grid_response)
+        i_d = get_nearest_grid_index(design.values, self.grid_design.values)
+        i_y = get_nearest_grid_index(
+            response.values, self.grid_response.values)
 
-        self.log_post += self.log_lik[idx_design, :, idx_response].flatten()
+        self.log_post += self.log_lik[i_d, :, i_y]
         self.log_post -= logsumexp(self.log_post)
-
-        self.flag_update_mutual_info = True
+        self._update_mutual_info()

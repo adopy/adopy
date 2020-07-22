@@ -10,12 +10,8 @@ These classes provide built-in functions for the Adaptive Design Optimization.
    directly as :py:class:`adopy.Task`, :py:class:`adopy.Model`, and
    :py:class:`adopy.Engine`.
 """
-from ._task import Task as _Task
-from ._model import Model as _Model
-from ._engine import Engine as _Engine
-
-Task = _Task
-Model = _Model
-Engine = _Engine
+from ._task import Task
+from ._model import Model
+from ._engine import Engine
 
 __all__ = ['Task', 'Model', 'Engine']
