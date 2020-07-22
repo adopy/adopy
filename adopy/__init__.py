@@ -11,7 +11,7 @@ from adopy import tasks
 from adopy.base import Task, Model, Engine
 from adopy import cmodules
 
-__version__ = '0.4.0.rc1'
+__version__ = '0.4.0.rc2'
 
 __all__ = [
     # Submodules
