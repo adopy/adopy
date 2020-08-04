@@ -37,6 +37,7 @@ def get_random_design_index(designs):
 
 
 def make_grid_matrix(axes_dict: Dict[GK, GV],
+                     columns: Optional[List[str]] = None,
                      dtype: Optional[Any] = np.float32,
                      ) -> pd.DataFrame:
     assert isinstance(axes_dict, dict)
@@ -44,20 +45,23 @@ def make_grid_matrix(axes_dict: Dict[GK, GV],
 
     n_dims = len(axes_dict)
 
+    if not n_dims:
+        return pd.DataFrame(None)
+
     n_d_each = [1 if len(np.shape(x)) == 1 else np.shape(x)[1]
                 for x in axes_dict.values()]
     n_d_prev = np.cumsum(n_d_each) - n_d_each
     n_d_total = sum(n_d_each)
 
-    columns = []  # type: List[str]
+    labels = []  # type: List[str]
     grids = []  # type: List[np.ndarray]
     for i, (k, g) in enumerate(axes_dict.items()):
         dim_grid = np.append(make_vector_shape(n_dims, i), n_d_total)
 
         if isinstance(k, str):
-            columns.append(k)
+            labels.append(k)
         else:
-            columns.extend(k)
+            labels.extend(k)
 
         # Make a grid as a 2d matrix
         g_2d = np.reshape(g, (-1, 1)) if n_d_each[i] == 1 else g
@@ -74,4 +78,8 @@ def make_grid_matrix(axes_dict: Dict[GK, GV],
 
     grid_mat = sum(grids, np.zeros_like(grids[0])).reshape(-1, n_d_total)
 
-    return pd.DataFrame(grid_mat, columns=columns, dtype=dtype)
+    ret = pd.DataFrame(grid_mat, columns=labels, dtype=dtype)
+    if columns:
+        ret = ret[columns]
+
+    return ret
