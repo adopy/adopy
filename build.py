@@ -30,6 +30,6 @@ def build(setup_kwargs):
     setup_kwargs.update(
         dict(
             cmdclass=dict(build_ext=ExtBuilder),
-            ext_modules=cythonize(extensions),
+            ext_modules=cythonize(extensions, language_level="3"),
         )
     )
