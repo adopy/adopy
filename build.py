@@ -5,7 +5,8 @@ from distutils.command.build_ext import build_ext
 from Cython.Build import cythonize
 
 extensions = [
-    Extension("adopy.cmodules", ['adopy/src/*.pyx']),
+    Extension("adopy.internals", ['adopy/src/internals.pyx']),
+    Extension("adopy.stats", ['adopy/src/stats.pyx']),
 ]
 
 
