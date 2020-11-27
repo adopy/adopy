@@ -1,6 +1,13 @@
 Psychometric Function Estimation
 ================================
 
+.. warning::
+
+   This example includes deprecated functions and arguments.
+   We plan to update this page following the up-to-date ADOpy usage.
+   Sorry for your inconvenience.
+
+
 Let’s start with psychometric functions as an example. The goal of the function
 is to figure out whether a subject can perceive a signal with varying levels
 of magnitude. The function has one design variable for the *intensity* of a
@@ -112,9 +119,9 @@ codes below:
       return guess_rate + (1 - guess_rate - lapse_rate) * inv_logit(slope * (stimulus - threshold))
 
 
-  model_log = Model(name='Logistic', key='log', task=task_psi,
+  model_log = Model(name='Logistic', task=task_psi,
                     param=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
-                    func=func_logistic, constraint={'slope': lambda x: x > 0})
+                    func=func_logistic)
 
 Then, you can compute the probability using ``compute`` method in the
 model object.

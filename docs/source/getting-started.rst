@@ -14,10 +14,7 @@ Instead, you can install the developmental version in the GitHub repository.
 
 .. code:: bash
 
-    git clone https://github.com/adopy/adopy.git
-    cd adopy
-    git checkout develop
-    pip install .
+    pip install git+https://github.com/adopy/adopy.git@develop
 
 Quick-start guide
 -----------------
@@ -115,6 +112,7 @@ the corresponding grid points should be set as its values.
         'choice': [0, 1]  # Binary choice
     }
 
+
 Step 4. Initialize an engine using :py:class:`adopy.Engine`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -126,11 +124,11 @@ optimal design using ADO.
 
     from adopy import Engine
 
-    engine = Engine(model=model,              # a Model object
-                    task=task,                # a Task object
-                    grid_design=grid_design,  # a grid for design variables
-                    grid_param=grid_param,    # a grid for model parameters
-                    grid_response=grid_response)  # a grid for response variables
+    engine = Engine(model=model,                  # Model object
+                    task=task,                    # Task object
+                    grid_design=grid_design,      # grid for design variables
+                    grid_param=grid_param,        # grid for model parameters
+                    grid_response=grid_response)  # grid for response variables
 
 
 Step 5. Compute a design using the engine
@@ -180,9 +178,3 @@ Step 8. Repeat Step 5 through Step 7 until the experiment is over
         # Update the engine
         engine.update(design, response)
 
-More examples
--------------
-
-There are `more examples`_ on how to use ADOpy for other experimental tasks.
-
-.. _more examples: https://github.com/adopy/adopy/tree/master/examples
