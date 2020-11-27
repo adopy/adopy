@@ -6,13 +6,13 @@ from scipy.stats import bernoulli
 
 from adopy.functions import (
     get_random_design_index,
+    get_nearest_grid_index,
     make_grid_matrix,
     marginalize,
     make_vector_shape,
     logsumexp,
 )
 from adopy.types import array_like, vector_like, matrix_like
-from adopy.cmodules import get_nearest_grid_index
 
 from ._task import Task
 from ._model import Model
@@ -204,7 +204,7 @@ class Engine(object):
         ent_cond = np.einsum('j,ij->i', np.exp(self.log_post), self.ent_obs)
         self.mutual_info = ent_marg - ent_cond
 
-    def get_design(self, kind='optimal') -> Dict[str, Any]:
+    def get_design(self, kind='optimal') -> Optional[Dict[str, Any]]:
         r"""
         Choose a design with a given type.
 
@@ -219,9 +219,12 @@ class Engine(object):
 
         Returns
         -------
-        design : Dict[str, any]
-            A chosen design vector
+        design : Dict[str, any] or None
+            A chosen design vector to use for the next trial.
+            Returns `None` if there is no design available.
         """
+        if self.num_design == 0:
+            return None
 
         if kind == 'optimal':
             idx_design = np.argmax(self.mutual_info)

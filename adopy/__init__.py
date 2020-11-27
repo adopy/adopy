@@ -2,22 +2,17 @@
 ADOpy: Adaptive Design Optimization on Experimental Tasks
 """
 import os
+
 import numpy as np
 
-from adopy import base
-from adopy import functions
-from adopy import tasks
-
-from adopy.base import Task, Model, Engine
-from adopy import cmodules
+from adopy import base, functions, tasks
+from adopy.base import Engine, Model, Task
 
 __version__ = '0.4.0.rc1'
 
 __all__ = [
     # Submodules
     'base', 'functions', 'tasks',
-    # C modules
-    'cmodules',
     # Base classes
     'Task', 'Model', 'Engine',
 ]
