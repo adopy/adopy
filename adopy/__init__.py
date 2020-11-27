@@ -2,13 +2,15 @@
 ADOpy: Adaptive Design Optimization on Experimental Tasks
 """
 import os
+try:
+    import importlib.metadata as importlib_metadata
+except ModuleNotFoundError:
+    import importlib_metadata
 
 import numpy as np
 
 from adopy import base, functions, tasks
 from adopy.base import Engine, Model, Task
-
-__version__ = '0.4.0-rc.3'
 
 __all__ = [
     # Submodules
@@ -16,6 +18,9 @@ __all__ = [
     # Base classes
     'Task', 'Model', 'Engine',
 ]
+
+# Load version from the metadata
+__version__ = importlib_metadata.version(__name__)
 
 # Ignore overflow and underflow floating-point errors
 np.seterr(over='ignore', under='ignore')
