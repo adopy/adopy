@@ -21,6 +21,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.6"
+importlib_metadata = { version = "*", python = "<3.8" }
 pandas = "*"
 scipy = ">=1.0.0"
 numpy = "*"
@@ -29,9 +30,6 @@ numpy = "*"
 pytest = { version = "*", optional = true }
 pytest-cov = { version = "*", optional = true }
 codecov = { version = "*", optional = true }
-
-# Extra packages for interactive environments
-jupyterlab = { version = "*", optional = true }
 
 # Extra packages for documentation
 sphinx = { version = "*", optional = true }
@@ -57,9 +55,6 @@ docs = [
   "sphinx-autobuild",
   "recommonmark",
   "sphinxcontrib-rawfiles"
-]
-interactive = [
-  "jupyterlab"
 ]
 
 [[tool.poetry.source]]
