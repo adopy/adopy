@@ -34,8 +34,6 @@ class Model(object):
 
     Examples
     --------
-    .. todo::
-        Update examples using a likelihood function.
 
     >>> task = Task(name='Task A', designs=['x1', 'x2'], responses=['y'])
 

@@ -24,8 +24,6 @@ script:
 after_success:
   - poetry run flake8 adopy --format=pylint --statistics --exit-zero
   - poetry run pylint adopy --rcfile=setup.cfg --exit-zero
-  - poetry run travis-sphinx build
-  - poetry run travis-sphinx deploy -b master
 
 before_deploy:
   - poetry build

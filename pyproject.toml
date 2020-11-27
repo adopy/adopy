@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adopy"
-version = "0.4.0.rc1"
+version = "0.4.0-rc.3"
 description = "Adaptive Design Optimization on Experimental Tasks"
 authors = ["Jaeyeong Yang <jaeyeong.yang1125@gmail.com>"]
 license = "GPL-3.0+"
@@ -21,6 +21,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = ">=3.6"
+importlib_metadata = { version = "*", python = "<3.8" }
 pandas = "*"
 scipy = ">=1.0.0"
 numpy = "*"
@@ -30,14 +31,10 @@ pytest = { version = "*", optional = true }
 pytest-cov = { version = "*", optional = true }
 codecov = { version = "*", optional = true }
 
-# Extra packages for interactive environments
-jupyterlab = { version = "*", optional = true }
-
 # Extra packages for documentation
 sphinx = { version = "*", optional = true }
 sphinx_rtd_theme = { version = "*", optional = true }
 sphinx-autobuild = { version = "*", optional = true }
-travis-sphinx = { version = "*", optional = true }
 recommonmark = { version = "*", optional = true }
 
 [tool.poetry.dev-dependencies]
@@ -56,12 +53,8 @@ docs = [
   "sphinx",
   "sphinx_rtd_theme",
   "sphinx-autobuild",
-  "travis-sphinx",
   "recommonmark",
   "sphinxcontrib-rawfiles"
-]
-interactive = [
-  "jupyterlab"
 ]
 
 [[tool.poetry.source]]
