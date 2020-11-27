@@ -24,9 +24,10 @@ def marginalize(post, grid_param, axis):
 
 
 def get_nearest_grid_index(design: pd.Series, designs: pd.DataFrame) -> int:
-    ds = designs.values
-    d = design.values.reshape(1, -1)
-    return int(np.argmin(np.square(ds - d).sum(-1)))
+    ds = designs
+    d = design.reshape(1, -1)
+    # return int(np.argmin(np.square(ds - d).sum(-1)))
+    return np.square(ds - d).sum(-1).argsort()[0]
 
 
 def get_random_design_index(designs):

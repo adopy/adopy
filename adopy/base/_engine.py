@@ -6,13 +6,13 @@ from scipy.stats import bernoulli
 
 from adopy.functions import (
     get_random_design_index,
+    get_nearest_grid_index,
     make_grid_matrix,
     marginalize,
     make_vector_shape,
     logsumexp,
 )
 from adopy.types import array_like, vector_like, matrix_like
-from adopy.internals import get_nearest_grid_index
 
 from ._task import Task
 from ._model import Model

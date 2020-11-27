@@ -6,11 +6,11 @@ parameters: *guess rate* :math:`\gamma`, *lapse rate* :math:`\delta`,
 *threshold* :math:`\alpha`, and *slope* :math:`\beta`.
 """
 import numpy as np
-from scipy.stats import bernoulli, norm, gumbel_l
+from scipy.stats import bernoulli, gumbel_l, norm
 
-from adopy.base import Engine, Task, Model
-from adopy.functions import (inv_logit, get_random_design_index,
-                             get_nearest_grid_index, const_positive, const_01)
+from adopy.base import Engine, Model, Task
+from adopy.functions import (const_01, const_positive, get_nearest_grid_index,
+                             get_random_design_index, inv_logit)
 from adopy.types import integer_like
 
 __all__ = [
@@ -279,7 +279,8 @@ class EnginePsi(Engine):
         else:
             raise RuntimeError('An invalid kind of design: "{}".'.format(type))
 
-        self.idx_opt = get_nearest_grid_index(ret, self.grid_design)
+        self.idx_opt = get_nearest_grid_index(
+            ret.values, self.grid_design.values)
 
         return ret
 
