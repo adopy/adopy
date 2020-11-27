@@ -2,8 +2,8 @@
 
 [![PyPI](https://img.shields.io/pypi/v/adopy.svg?color=green)](https://pypi.org/project/adopy/)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Travis CI](https://travis-ci.org/adopy/adopy.svg?branch=master)](https://travis-ci.org/adopy/adopy)
-[![CodeCov](https://codecov.io/gh/adopy/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k)](https://codecov.io/gh/adopy/adopy)
+[![Travis CI](https://travis-ci.org/adopy/adopy.svg?branch=develop)](https://travis-ci.org/adopy/adopy)
+[![CodeCov](https://codecov.io/gh/adopy/adopy/branch/develop/graph/badge.svg?token=jFnJgnVV1k)](https://codecov.io/gh/adopy/adopy)
 
 **ADOpy** is a Python implementation of Adaptive Design Optimization (ADO; Myung, Cavagnaro, & Pitt, 2013), which computes optimal designs dynamically in an experiment. Its modular structure permit easy integration into existing experimentation code.
 
@@ -42,9 +42,10 @@ pip install git+https://github.com/adopy/adopy.git@develop
 If you use ADOpy, please cite this package along with the specific version.
 It greatly encourages contributors to continue supporting ADOpy.
 
-> Yang, J., Pitt, M. A., Ahn, W., & Myung, J. I. (2019).
+> Yang, J., Pitt, M. A., Ahn, W., & Myung, J. I. (2020).
 > ADOpy: A Python Package for Adaptive Design Optimization.
-> https://doi.org/10.31234/osf.io/mdu23
+> _Behavior Research Methods_, 1--24.
+> https://doi.org/10.3758/s13428-020-01386-4
 
 ## References
 - Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).

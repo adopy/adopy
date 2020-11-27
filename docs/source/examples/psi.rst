@@ -4,8 +4,8 @@ Psychometric Function Estimation
 .. warning::
 
    This example includes deprecated functions and arguments.
-   We plan to update this page following the up-to-date ADOpy usage.
-   Sorry for your inconvenience.
+   We plan to update this page following the up-to-date usage.
+   Sorry for the inconvenience.
 
 
 Let’s start with psychometric functions as an example. The goal of the function
