@@ -53,8 +53,8 @@ class Engine(object):
         self._ent_cond = None
         self._mutual_info = None
 
-        self.log_prior = np.repeat(np.log(1 / self.n_p), self.n_p).astype(dtype)
-        self.log_post = np.repeat(np.log(1 / self.n_p), self.n_p).astype(dtype)
+        self._log_prior = np.log(np.ones(self.n_p, dtype=dtype) / self.n_p)
+        self._log_post = np.copy(self.log_prior)
 
         self._update_mutual_info()
 
@@ -75,40 +75,82 @@ class Engine(object):
     @property
     def grid_design(self):
         """
-        Grid space for design variables, generated from the grid definition
-        given as `grid_design` with initialization.
+        Grid space for design variables, generated from the grid definition,
+        given as :code:`grid_design` with initialization.
         """
         return self._g_d
 
     @property
     def grid_param(self):
         """
-        Grid space for model parameters, generated from the grid definition
-        given as `grid_param` with initialization.
+        Grid space for model parameters, generated from the grid definition,
+        given as :code:`grid_param` with initialization.
         """
         return self._g_p
 
     @property
     def grid_response(self):
         """
-        Grid space for response variables, generated from the grid definition
-        given as `grid_response` with initialization.
+        Grid space for response variables, generated from the grid definition,
+        given as :code:`grid_response` with initialization.
         """
         return self._g_y
 
     @property
-    def prior(self) -> array_like:
+    def log_prior(self) -> vector_like:
         r"""
-        Prior distributions :math:`p_0(\theta)` on the grid space of model parameters.
+        Log prior probabilities on the grid space of model parameters, :math:`\log p_0(\theta)`.
+
+        This probabilities correspond to grid points defined in :code:`grid_param`.
         """
-        return np.exp(self.log_prior)
+        return self._log_prior
+
+    @log_prior.setter
+    def log_prior(self, lp):
+        self._log_prior = lp
+
+    @log_prior.deleter
+    def log_prior(self):
+        del self._log_prior
+        self._log_prior = (
+            np.log(np.ones(self.n_p) / self.n_p, dtype=self.dtype)
+        )
 
     @property
-    def post(self) -> array_like:
+    def log_post(self) -> vector_like:
         r"""
-        Posterior distributions :math:`p(\theta)` on the grid space of model parameters.
+        Log posterior probabilities on the grid space of model parameters, :math:`\log p_0(\theta)`.
+
+        This probabilities correspond to grid points defined in :code:`grid_param`.
         """
-        return np.exp(self.log_post)
+        return self._log_post
+
+    @log_post.setter
+    def log_post(self, lp):
+        self._log_post = lp
+
+    @log_post.deleter
+    def log_post(self):
+        del self._log_post
+        self._log_post = np.copy(self._log_prior)
+
+    @property
+    def prior(self) -> vector_like:
+        r"""
+        Prior probabilities on the grid space of model parameters, :math:`p_0(\theta)`.
+
+        This probabilities correspond to grid points defined in :code:`grid_param`.
+        """
+        return np.exp(self._log_prior)
+
+    @property
+    def post(self) -> vector_like:
+        r"""
+        Posterior probabilities on the grid space of model parameters, :math:`p(\theta)`.
+
+        This probabilities correspond to grid points defined in :code:`grid_param`.
+        """
+        return np.exp(self._log_post)
 
     @property
     def marg_post(self) -> Dict[str, vector_like]:
@@ -146,7 +188,7 @@ class Engine(object):
             l_model = np.exp(self.model.compute(**args))
 
             self._log_lik = np.log(
-                (1 - self._noise_ratio) * l_model + self._noise_ratio
+                (1 - 2 * self._noise_ratio) * l_model + self._noise_ratio
             ).astype(self.dtype)
 
         return self._log_lik
@@ -174,7 +216,7 @@ class Engine(object):
             )
 
         return self._ent
-    
+
     @property
     def ent_marg(self) -> array_like:
         r"""
@@ -187,7 +229,7 @@ class Engine(object):
                 'dy,dy->d', np.exp(self.marg_log_lik), self.marg_log_lik
             )
         return self._ent_marg
-    
+
     @property
     def ent_cond(self) -> array_like:
         r"""
@@ -198,9 +240,8 @@ class Engine(object):
         if self._ent_cond is None:
             self._ent_cond = np.einsum('p,dp->d', self.post, self.ent)
             # self._ent_cond = (self.ent * self.post).sum(-1)
-            print('Cond ent:', self._ent_cond.shape)
         return self._ent_cond
-    
+
     @property
     def mutual_info(self) -> vector_like:
         r"""
@@ -270,7 +311,6 @@ class Engine(object):
 
         self.log_post = np.copy(self.log_prior)
         self._update_mutual_info()
-
 
     def get_design(self, kind='optimal') -> Optional[Dict[str, Any]]:
         r"""
