@@ -2,10 +2,11 @@ from collections import OrderedDict
 
 import numpy as np
 from scipy.stats import bernoulli
+from scipy.special import expit as inv_logit
+import pandas as pd
 import pytest
 
 from adopy import Task, Model, Engine
-from scipy.special import expit as inv_logit
 
 
 @pytest.fixture()
@@ -133,7 +134,7 @@ def test_engine(engine, task, model):
     assert engine.model is model
 
     # engine.post_mean
-    assert isinstance(engine.post_mean, np.ndarray)
+    assert isinstance(engine.post_mean, pd.Series)
     assert len(engine.post_mean) == 4
 
     # engine.post_cov
@@ -141,7 +142,7 @@ def test_engine(engine, task, model):
     assert np.shape(engine.post_cov) == (4, 4)
 
     # engine.post_sd
-    assert isinstance(engine.post_sd, np.ndarray)
+    assert isinstance(engine.post_sd, pd.Series)
     assert len(engine.post_sd) == 4
 
     # engine.reset()
