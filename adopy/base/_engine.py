@@ -2,11 +2,11 @@ from typing import Any, Dict, Optional
 
 import numpy as np
 import pandas as pd
-from scipy.stats import bernoulli
+from scipy.special import logsumexp
 
-from adopy.functions import (get_nearest_grid_index, get_random_design_index,
-                             logsumexp, make_grid_matrix, make_vector_shape,
-                             marginalize)
+from adopy.functions import (
+    get_nearest_grid_index, make_grid_matrix, make_vector_shape, marginalize,
+)
 from adopy.types import array_like, matrix_like, vector_like
 
 from ._model import Model
@@ -158,9 +158,8 @@ class Engine(object):
         for :math:`y` and :math:`d`.
         """
         if self._marg_log_lik is None:
-            self._marg_log_lik = np.einsum(
-                'dpy->dy', self.log_lik + self.log_post.reshape(1, -1, 1)
-            )
+            self._marg_log_lik = logsumexp(
+                self.log_lik + self.log_post.reshape(1, -1, 1), axis=1)
         return self._marg_log_lik
 
     @property
@@ -299,7 +298,7 @@ class Engine(object):
             idx_design = np.argmax(self.mutual_info)
 
         elif kind == 'random':
-            idx_design = get_random_design_index(self.grid_design)
+            idx_design = np.random.randint(self.n_d)
 
         else:
             raise ValueError(

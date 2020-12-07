@@ -5,7 +5,7 @@ from scipy.stats import bernoulli
 import pytest
 
 from adopy import Task, Model, Engine
-from adopy.functions import inv_logit
+from scipy.special import expit as inv_logit
 
 
 @pytest.fixture()

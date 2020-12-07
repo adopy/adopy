@@ -31,7 +31,7 @@ import numpy as np
 from scipy.stats import bernoulli
 
 from adopy.base import Engine, Task, Model
-from adopy.functions import inv_logit
+from scipy.special import expit as inv_logit
 
 __all__ = ['TaskCRA', 'ModelLinear', 'ModelExp', 'EngineCRA']
 
