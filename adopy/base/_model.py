@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from functools import reduce
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
@@ -36,17 +37,14 @@ class Model(object):
     --------
 
     >>> task = Task(name='Task A', designs=['x1', 'x2'], responses=['y'])
-
     >>> def calculate_log_lik(y, x1, x2, b0, b1, b2):
     ...     import numpy as np
     ...     from scipy.stats import bernoulli
     ...     logit = b0 + b1 * x1 + b2 * x2
     ...     p = np.divide(1, 1 + np.exp(-logit))
     ...     return bernoulli.logpmf(y, p)
-
     >>> model = Model(name='Model X', task=task, params=['b0', 'b1', 'b2'],
     ...               func=calculate_log_lik)
-
     >>> model.name
     >>> model.task
     >>> model.params
