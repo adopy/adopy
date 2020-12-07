@@ -69,7 +69,7 @@ Content
    changelogs.rst
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 3
    :glob:
    :caption: examples
 
