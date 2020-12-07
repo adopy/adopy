@@ -113,11 +113,17 @@ class Model(object):
         model parameters. If the likelihood function is not given for the
         model, it returns a random log probability.
 
-        .. deprecated:: 0.4.0
-            As the Model class get modified to contain a function for
-            log likelihood in 0.4.0, we recommend you to use
-            `model.compute_log_lik()` function instead so to make it clear what
-            the function calculates.
+        .. warning::
+
+            Since the version 0.4.0, :code:`compute()` function should compute
+            the log likelihood, instead of the probability of a binary response
+            variable. Also, it should include the response variables as arguments.
+            These changes might break existing codes using the previous versions
+            of ADOpy.
+        
+        .. versionchanged:: 0.4.0
+        
+            Provide the log likelihood instead of the probability of a binary response.
         """
         if self._func is not None:
             return self._func(*args, **kargs)

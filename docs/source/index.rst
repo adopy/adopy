@@ -1,9 +1,11 @@
 Home
 ====
 
-.. image:: https://adopy.github.io/logo/adopy-logo.svg
+.. image:: https://adopy.github.io/logo/adopy-logo-tight.svg
    :alt: ADOpy logo
    :align: center
+
+.. centered:: |version|
 
 ----
 
