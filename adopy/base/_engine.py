@@ -259,7 +259,9 @@ class Engine(object):
         A vector of estimated means for the posterior distribution.
         Its length is ``num_params``.
         """
-        return np.dot(self.post, self.grid_param)
+        return pd.Series(np.dot(self.post, self.grid_param),
+                         index=self.model.params,
+                         name='Posterior mean')
 
     @property
     def post_cov(self) -> np.ndarray:
@@ -268,7 +270,7 @@ class Engine(object):
         Its shape is ``(num_grids, num_params)``.
         """
         # shape: (N_grids, N_param)
-        d = self.grid_param.values - self.post_mean
+        d = self.grid_param.values - self.post_mean.values
         return np.dot(d.T, d * self.post.reshape(-1, 1))
 
     @property
@@ -277,7 +279,9 @@ class Engine(object):
         A vector of estimated standard deviations for the posterior
         distribution. Its length is ``num_params``.
         """
-        return np.sqrt(np.diag(self.post_cov))
+        return pd.Series(np.sqrt(np.diag(self.post_cov)),
+                         index=self.model.params,
+                         name='Posterior SD')
 
     @property
     def dtype(self):
