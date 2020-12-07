@@ -4,18 +4,13 @@ import numpy as np
 import pandas as pd
 from scipy.stats import bernoulli
 
-from adopy.functions import (
-    get_random_design_index,
-    get_nearest_grid_index,
-    make_grid_matrix,
-    marginalize,
-    make_vector_shape,
-    logsumexp,
-)
-from adopy.types import array_like, vector_like, matrix_like
+from adopy.functions import (get_nearest_grid_index, get_random_design_index,
+                             logsumexp, make_grid_matrix, make_vector_shape,
+                             marginalize)
+from adopy.types import array_like, matrix_like, vector_like
 
-from ._task import Task
 from ._model import Model
+from ._task import Task
 
 __all__ = ['Engine']
 
@@ -31,7 +26,7 @@ class Engine(object):
                  grid_design: Dict[str, Any],
                  grid_param: Dict[str, Any],
                  grid_response: Dict[str, Any],
-                 noise_ratio: Optional[float] = 1e-7,
+                 noise_ratio: float = 1e-7,
                  dtype: Optional[Any] = np.float32):
         super(Engine, self).__init__()
 
@@ -51,23 +46,17 @@ class Engine(object):
         self.n_p = g_p.shape[0]
         self.n_y = g_y.shape[0]
 
-        l_model = np.exp(self._compute_log_lik())
-        l_noise = np.repeat(1 / self.n_y, self.n_y).reshape(1, 1, -1)
-        log_lik = np.log((1 - noise_ratio) * l_model + noise_ratio * l_noise) \
-            .astype(dtype)
+        self._log_lik = None
+        self._marg_log_lik = None
+        self._ent = None
+        self._ent_marg = None
+        self._ent_cond = None
+        self._mutual_info = None
 
-        self.log_lik = log_lik
-        self.ent_obs = -np.einsum('ijk,ijk->ij', np.exp(log_lik), log_lik)
-        self.log_prior = np.repeat(np.log(1 / self.n_p), self.n_p) \
-            .astype(dtype)
-        self.log_post = np.repeat(np.log(1 / self.n_p), self.n_p) \
-            .astype(dtype)
+        self.log_prior = np.repeat(np.log(1 / self.n_p), self.n_p).astype(dtype)
+        self.log_post = np.repeat(np.log(1 / self.n_p), self.n_p).astype(dtype)
 
-        self.mll = np.sum(
-            self.log_lik + self.log_post.reshape(1, -1, 1), axis=1)
-        ent_marg = -np.einsum('ij,ij->i', np.exp(self.mll), self.mll)
-        ent_cond = np.einsum('j,ij->i', np.exp(self.log_post), self.ent_obs)
-        self.mutual_info = ent_marg - ent_cond
+        self._update_mutual_info()
 
     ###########################################################################
     # Properties
@@ -75,47 +64,50 @@ class Engine(object):
 
     @property
     def task(self) -> Task:
-        """Task instance for the engine"""
+        """Task instance for the engine."""
         return self._task
 
     @property
     def model(self) -> Model:
-        """Model instance for the engine"""
+        """Model instance for the engine."""
         return self._model
 
     @property
-    def num_design(self):
-        """Number of design grid axes"""
-        return len(self.task.designs)
-
-    @property
-    def num_param(self):
-        """Number of parameter grid axes"""
-        return len(self.model.params)
-
-    @property
     def grid_design(self):
-        """Grids for a design space."""
+        """
+        Grid space for design variables, generated from the grid definition
+        given as `grid_design` with initialization.
+        """
         return self._g_d
 
     @property
     def grid_param(self):
-        """Grids for a parameter space."""
+        """
+        Grid space for model parameters, generated from the grid definition
+        given as `grid_param` with initialization.
+        """
         return self._g_p
 
     @property
     def grid_response(self):
-        """Grids for a response space."""
+        """
+        Grid space for response variables, generated from the grid definition
+        given as `grid_response` with initialization.
+        """
         return self._g_y
 
     @property
     def prior(self) -> array_like:
-        """Prior distributions of joint parameter space"""
+        r"""
+        Prior distributions :math:`p_0(\theta)` on the grid space of model parameters.
+        """
         return np.exp(self.log_prior)
 
     @property
     def post(self) -> array_like:
-        """Posterior distributions of joint parameter space"""
+        r"""
+        Posterior distributions :math:`p(\theta)` on the grid space of model parameters.
+        """
         return np.exp(self.log_post)
 
     @property
@@ -125,6 +117,101 @@ class Engine(object):
             param: marginalize(self.post, self.grid_param, i)
             for i, param in enumerate(self.model.params)
         }
+
+    @property
+    def log_lik(self) -> matrix_like:
+        r"""
+        Log likelihood :math:`p(y | d, \theta)` for all discretized values of
+        :math:`y`, :math:`d`, and :math:`\theta`.
+        """
+        if self._log_lik is None:
+            shape_design = make_vector_shape(3, 0)
+            shape_param = make_vector_shape(3, 1)
+            shape_response = make_vector_shape(3, 2)
+
+            args = {}
+            args.update({
+                k: v.reshape(shape_design)
+                for k, v in self.task.extract_designs(self.grid_design).items()
+            })
+            args.update({
+                k: v.reshape(shape_param)
+                for k, v in self.model.extract_params(self.grid_param).items()
+            })
+            args.update({
+                k: v.reshape(shape_response)
+                for k, v in self.task.extract_responses(self.grid_response).items()
+            })
+
+            l_model = np.exp(self.model.compute(**args))
+
+            self._log_lik = np.log(
+                (1 - self._noise_ratio) * l_model + self._noise_ratio
+            ).astype(self.dtype)
+
+        return self._log_lik
+
+    @property
+    def marg_log_lik(self) -> array_like:
+        """
+        Marginal log likelihood :math:`\log p(y | d)` for all discretized values
+        for :math:`y` and :math:`d`.
+        """
+        if self._marg_log_lik is None:
+            self._marg_log_lik = np.einsum(
+                'dpy->dy', self.log_lik + self.log_post.reshape(1, -1, 1)
+            )
+        return self._marg_log_lik
+
+    @property
+    def ent(self) -> array_like:
+        r"""
+        Entropy :math:`H(Y(d) | \theta) = -\sum_y p(y | d, \theta) \log p(y | d, \theta)`
+        for all discretized values for :math:`d` and :math:`\theta`.
+        """
+        if self._ent is None:
+            self._ent = -1 * np.einsum(
+                'dpy,dpy->dp', np.exp(self.log_lik), self.log_lik
+            )
+
+        return self._ent
+    
+    @property
+    def ent_marg(self) -> array_like:
+        r"""
+        Marginal entropy :math:`H(Y(d)) = -\sum_y p(y | d) \log p(y | d)`
+        for all discretized values for :math:`d`,
+        where :math:`p(y | d)` indicates the marginal likelihood.
+        """
+        if self._ent_marg is None:
+            self._ent_marg = -1 * np.einsum(
+                'dy,dy->d', np.exp(self.marg_log_lik), self.marg_log_lik
+            )
+        return self._ent_marg
+    
+    @property
+    def ent_cond(self) -> array_like:
+        r"""
+        Conditional entropy :math:`H(Y(d) | \Theta) = \sum_\theta p(\theta) H(Y(d) | \theta)`
+        for all discretized values for :math:`d`,
+        where :math:`p(\theta)` indicates the posterior distribution for model parameters.
+        """
+        if self._ent_cond is None:
+            self._ent_cond = np.einsum('p,dp->d', self.post, self.ent)
+            # self._ent_cond = (self.ent * self.post).sum(-1)
+            print('Cond ent:', self._ent_cond.shape)
+        return self._ent_cond
+    
+    @property
+    def mutual_info(self) -> vector_like:
+        r"""
+        Mutual information :math:`I(Y(d); \Theta) = H(Y(d)) - H(Y(d) | \Theta)`,
+        where :math:`H(Y(d))` indicates the marginal entropy
+        and :math:`H(Y(d) | \Theta)` indicates the conditional entropy.
+        """
+        if self._mutual_info is None:
+            self._mutual_info = self.ent_marg - self.ent_cond
+        return self._mutual_info
 
     @property
     def post_mean(self) -> vector_like:
@@ -154,55 +241,37 @@ class Engine(object):
 
     @property
     def dtype(self):
+        """
+        """
         return self._dtype
 
     ###########################################################################
     # Methods
     ###########################################################################
 
-    def _compute_log_lik(self):
-        """Compute the probability of getting observed response."""
-        shape_design = make_vector_shape(3, 0)
-        shape_param = make_vector_shape(3, 1)
-        shape_response = make_vector_shape(3, 2)
+    def _update_mutual_info(self):
+        """
+        Update mutual information using posterior distributions.
 
-        args = {}
-        args.update({
-            k: v.reshape(shape_design)
-            for k, v in self.task.extract_designs(self.grid_design).items()
-        })
-        args.update({
-            k: v.reshape(shape_param)
-            for k, v in self.model.extract_params(self.grid_param).items()
-        })
-        args.update({
-            k: v.reshape(shape_response)
-            for k, v in self.task.extract_responses(self.grid_response).items()
-        })
-
-        return self.model.compute(**args)
+        By accessing `mutual_info` once, the engine computes log_lik, marg_log_lik,
+        ent, ent_marg, ent_cond, and mutual_info in a chain.
+        """
+        _ = self.mutual_info
 
     def reset(self):
         """
         Reset the engine as in the initial state.
         """
-        self.log_post = np.repeat(np.log(1 / self.n_p), self.n_p) \
-            .astype(self.dtype)
+        self._log_lik = None
+        self._marg_log_lik = None
+        self._ent = None
+        self._ent_marg = None
+        self._ent_cond = None
+        self._mutual_info = None
+
+        self.log_post = np.copy(self.log_prior)
         self._update_mutual_info()
 
-    def _update_mutual_info(self):
-        """
-        Update mutual information using posterior distributions.
-
-        If there is no nedd to update mutual information, it ends.
-        The flag to update mutual information must be true only when
-        posteriors are updated in :code:`update(design, response)` method.
-        """
-        self.mll = np.sum(self.log_lik + self.log_post.reshape(1, self.n_p, 1),
-                          axis=1)
-        ent_marg = -np.einsum('ij,ij->i', np.exp(self.mll), self.mll)
-        ent_cond = np.einsum('j,ij->i', np.exp(self.log_post), self.ent_obs)
-        self.mutual_info = ent_marg - ent_cond
 
     def get_design(self, kind='optimal') -> Optional[Dict[str, Any]]:
         r"""
@@ -223,7 +292,7 @@ class Engine(object):
             A chosen design vector to use for the next trial.
             Returns `None` if there is no design available.
         """
-        if self.num_design == 0:
+        if len(self.task.designs) == 0:
             return None
 
         if kind == 'optimal':
@@ -257,11 +326,11 @@ class Engine(object):
         """
         if not isinstance(design, pd.Series):
             design = pd.Series(
-                design, index=self.task.designs, dtype=np.float32)
+                design, index=self.task.designs, dtype=self.dtype)
 
         if not isinstance(response, pd.Series):
             response = pd.Series(
-                response, index=self.task.responses, dtype=np.float32)
+                response, index=self.task.responses, dtype=self.dtype)
 
         i_d = get_nearest_grid_index(design.values, self.grid_design.values)
         i_y = get_nearest_grid_index(
@@ -269,4 +338,10 @@ class Engine(object):
 
         self.log_post += self.log_lik[i_d, :, i_y]
         self.log_post -= logsumexp(self.log_post)
+
+        self._marg_log_lik = None
+        self._ent_marg = None
+        self._ent_cond = None
+        self._mutual_info = None
+
         self._update_mutual_info()
