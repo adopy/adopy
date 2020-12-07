@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import Any, Dict, Optional
 
 import numpy as np
@@ -352,34 +353,68 @@ class Engine(object):
 
     def update(self, design, response):
         r"""
-        Update the posterior :math:`p(\theta | y_\text{obs}(t), d^*)` for
+        Update the posterior :math:`p(\theta | y, d^*)` for
         all discretized values of :math:`\theta`.
 
         .. math::
-            p(\theta | y_\text{obs}(t), d^*) =
-                \frac{ p( y_\text{obs}(t) | \theta, d^*) p_t(\theta) }
-                    { p( y_\text{obs}(t) | d^* ) }
+            p(\theta | y, d^*) \sim
+                p( y | \theta, d^*) p(\theta)
+
+        Also, it can takes multiple observations for updating posterior
+        probabilities. Multiple pairs of design and response should be
+        given as a list of designs and a list of responses, into
+        :code:`design` and :code:`response` argument, respectively.
+
+        .. math::
+
+            \begin{aligned}
+            p\big(\theta | y_1, \ldots, y_n, d_1^*, \ldots, d_n^*\big)
+            &\sim p\big( y_1, \ldots, y_n | \theta, d_1^*, \ldots, d_n^* \big) p(\theta) \\
+            &= p(y_1 | \theta, d_1^*) \cdot \ldots \cdot p(y_n | \theta, d_n^*) p(\theta)
+            \end{aligned}
 
         Parameters
         ----------
-        design
+        design : dict or :code:`pandas.Series` or list of designs
             Design vector for given response
-        response
+        response : dict or :code:`pandas.Series` or list of responses
             Any kinds of observed response
         """
-        if not isinstance(design, pd.Series):
-            design = pd.Series(
-                design, index=self.task.designs, dtype=self.dtype)
+        if isinstance(design, list) != isinstance(response, list):
+            raise ValueError(
+                'The number of observations (pairs of design and response) '
+                'should be matched in the design and response arguments.')
 
-        if not isinstance(response, pd.Series):
-            response = pd.Series(
-                response, index=self.task.responses, dtype=self.dtype)
+        if isinstance(design, list) and isinstance(response, list):
+            if len(design) != len(response):
+                raise ValueError(
+                    'The length of designs and responses should be the same.')
 
-        i_d = get_nearest_grid_index(design.values, self.grid_design.values)
-        i_y = get_nearest_grid_index(
-            response.values, self.grid_response.values)
+            _designs = [
+                pd.Series(d, index=self.task.designs, dtype=self.dtype)
+                for d in design
+            ]
 
-        self.log_post += self.log_lik[i_d, :, i_y]
+            _responses = [
+                pd.Series(r, index=self.task.responses, dtype=self.dtype)
+                for r in response
+            ]
+
+        else:
+            _designs = [
+                pd.Series(design, index=self.task.designs, dtype=self.dtype)
+            ]
+
+            _responses = [
+                pd.Series(response, index=self.task.responses,
+                          dtype=self.dtype)
+            ]
+
+        for d, r in zip(_designs, _responses):
+            i_d = get_nearest_grid_index(d.values, self.grid_design.values)
+            i_y = get_nearest_grid_index(r.values, self.grid_response.values)
+            self.log_post += self.log_lik[i_d, :, i_y]
+
         self.log_post -= logsumexp(self.log_post)
 
         self._marg_log_lik = None
