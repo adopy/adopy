@@ -1,10 +1,10 @@
 from functools import reduce
-from typing import Any, Callable, Dict, Iterable, Optional, List, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 import numpy as np
 
-from adopy.types import data_like
 from adopy.functions import extract_vars_from_data
+from adopy.types import data_like
 
 from ._task import Task
 
@@ -120,14 +120,6 @@ class Model(object):
             log likelihood in 0.4.0, we recommend you to use
             `model.compute_log_lik()` function instead so to make it clear what
             the function calculates.
-        """
-        return self.compute_log_lik(*args, **kargs)
-
-    def compute_log_lik(self, *args, **kargs):
-        """
-        Compute log likelihood of obtaining responses with given designs and
-        model parameters. If the likelihood function is not given for the
-        model, it returns a random log probability.
         """
         if self._func is not None:
             return self._func(*args, **kargs)

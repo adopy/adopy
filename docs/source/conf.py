@@ -14,9 +14,10 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
 
 import adopy  # noqa: E402
+
+sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- Project information -----------------------------------------------------
@@ -46,6 +47,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
     'recommonmark',
+    'sphinx_issues',
+    'nbsphinx',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -198,3 +201,15 @@ napoleon_use_rtype = False
 def setup(app):
     app.add_stylesheet('css/custom.css')
     app.add_javascript('js/custom.js')
+
+
+# Sphinx-issues settings
+issues_github_path = "adopy/adopy"
+issues_uri = "https://github.com/adopy/adopy/issues/{issue}"
+issues_pr_uri = "https://github.com/adopy/adopy/pull/{pr}"
+issues_commit_uri = "https://github.com/adopy/adopy/commit/{commit}"
+
+# nbsphinx settings
+suppress_warnings = [
+    'nbsphinx',
+]

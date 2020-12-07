@@ -66,6 +66,7 @@ Content
 
    getting-started.md
    dev-guide.rst
+   changelogs.rst
 
 .. toctree::
    :maxdepth: 1
