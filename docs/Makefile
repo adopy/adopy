@@ -14,7 +14,8 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 livehtml:
-	@$(SPHINXAUTOBUILD) --watch "$(PACKAGEDIR)" -b html "$(SOURCEDIR)" "$(BUILDDIR)/html" $(SPHINXOPTS) $(O)
+	@$(SPHINXAUTOBUILD) --watch "$(PACKAGEDIR)" \
+	-b html "$(SOURCEDIR)" "$(BUILDDIR)/html" $(SPHINXOPTS) $(O)
 
 .PHONY: help Makefile
 

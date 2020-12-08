@@ -17,6 +17,9 @@ Changelogs
   provides the log likelihood function now, instead of the probability of a
   single binary response variable.
 * Using multiple response variables is available now!
+* :py:mod:`adopy.base.Engine` now can update multiple observations, given as a
+  list of designs and a list of corresponding responses into :code:`design` and
+  :code:`response` arguments, respectively.
 * Now, you can choose what datatype to use for :py:mod:`adopy.base.Engine`,
   with an argument named `dtype`. The default is `numpy.float32`.
 * Remove unusing types at base (:issue:`26`; contributed by :user:`NicholasWon47`)

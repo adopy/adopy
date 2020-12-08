@@ -1,1 +1,1 @@
-sphinx-autobuild -b html -z "../adopy" "source" "build/html" 
+sphinx-autobuild -b html --watch "../adopy" "source" "build/html" 

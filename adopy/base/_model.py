@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from functools import reduce
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
@@ -14,6 +15,43 @@ __all__ = ['Model']
 class Model(object):
     r"""
     A base class for a model in the ADOpy package.
+
+    Its initialization requires up to 4 arguments: :code:`task`,
+    :code:`params`, :code:`func` (optional), and :code:`name` (optional).
+
+    :code:`task` is an instance of a :py:mod:`adopy.base.Task` class that this
+    model is for. :code:`params` is a list of model parameters, given as a
+    list of their labels, e.g., :code:`['alpha', 'beta']`. :code:`name` is the
+    name of this model, which is optional for its functioning.
+
+    The most important argument is :code:`func`, which calculates the log
+    likelihood given with design values, parameter values, and response values
+    as its input. The arguments of the function should include design variables
+    and response variables (defined in the :code:`task`: instance) and model
+    parameters (given as :code:`params`). The order of arguments does not
+    matter. If :code:`func` is not given, the model provides the log likelihood
+    of a random noise. An simple example is given as follows:
+
+    .. code-block:: python
+
+        def compute_log_lik(design1, design2,
+                            param1, param2, param3,
+                            response1, response2):
+            # ... calculating the log likelihood ...
+            return log_lik
+
+    .. warning::
+
+        Since the version 0.4.0, the :code:`func` argument should be defined to
+        compute the log likelihood, instead of the probability of a binary
+        response variable. Also, it should include the response variables as
+        arguments. These changes might break existing codes using the previous
+        versions of ADOpy.
+
+    .. versionchanged:: 0.4.0
+
+        The :code:`func` argument is changed to the log likelihood function,
+        instead of the probability function of a single binary response.
 
     Parameters
     ----------
@@ -36,20 +74,24 @@ class Model(object):
     --------
 
     >>> task = Task(name='Task A', designs=['x1', 'x2'], responses=['y'])
-
     >>> def calculate_log_lik(y, x1, x2, b0, b1, b2):
     ...     import numpy as np
     ...     from scipy.stats import bernoulli
     ...     logit = b0 + b1 * x1 + b2 * x2
     ...     p = np.divide(1, 1 + np.exp(-logit))
     ...     return bernoulli.logpmf(y, p)
-
     >>> model = Model(name='Model X', task=task, params=['b0', 'b1', 'b2'],
     ...               func=calculate_log_lik)
-
     >>> model.name
+    'Model X'
     >>> model.task
+    Task('Task A', designs=['x1', 'x2'], responses=['y'])
     >>> model.params
+    ['b0', 'b1', 'b2']
+    >>> model.compute(y=1, x1=1, x2=-1, b0=1, b1=0.5, b2=0.25)
+    -0.251929081345373
+    >>> compute_log_lik(y=1, x1=1, x2=-1, b0=1, b1=0.5, b2=0.25)
+    -0.251929081345373
     """
 
     def __init__(self,
@@ -112,14 +154,23 @@ class Model(object):
     def compute(self, *args, **kargs):
         """
         Compute log likelihood of obtaining responses with given designs and
-        model parameters. If the likelihood function is not given for the
-        model, it returns a random log probability.
+        model parameters. The function provide the same result as the argument
+        :code:`func` given in the initialization. If the likelihood function is
+        not given for the model, it returns the log probability of a random
+        noise.
 
-        .. deprecated:: 0.4.0
-            As the Model class get modified to contain a function for
-            log likelihood in 0.4.0, we recommend you to use
-            `model.compute_log_lik()` function instead so to make it clear what
-            the function calculates.
+        .. warning::
+
+            Since the version 0.4.0, :code:`compute()` function should compute
+            the log likelihood, instead of the probability of a binary response
+            variable. Also, it should include the response variables as
+            arguments. These changes might break existing codes using the
+            previous versions of ADOpy.
+
+        .. versionchanged:: 0.4.0
+
+            Provide the log likelihood instead of the probability of a binary
+            response.
         """
         if self._func is not None:
             return self._func(*args, **kargs)
@@ -128,7 +179,7 @@ class Model(object):
         return np.log(np.random.rand())
 
     def __repr__(self) -> str:
-        strs = []
+        strs: List[str] = []
         strs += 'Model('
         if self.name:
             strs += '{}, '.format(repr(self.name))

@@ -1,11 +1,12 @@
 from collections import OrderedDict
 
 import numpy as np
-from scipy.stats import bernoulli
+import pandas as pd
 import pytest
+from scipy.special import expit as inv_logit
+from scipy.stats import bernoulli
 
-from adopy import Task, Model, Engine
-from adopy.functions import inv_logit
+from adopy import Engine, Model, Task
 
 
 @pytest.fixture()
@@ -133,7 +134,7 @@ def test_engine(engine, task, model):
     assert engine.model is model
 
     # engine.post_mean
-    assert isinstance(engine.post_mean, np.ndarray)
+    assert isinstance(engine.post_mean, pd.Series)
     assert len(engine.post_mean) == 4
 
     # engine.post_cov
@@ -141,7 +142,7 @@ def test_engine(engine, task, model):
     assert np.shape(engine.post_cov) == (4, 4)
 
     # engine.post_sd
-    assert isinstance(engine.post_sd, np.ndarray)
+    assert isinstance(engine.post_sd, pd.Series)
     assert len(engine.post_sd) == 4
 
     # engine.reset()
@@ -154,10 +155,55 @@ def test_engine_get_design(engine, design_type):
 
 
 @pytest.mark.parametrize('choice', [0, 1])
-def test_engine_update(engine, choice):
+def test_engine_single_update(engine, choice):
     design = engine.get_design()
     response = {'choice': choice}
-    engine.update(design, response)
+
+    try:
+        engine.update(design, response)
+    except Exception:
+        pytest.fail('Updating with single observation failed.')
+
+
+def test_engine_multiple_update(engine):
+    try:
+        engine.update(
+            [
+                engine.get_design('random') for _ in range(3)
+            ],
+            {'choice': 1}
+        )
+
+        pytest.fail(
+            'Failed to detect whether both design and response are '
+            'given as lists.'
+        )
+    except Exception:
+        pass
+
+    try:
+        engine.update(
+            engine.get_design('random'),
+            [{'choice': 1} for _ in range(3)]
+        )
+
+        pytest.fail(
+            'Failed to detect whether both design and response are '
+            'given as lists.'
+        )
+    except Exception:
+        pass
+
+    try:
+        engine.update(
+            [
+                engine.get_design('random') for _ in range(3)
+            ],
+            [{'choice': 1} for _ in range(3)]
+        )
+
+    except Exception:
+        pytest.fail('Failed to update multiple observations.')
 
 
 if __name__ == '__main__':

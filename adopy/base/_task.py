@@ -1,47 +1,53 @@
-from typing import Any, Dict, Iterable, Optional, List, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import numpy as np
 
-from adopy.types import number_like, data_like, vector_like
 from adopy.functions import extract_vars_from_data
+from adopy.types import data_like, number_like, vector_like
 
 __all__ = ['Task']
 
 
 class Task(object):
+    """
+    A task object stores information for a specific experimental task,
+    including labels of design variables (:code:`designs`), labels of possible
+    responses (:code:`responses`), and the task name (:code:`name`).
+
+    .. versionchanged:: 0.4.0
+
+        The :code:`response` argument is changed to the labels of response
+        variables, instead of possible values of a response variable.
+
+    Parameters
+    ----------
+    designs
+        Labels of design variables in the task.
+    responses
+        Labels of response variables in the task (e.g., choice, rt).
+    name
+        Name of the task.
+
+    Examples
+    --------
+    >>> task = Task(name='Task A',
+    ...             designs=['d1', 'd2'],
+    ...             responses=['choice'])
+    >>> task
+    Task('Task A', designs=['d1', 'd2'], responses=['choice'])
+    >>> task.name
+    'Task A'
+    >>> task.designs
+    ['d1', 'd2']
+    >>> task.responses
+    ['choice']
+    """
+
     def __init__(self,
                  designs: Iterable[str],
                  responses: Iterable[str],
                  name: Optional[str] = None,
                  ):
-        """
-        A task object stores information for a specific experimental task,
-        including labels of design variables (``designs``), possible responses
-        (``responses``) and its name (``name``).
-
-        Parameters
-        ----------
-        designs
-            Labels of design variables in the task.
-        responses
-            Labels of response variables in the task (e.g., choice, rt).
-        name
-            Name of the task.
-
-        Examples
-        --------
-        >>> task = Task(name='Task A',
-        ...             designs=['d1', 'd2'],
-        ...             responses=['choice'])
-        >>> task
-        Task('Task A', designs=['d1', 'd2'], responses=['choice'])
-        >>> task.name
-        'Task A'
-        >>> task.designs
-        ['d1', 'd2']
-        >>> task.responses
-        ['choice']
-        """
         self._name = name
         self._designs = tuple(designs)  # type: Tuple[str, ...]
         self._responses = tuple(responses)  # type: Tuple[str, ...]
