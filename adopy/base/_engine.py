@@ -119,7 +119,7 @@ class Engine(object):
     @property
     def log_post(self) -> vector_like:
         r"""
-        Log posterior probabilities on the grid space of model parameters, :math:`\log p_0(\theta)`.
+        Log posterior probabilities on the grid space of model parameters, :math:`\log p(\theta)`.
 
         This probabilities correspond to grid points defined in :code:`grid_param`.
         """
