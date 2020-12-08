@@ -5,9 +5,8 @@ import numpy as np
 import pandas as pd
 from scipy.special import logsumexp
 
-from adopy.functions import (
-    get_nearest_grid_index, make_grid_matrix, make_vector_shape, marginalize,
-)
+from adopy.functions import (get_nearest_grid_index, make_grid_matrix,
+                             make_vector_shape, marginalize)
 from adopy.types import array_like, matrix_like, vector_like
 
 from ._model import Model
@@ -287,6 +286,8 @@ class Engine(object):
     @property
     def dtype(self):
         """
+        The desired data-type for the internal vectors and matrixes, e.g.,
+        :code:`numpy.float64`. Default is :code:`numpy.float32`.
         """
         return self._dtype
 
@@ -298,8 +299,8 @@ class Engine(object):
         """
         Update mutual information using posterior distributions.
 
-        By accessing `mutual_info` once, the engine computes log_lik, marg_log_lik,
-        ent, ent_marg, ent_cond, and mutual_info in a chain.
+        By accessing :code:`mutual_info` once, the engine computes log_lik,
+        marg_log_lik, ent, ent_marg, ent_cond, and mutual_info in a chain.
         """
         _ = self.mutual_info
 
