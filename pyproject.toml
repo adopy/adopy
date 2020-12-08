@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adopy"
-version = "0.4.0-rc.3"
+version = "0.4.0-rc.4"
 description = "Adaptive Design Optimization on Experimental Tasks"
 authors = ["Jaeyeong Yang <jaeyeong.yang1125@gmail.com>"]
 license = "GPL-3.0+"
