@@ -40,6 +40,19 @@ class Model(object):
             # ... calculating the log likelihood ...
             return log_lik
 
+    .. warning::
+
+        Since the version 0.4.0, the :code:`func` argument should be defined to
+        compute the log likelihood, instead of the probability of a binary
+        response variable. Also, it should include the response variables as
+        arguments. These changes might break existing codes using the previous
+        versions of ADOpy.
+
+    .. versionchanged:: 0.4.0
+
+        The :code:`func` argument is changed to the log likelihood function,
+        instead of the probability function of a single binary response.
+
     Parameters
     ----------
     task : Task
@@ -150,9 +163,9 @@ class Model(object):
 
             Since the version 0.4.0, :code:`compute()` function should compute
             the log likelihood, instead of the probability of a binary response
-            variable. Also, it should include the response variables as arguments.
-            These changes might break existing codes using the previous versions
-            of ADOpy.
+            variable. Also, it should include the response variables as
+            arguments. These changes might break existing codes using the
+            previous versions of ADOpy.
 
         .. versionchanged:: 0.4.0
 
@@ -166,7 +179,7 @@ class Model(object):
         return np.log(np.random.rand())
 
     def __repr__(self) -> str:
-        strs = []
+        strs: List[str] = []
         strs += 'Model('
         if self.name:
             strs += '{}, '.format(repr(self.name))

@@ -100,8 +100,7 @@ class Engine(object):
     def log_prior(self) -> vector_like:
         r"""
         Log prior probabilities on the grid space of model parameters, :math:`\log p_0(\theta)`.
-
-        This probabilities correspond to grid points defined in :code:`grid_param`.
+        This log probabilities correspond to grid points defined in :code:`grid_param`.
         """
         return self._log_prior
 
@@ -120,8 +119,7 @@ class Engine(object):
     def log_post(self) -> vector_like:
         r"""
         Log posterior probabilities on the grid space of model parameters, :math:`\log p(\theta)`.
-
-        This probabilities correspond to grid points defined in :code:`grid_param`.
+        This log probabilities correspond to grid points defined in :code:`grid_param`.
         """
         return self._log_post
 
@@ -138,7 +136,6 @@ class Engine(object):
     def prior(self) -> vector_like:
         r"""
         Prior probabilities on the grid space of model parameters, :math:`p_0(\theta)`.
-
         This probabilities correspond to grid points defined in :code:`grid_param`.
         """
         return np.exp(self._log_prior)
@@ -147,7 +144,6 @@ class Engine(object):
     def post(self) -> vector_like:
         r"""
         Posterior probabilities on the grid space of model parameters, :math:`p(\theta)`.
-
         This probabilities correspond to grid points defined in :code:`grid_param`.
         """
         return np.exp(self._log_post)
@@ -288,6 +284,8 @@ class Engine(object):
         """
         The desired data-type for the internal vectors and matrixes, e.g.,
         :code:`numpy.float64`. Default is :code:`numpy.float32`.
+
+        .. versionadded:: 0.4.0
         """
         return self._dtype
 
@@ -320,16 +318,16 @@ class Engine(object):
 
     def get_design(self, kind='optimal') -> Optional[Dict[str, Any]]:
         r"""
-        Choose a design with a given type.
+        Choose a design with given one of following types:
 
-        * ``optimal``: an optimal design :math:`d^*` that maximizes the mutual
+        * :code:`'optimal'` (default): an optimal design :math:`d^*` that maximizes the mutual
           information.
-        * ``random``: a design randomly chosen.
+        * :code:`'random'`: a design randomly chosen.
 
         Parameters
         ----------
         kind : {'optimal', 'random'}, optional
-            Type of a design to choose
+            Type of a design to choose. Default is :code:`'optimal'`.
 
         Returns
         -------
@@ -354,12 +352,18 @@ class Engine(object):
 
     def update(self, design, response):
         r"""
-        Update the posterior :math:`p(\theta | y, d^*)` for
+        Update the posterior probabilities :math:`p(\theta | y, d^*)` for
         all discretized values of :math:`\theta`.
 
         .. math::
             p(\theta | y, d^*) \sim
                 p( y | \theta, d^*) p(\theta)
+
+        .. code-block:: python
+
+            # Given design and resposne as `design` and `response`,
+            # the engine can update probability with the following line:
+            engine.update(design, response)
 
         Also, it can takes multiple observations for updating posterior
         probabilities. Multiple pairs of design and response should be
@@ -373,6 +377,15 @@ class Engine(object):
             &\sim p\big( y_1, \ldots, y_n | \theta, d_1^*, \ldots, d_n^* \big) p(\theta) \\
             &= p(y_1 | \theta, d_1^*) \cdot \ldots \cdot p(y_n | \theta, d_n^*) p(\theta)
             \end{aligned}
+
+        .. code-block:: python
+
+            # Given a list of designs and corresponding responses as below:
+            designs = [design1, design2, design3]
+            responses = [response1, response2, response3]
+
+            # the engine can update with multiple observations:
+            engine.update(designs, responses)
 
         Parameters
         ----------
