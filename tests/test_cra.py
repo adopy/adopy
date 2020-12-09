@@ -37,19 +37,6 @@ def grid_param():
     return params
 
 
-@pytest.mark.parametrize('model', [ModelLinear, ModelExp])
-def test_calculate_psi(model, grid_design, grid_param):
-    cra = EngineCRA(model=model(),
-                    grid_design=grid_design,
-                    grid_param=grid_param)
-
-    len_design = int(np.prod([np.shape(des)[0]
-                              for des in grid_design.values()]))
-    len_param = int(np.prod([np.shape(par)[0] for par in grid_param.values()]))
-
-    assert cra.p_obs.shape == (len_design, len_param)
-
-
 @pytest.mark.parametrize('design_type', ['optimal', 'random'])
 @pytest.mark.parametrize('model', [ModelLinear, ModelExp])
 @pytest.mark.parametrize('response', [0, 1])

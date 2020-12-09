@@ -1,22 +1,16 @@
-from typing import Any, Callable, Dict, Iterable, Optional, List, Tuple
+# -*- coding: utf-8 -*-
+from typing import Any, Dict, Optional
 
 import numpy as np
 import pandas as pd
 from scipy.special import logsumexp
 
-from adopy.functions import (
-    expand_multiple_dims,
-    get_nearest_grid_index,
-    get_random_design_index,
-    make_grid_matrix,
-    marginalize,
-    make_vector_shape,
-    log_lik_bernoulli
-)
-from adopy.types import array_like, vector_like, matrix_like
+from adopy.functions import (get_nearest_grid_index, make_grid_matrix,
+                             make_vector_shape, marginalize)
+from adopy.types import array_like, matrix_like, vector_like
 
-from ._task import Task
 from ._model import Model
+from ._task import Task
 
 __all__ = ['Engine']
 
@@ -31,22 +25,38 @@ class Engine(object):
                  model: Model,
                  grid_design: Dict[str, Any],
                  grid_param: Dict[str, Any],
-                 lambda_et: Optional[float] = None):
+                 grid_response: Dict[str, Any],
+                 noise_ratio: float = 1e-7,
+                 dtype: Optional[Any] = np.float32):
         super(Engine, self).__init__()
 
         if model.task != task:
             raise ValueError('Given task and model are not matched.')
 
-        self._task = task  # type: Task
-        self._model = model  # type: Model
-        self.lambda_et = lambda_et
+        self._task = task
+        self._model = model
+        self._dtype = dtype
+        self._noise_ratio = noise_ratio
 
-        self.grid_design = make_grid_matrix(grid_design)[task.designs]
-        self.grid_param = make_grid_matrix(grid_param)[model.params]
-        self.grid_response = pd.DataFrame(
-            np.array(task.responses), columns=['y_obs'])
+        self._g_d = g_d = make_grid_matrix(grid_design)[task.designs]
+        self._g_p = g_p = make_grid_matrix(grid_param)[model.params]
+        self._g_y = g_y = make_grid_matrix(grid_response)[task.responses]
 
-        self.reset()
+        self.n_d = g_d.shape[0]
+        self.n_p = g_p.shape[0]
+        self.n_y = g_y.shape[0]
+
+        self._log_lik = None
+        self._marg_log_lik = None
+        self._ent = None
+        self._ent_marg = None
+        self._ent_cond = None
+        self._mutual_info = None
+
+        self._log_prior = np.log(np.ones(self.n_p, dtype=dtype) / self.n_p)
+        self._log_post = np.copy(self.log_prior)
+
+        self._update_mutual_info()
 
     ###########################################################################
     # Properties
@@ -54,33 +64,89 @@ class Engine(object):
 
     @property
     def task(self) -> Task:
-        """Task instance for the engine"""
+        """Task instance for the engine."""
         return self._task
 
     @property
     def model(self) -> Model:
-        """Model instance for the engine"""
+        """Model instance for the engine."""
         return self._model
 
     @property
-    def num_design(self):
-        """Number of design grid axes"""
-        return len(self.task.designs)
+    def grid_design(self):
+        """
+        Grid space for design variables, generated from the grid definition,
+        given as :code:`grid_design` with initialization.
+        """
+        return self._g_d
 
     @property
-    def num_param(self):
-        """Number of parameter grid axes"""
-        return len(self.model.params)
+    def grid_param(self):
+        """
+        Grid space for model parameters, generated from the grid definition,
+        given as :code:`grid_param` with initialization.
+        """
+        return self._g_p
 
     @property
-    def prior(self) -> array_like:
-        """Prior distributions of joint parameter space"""
-        return np.exp(self.log_prior)
+    def grid_response(self):
+        """
+        Grid space for response variables, generated from the grid definition,
+        given as :code:`grid_response` with initialization.
+        """
+        return self._g_y
 
     @property
-    def post(self) -> array_like:
-        """Posterior distributions of joint parameter space"""
-        return np.exp(self.log_post)
+    def log_prior(self) -> vector_like:
+        r"""
+        Log prior probabilities on the grid space of model parameters, :math:`\log p_0(\theta)`.
+        This log probabilities correspond to grid points defined in :code:`grid_param`.
+        """
+        return self._log_prior
+
+    @log_prior.setter
+    def log_prior(self, lp):
+        self._log_prior = lp
+
+    @log_prior.deleter
+    def log_prior(self):
+        del self._log_prior
+        self._log_prior = (
+            np.log(np.ones(self.n_p) / self.n_p, dtype=self.dtype)
+        )
+
+    @property
+    def log_post(self) -> vector_like:
+        r"""
+        Log posterior probabilities on the grid space of model parameters, :math:`\log p(\theta)`.
+        This log probabilities correspond to grid points defined in :code:`grid_param`.
+        """
+        return self._log_post
+
+    @log_post.setter
+    def log_post(self, lp):
+        self._log_post = lp
+
+    @log_post.deleter
+    def log_post(self):
+        del self._log_post
+        self._log_post = np.copy(self._log_prior)
+
+    @property
+    def prior(self) -> vector_like:
+        r"""
+        Prior probabilities on the grid space of model parameters, :math:`p_0(\theta)`.
+        This probabilities correspond to grid points defined in :code:`grid_param`.
+        """
+        return np.exp(self._log_prior)
+
+    @property
+    def post(self) -> vector_like:
+        r"""
+        Posterior probabilities on the grid space of model parameters, :math:`p(\theta)`.
+        This probabilities correspond to grid points defined in :code:`grid_param`.
+        """
+        return np.exp(self._log_post)
 
     @property
     def marg_post(self) -> Dict[str, vector_like]:
@@ -91,12 +157,107 @@ class Engine(object):
         }
 
     @property
+    def log_lik(self) -> matrix_like:
+        r"""
+        Log likelihood :math:`p(y | d, \theta)` for all discretized values of
+        :math:`y`, :math:`d`, and :math:`\theta`.
+        """
+        if self._log_lik is None:
+            shape_design = make_vector_shape(3, 0)
+            shape_param = make_vector_shape(3, 1)
+            shape_response = make_vector_shape(3, 2)
+
+            args = {}
+            args.update({
+                k: v.reshape(shape_design)
+                for k, v in self.task.extract_designs(self.grid_design).items()
+            })
+            args.update({
+                k: v.reshape(shape_param)
+                for k, v in self.model.extract_params(self.grid_param).items()
+            })
+            args.update({
+                k: v.reshape(shape_response)
+                for k, v in self.task.extract_responses(self.grid_response).items()
+            })
+
+            l_model = np.exp(self.model.compute(**args))
+
+            self._log_lik = np.log(
+                (1 - 2 * self._noise_ratio) * l_model + self._noise_ratio
+            ).astype(self.dtype)
+
+        return self._log_lik
+
+    @property
+    def marg_log_lik(self) -> array_like:
+        """
+        Marginal log likelihood :math:`\log p(y | d)` for all discretized values
+        for :math:`y` and :math:`d`.
+        """
+        if self._marg_log_lik is None:
+            self._marg_log_lik = logsumexp(
+                self.log_lik + self.log_post.reshape(1, -1, 1), axis=1)
+        return self._marg_log_lik
+
+    @property
+    def ent(self) -> array_like:
+        r"""
+        Entropy :math:`H(Y(d) | \theta) = -\sum_y p(y | d, \theta) \log p(y | d, \theta)`
+        for all discretized values for :math:`d` and :math:`\theta`.
+        """
+        if self._ent is None:
+            self._ent = -1 * np.einsum(
+                'dpy,dpy->dp', np.exp(self.log_lik), self.log_lik
+            )
+
+        return self._ent
+
+    @property
+    def ent_marg(self) -> array_like:
+        r"""
+        Marginal entropy :math:`H(Y(d)) = -\sum_y p(y | d) \log p(y | d)`
+        for all discretized values for :math:`d`,
+        where :math:`p(y | d)` indicates the marginal likelihood.
+        """
+        if self._ent_marg is None:
+            self._ent_marg = -1 * np.einsum(
+                'dy,dy->d', np.exp(self.marg_log_lik), self.marg_log_lik
+            )
+        return self._ent_marg
+
+    @property
+    def ent_cond(self) -> array_like:
+        r"""
+        Conditional entropy :math:`H(Y(d) | \Theta) = \sum_\theta p(\theta) H(Y(d) | \theta)`
+        for all discretized values for :math:`d`,
+        where :math:`p(\theta)` indicates the posterior distribution for model parameters.
+        """
+        if self._ent_cond is None:
+            self._ent_cond = np.einsum('p,dp->d', self.post, self.ent)
+            # self._ent_cond = (self.ent * self.post).sum(-1)
+        return self._ent_cond
+
+    @property
+    def mutual_info(self) -> vector_like:
+        r"""
+        Mutual information :math:`I(Y(d); \Theta) = H(Y(d)) - H(Y(d) | \Theta)`,
+        where :math:`H(Y(d))` indicates the marginal entropy
+        and :math:`H(Y(d) | \Theta)` indicates the conditional entropy.
+        """
+        if self._mutual_info is None:
+            self._mutual_info = self.ent_marg - self.ent_cond
+        return self._mutual_info
+
+    @property
     def post_mean(self) -> vector_like:
         """
         A vector of estimated means for the posterior distribution.
         Its length is ``num_params``.
         """
-        return np.dot(self.post, self.grid_param)
+        return pd.Series(np.dot(self.post, self.grid_param),
+                         index=self.model.params,
+                         name='Posterior mean')
 
     @property
     def post_cov(self) -> np.ndarray:
@@ -105,7 +266,7 @@ class Engine(object):
         Its shape is ``(num_grids, num_params)``.
         """
         # shape: (N_grids, N_param)
-        d = self.grid_param.values - self.post_mean
+        d = self.grid_param.values - self.post_mean.values
         return np.dot(d.T, d * self.post.reshape(-1, 1))
 
     @property
@@ -114,169 +275,165 @@ class Engine(object):
         A vector of estimated standard deviations for the posterior
         distribution. Its length is ``num_params``.
         """
-        return np.sqrt(np.diag(self.post_cov))
+        return pd.Series(np.sqrt(np.diag(self.post_cov)),
+                         index=self.model.params,
+                         name='Posterior SD')
 
     @property
-    def lambda_et(self):
+    def dtype(self):
         """
-        Lambda value for eligibility traces. If it equals to None, eligibility
-        traces do not affect choices of the optimal designs.
+        The desired data-type for the internal vectors and matrixes, e.g.,
+        :code:`numpy.float64`. Default is :code:`numpy.float32`.
+
+        .. versionadded:: 0.4.0
         """
-        return self._lambda_et
-
-    @lambda_et.setter
-    def lambda_et(self, v):
-        if v and not (0 <= v <= 1):
-            raise ValueError('Invalid value for lambda_et')
-
-        self._lambda_et = v
+        return self._dtype
 
     ###########################################################################
     # Methods
     ###########################################################################
 
-    def reset(self):
-        """
-        Reset the engine as in the initial state.
-        """
-        self.y_obs = np.array(self.task.responses)
-        self.p_obs = self._compute_p_obs()
-        self.log_lik = ll = self._compute_log_lik()
-
-        lp = np.ones(self.grid_param.shape[0])
-        self.log_prior = lp - logsumexp(lp)
-        self.log_post = self.log_prior.copy()
-
-        lp = expand_multiple_dims(self.log_post, 1, 1)
-        mll = logsumexp(self.log_lik + lp, axis=1)
-        self.marg_log_lik = mll  # shape (num_design, num_response)
-
-        self.ent_obs = -np.multiply(np.exp(ll), ll).sum(-1)
-        self.ent_marg = None
-        self.ent_cond = None
-        self.mutual_info = None
-
-        self.eligibility_trace = np.zeros(self.grid_design.shape[0])
-
-        self.flag_update_mutual_info = True
-
-    def _compute_p_obs(self):
-        """Compute the probability of getting observed response."""
-        shape_design = make_vector_shape(2, 0)
-        shape_param = make_vector_shape(2, 1)
-
-        args = {}
-        args.update({
-            k: v.reshape(shape_design)
-            for k, v in self.task.extract_designs(self.grid_design).items()
-        })
-        args.update({
-            k: v.reshape(shape_param)
-            for k, v in self.model.extract_params(self.grid_param).items()
-        })
-
-        return self.model.compute(**args)
-
-    def _compute_log_lik(self):
-        """Compute the log likelihood."""
-        dim_p_obs = len(self.p_obs.shape)
-        y = self.y_obs.reshape(make_vector_shape(dim_p_obs + 1, dim_p_obs))
-        p = np.expand_dims(self.p_obs, dim_p_obs)
-
-        return log_lik_bernoulli(y, p)
-
     def _update_mutual_info(self):
         """
         Update mutual information using posterior distributions.
 
-        If there is no nedd to update mutual information, it ends.
-        The flag to update mutual information must be true only when
-        posteriors are updated in :code:`update(design, response)` method.
+        By accessing :code:`mutual_info` once, the engine computes log_lik,
+        marg_log_lik, ent, ent_marg, ent_cond, and mutual_info in a chain.
         """
-        # If there is no need to update mutual information, it ends.
-        if not self.flag_update_mutual_info:
-            return
+        _ = self.mutual_info
 
-        # Calculate the marginal log likelihood.
-        lp = expand_multiple_dims(self.log_post, 1, 1)
-        mll = logsumexp(self.log_lik + lp, axis=1)
-        self.marg_log_lik = mll  # shape (num_design, num_response)
+    def reset(self):
+        """
+        Reset the engine as in the initial state.
+        """
+        self._log_lik = None
+        self._marg_log_lik = None
+        self._ent = None
+        self._ent_marg = None
+        self._ent_cond = None
+        self._mutual_info = None
 
-        # Calculate the marginal entropy and conditional entropy.
-        self.ent_marg = -np.sum(np.exp(mll) * mll, -1)  # shape (num_designs,)
-        self.ent_cond = np.sum(
-            self.post * self.ent_obs, axis=1)  # shape (num_designs,)
+        self.log_post = np.copy(self.log_prior)
+        self._update_mutual_info()
 
-        # Calculate the mutual information.
-        self.mutual_info = self.ent_marg - \
-            self.ent_cond  # shape (num_designs,)
-
-        # Flag that there is no need to update mutual information again.
-        self.flag_update_mutual_info = False
-
-    def get_design(self, kind='optimal'):
-        # type: (str) -> pd.Series
+    def get_design(self, kind='optimal') -> Optional[Dict[str, Any]]:
         r"""
-        Choose a design with a given type.
+        Choose a design with given one of following types:
 
-        * ``optimal``: an optimal design :math:`d^*` that maximizes the mutual
+        * :code:`'optimal'` (default): an optimal design :math:`d^*` that maximizes the mutual
           information.
-        * ``random``: a design randomly chosen.
+        * :code:`'random'`: a design randomly chosen.
 
         Parameters
         ----------
         kind : {'optimal', 'random'}, optional
-            Type of a design to choose
+            Type of a design to choose. Default is :code:`'optimal'`.
 
         Returns
         -------
-        design : array_like
-            A chosen design vector
+        design : Dict[str, any] or None
+            A chosen design vector to use for the next trial.
+            Returns `None` if there is no design available.
         """
+        if len(self.task.designs) == 0:
+            return None
 
         if kind == 'optimal':
-            self._update_mutual_info()
-            idx_design = np.argmax(
-                self.mutual_info * (1 - self.eligibility_trace))
+            idx_design = np.argmax(self.mutual_info)
 
         elif kind == 'random':
-            idx_design = get_random_design_index(self.grid_design)
+            idx_design = np.random.randint(self.n_d)
 
         else:
             raise ValueError(
                 'The argument kind should be "optimal" or "random".')
 
-        return self.grid_design.iloc[idx_design]
+        return self.grid_design.iloc[idx_design].to_dict()
 
     def update(self, design, response):
         r"""
-        Update the posterior :math:`p(\theta | y_\text{obs}(t), d^*)` for
+        Update the posterior probabilities :math:`p(\theta | y, d^*)` for
         all discretized values of :math:`\theta`.
 
         .. math::
-            p(\theta | y_\text{obs}(t), d^*) =
-                \frac{ p( y_\text{obs}(t) | \theta, d^*) p_t(\theta) }
-                    { p( y_\text{obs}(t) | d^* ) }
+            p(\theta | y, d^*) \sim
+                p( y | \theta, d^*) p(\theta)
+
+        .. code-block:: python
+
+            # Given design and resposne as `design` and `response`,
+            # the engine can update probability with the following line:
+            engine.update(design, response)
+
+        Also, it can takes multiple observations for updating posterior
+        probabilities. Multiple pairs of design and response should be
+        given as a list of designs and a list of responses, into
+        :code:`design` and :code:`response` argument, respectively.
+
+        .. math::
+
+            \begin{aligned}
+            p\big(\theta | y_1, \ldots, y_n, d_1^*, \ldots, d_n^*\big)
+            &\sim p\big( y_1, \ldots, y_n | \theta, d_1^*, \ldots, d_n^* \big) p(\theta) \\
+            &= p(y_1 | \theta, d_1^*) \cdot \ldots \cdot p(y_n | \theta, d_n^*) p(\theta)
+            \end{aligned}
+
+        .. code-block:: python
+
+            # Given a list of designs and corresponding responses as below:
+            designs = [design1, design2, design3]
+            responses = [response1, response2, response3]
+
+            # the engine can update with multiple observations:
+            engine.update(designs, responses)
 
         Parameters
         ----------
-        design
+        design : dict or :code:`pandas.Series` or list of designs
             Design vector for given response
-        response
+        response : dict or :code:`pandas.Series` or list of responses
             Any kinds of observed response
         """
-        if not isinstance(design, pd.Series):
-            design = pd.Series(design, index=self.task.designs)
+        if isinstance(design, list) != isinstance(response, list):
+            raise ValueError(
+                'The number of observations (pairs of design and response) '
+                'should be matched in the design and response arguments.')
 
-        idx_design = get_nearest_grid_index(design, self.grid_design)
-        idx_response = get_nearest_grid_index(
-            pd.Series(response), self.grid_response)
+        if isinstance(design, list) and isinstance(response, list):
+            if len(design) != len(response):
+                raise ValueError(
+                    'The length of designs and responses should be the same.')
 
-        self.log_post += self.log_lik[idx_design, :, idx_response].flatten()
+            _designs = [
+                pd.Series(d, index=self.task.designs, dtype=self.dtype)
+                for d in design
+            ]
+
+            _responses = [
+                pd.Series(r, index=self.task.responses, dtype=self.dtype)
+                for r in response
+            ]
+
+        else:
+            _designs = [
+                pd.Series(design, index=self.task.designs, dtype=self.dtype)
+            ]
+
+            _responses = [
+                pd.Series(response, index=self.task.responses,
+                          dtype=self.dtype)
+            ]
+
+        for d, r in zip(_designs, _responses):
+            i_d = get_nearest_grid_index(d.values, self.grid_design.values)
+            i_y = get_nearest_grid_index(r.values, self.grid_response.values)
+            self.log_post += self.log_lik[i_d, :, i_y]
+
         self.log_post -= logsumexp(self.log_post)
 
-        if self.lambda_et:
-            self.eligibility_trace *= self.lambda_et
-            self.eligibility_trace[idx_design] += 1
+        self._marg_log_lik = None
+        self._ent_marg = None
+        self._ent_cond = None
+        self._mutual_info = None
 
-        self.flag_update_mutual_info = True
+        self._update_mutual_info()

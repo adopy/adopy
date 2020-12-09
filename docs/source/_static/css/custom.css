@@ -1,4 +1,10 @@
 .rst-content ul li p,
 .rst-content ol li p {
-    margin-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.output_area img {
+  max-width: 100% !important;
+  width: auto !important;
+  height: auto !important;
 }

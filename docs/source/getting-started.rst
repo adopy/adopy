@@ -14,10 +14,7 @@ Instead, you can install the developmental version in the GitHub repository.
 
 .. code:: bash
 
-    git clone https://github.com/adopy/adopy.git
-    cd adopy
-    git checkout develop
-    pip install .
+    pip install git+https://github.com/adopy/adopy.git@develop
 
 Quick-start guide
 -----------------
@@ -37,8 +34,9 @@ Step 1. Define a task using :py:class:`adopy.Task`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Assume that a user want to use ADOpy for an *arbitrary* task with two design
-variables (``x1`` and ``x2``) where participants can make a binary choice on each
-trial. Then, the task can be defined with :py:class:`adopy.Task` as described below:
+variables (``x1`` and ``x2``) where participants can make a binary choice
+(``choice``) on each trial. Then, the task can be defined with
+:py:class:`adopy.Task` as described below:
 
 .. code:: python
 
@@ -46,7 +44,7 @@ trial. Then, the task can be defined with :py:class:`adopy.Task` as described be
 
     task = Task(name='My New Experiment',  # Name of the task (optional)
                 designs = ['x1', 'x2'],    # Labels of design variables
-                responses = [0, 1])        # Possible responses
+                responses = ['choice'])    # Labels of response variables
 
 Step 2. Define a model using :py:class:`adopy.Model`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -57,19 +55,22 @@ parameters (``b0``, ``b1``, and ``b2``):
 
 .. math::
 
-    p = \frac{1}{1 + \exp\left[ - (b_0 + b_1 x_1 + b_2 x_2) \right]}
+    p = \frac{1}{1 + \exp\left[ - (b_0 + b_1 x_1 + b_2 x_2) \right]} \\
+    \text{choice} \sim \text{Bernoulli}(p)
 
-How to compute the probabilty :math:`p` should be defined as a function:
+Then, users should define a function to compute the log
+likelihood of a certain choice based on design variables and model parameters:
 
 .. code:: python
 
     import numpy as np
+    from scipy.stats import bernoulli
 
-    def calculate_prob(x1, x2, b0, b1, b2):
+    def calculate_loglik(x1, x2, b0, b1, b2, choice):
         """A function to compute the probability of a positive response."""
         logit = b0 + x1 * b1 + x1 * b2
         p_obs = 1. / (1 + np.exp(-logit))
-        return p_obs
+        return bernoulli.logpmf(choice, p_obs)
 
 Using the information and the function, the model can be defined with
 :py:class:`adopy.Model`:
@@ -79,18 +80,18 @@ Using the information and the function, the model can be defined with
     from adopy import Model
 
     model = Model(name='My Logistic Model',   # Name of the model (optional)
-                params=['b0', 'b1', 'b2'],  # Labels of model parameters
-                func=calculate_prob)        # A probability function
+                  params=['b0', 'b1', 'b2'],  # Labels of model parameters
+                  func=calculate_loglik)      # A log likelihood function
 
 
-Step 3. Define grids for design variables and model parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Step 3. Define grids for design variables, model parameters, and response variables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Since ADOpy uses grid search to search the design space and parameter space,
-you must define a grid for design variables and model parameters.
-The grid can be defined using the labels (of design variables or model
-parameters) as its key and an array of the corresponding grid points
-as its value.
+you must define a grid for design variables, model parameters, and response
+variables. The grid object can be defined as a Python dictionary.
+Labels used on the Task and Model class above should be set as its keys, and
+the corresponding grid points should be set as its values.
 
 .. code:: python
 
@@ -107,6 +108,11 @@ as its value.
         'b2': np.linspace(-5, 5, 100),  # 100 grid points within [-5, 5]
     }
 
+    grid_response = {
+        'choice': [0, 1]  # Binary choice
+    }
+
+
 Step 4. Initialize an engine using :py:class:`adopy.Engine`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -118,10 +124,11 @@ optimal design using ADO.
 
     from adopy import Engine
 
-    engine = Engine(model=model,              # a Model object
-                    task=task,                # a Task object
-                    grid_design=grid_design,  # a grid for design variables
-                    grid_param=grid_param)    # a grid for model parameters
+    engine = Engine(model=model,                  # Model object
+                    task=task,                    # Task object
+                    grid_design=grid_design,      # grid for design variables
+                    grid_param=grid_param,        # grid for model parameters
+                    grid_response=grid_response)  # grid for response variables
 
 
 Step 5. Compute a design using the engine
@@ -171,9 +178,3 @@ Step 8. Repeat Step 5 through Step 7 until the experiment is over
         # Update the engine
         engine.update(design, response)
 
-More examples
--------------
-
-There are `more examples`_ on how to use ADOpy for other experimental tasks.
-
-.. _more examples: https://github.com/adopy/adopy/tree/master/examples

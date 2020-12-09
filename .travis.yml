@@ -1,19 +1,38 @@
+---
+os: linux
 dist: xenial
 language: python
-sudo: false
-cache: pip
+
+cache:
+  pip: true
 
 python:
-  - "3.5"
   - "3.6"
   - "3.7"
+  - "3.8"
 
-install: "make"
+before_install:
+  - pip install poetry
+
+install:
+  - poetry install -E test -E docs
 
 script:
-  - make test-travis
+  - poetry run pytest --cov=adopy
+  - poetry run codecov
 
 after_success:
-  - make lint
-  - make docs-travis
+  - poetry run flake8 adopy --format=pylint --statistics --exit-zero
+  - poetry run pylint adopy --rcfile=setup.cfg --exit-zero
 
+before_deploy:
+  - poetry build
+
+deploy:
+  provider: releases
+  token: $GH_TOKEN
+  file_glob: true
+  file: dist/**/*
+  draft: true
+  on:
+    tags: true

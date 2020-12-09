@@ -1,19 +1,21 @@
 Home
 ====
 
-.. image:: https://adopy.github.io/logo/adopy-logo.svg
+.. image:: https://adopy.github.io/logo/adopy-logo-tight.svg
    :alt: ADOpy logo
    :align: center
 
+.. centered:: |version|
+
 ----
 
-.. image:: https://www.repostatus.org/badges/latest/wip.svg
-   :alt: Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.
-   :target: https://www.repostatus.org/#wip
-.. image:: https://travis-ci.com/adopy/adopy.svg?token=gbyEQoyAYgexeSRwBwj6&branch=master
+.. image:: https://www.repostatus.org/badges/latest/active.svg
+   :alt: Project Status: Active – The project has reached a stable, usable state and is being actively developed.
+   :target: https://www.repostatus.org/#active
+.. image:: https://travis-ci.org/adopy/adopy.svg?branch=develop
    :alt: Travis CI
-   :target: https://travis-ci.com/adopy/adopy
-.. image:: https://codecov.io/gh/adopy/adopy/branch/master/graph/badge.svg?token=jFnJgnVV1k
+   :target: https://travis-ci.org/adopy/adopy
+.. image:: https://codecov.io/gh/adopy/adopy/branch/develop/graph/badge.svg?token=jFnJgnVV1k
    :alt: CodeCov
    :target: https://codecov.io/gh/adopy/adopy
 
@@ -22,7 +24,7 @@ Home
 dynamically in an experiment. Its modular structure permit easy integration
 into existing experimentation code.
 
-ADOpy supports Python 3.5 or above and relies on NumPy, SciPy, and Pandas.
+ADOpy supports Python 3.6 or above and relies on NumPy, SciPy, and Pandas.
 
 Features
 --------
@@ -46,9 +48,22 @@ Citation
 If you use ADOpy, please cite this package along with the specific version.
 It greatly encourages contributors to continue supporting ADOpy.
 
-   Yang, J., Pitt, M. A., Ahn, W., & Myung, J. I. (2019).
+   Yang, J., Pitt, M. A., Ahn, W., & Myung, J. I. (2020).
    ADOpy: A Python Package for Adaptive Design Optimization.
-   https://doi.org/10.31234/osf.io/mdu23
+   *Behavior Research Methods*, 1--24.
+   https://doi.org/10.3758/s13428-020-01386-4
+
+Acknowledgement
+---------------
+
+The research was supported by National Institute of Health Grant R01-MH093838
+to Mark A. Pitt and Jay I. Myung, the Basic Science Research Program through
+the National Research Foundation (NRF) of Korea funded by the Ministry of Science,
+ICT, & Future Planning (NRF-2018R1C1B3007313 and NRF-2018R1A4A1025891),
+the Institute for Information & Communications Technology Planning & Evaluation
+(IITP) grant funded by the Korea government (MSIT) (No. 2019-0-01367, BabyMind),
+and the Creative-Pioneering Researchers Program through Seoul National University
+to Woo-Young Ahn.
 
 References
 ----------
@@ -65,11 +80,12 @@ Content
 
    getting-started.md
    dev-guide.rst
+   changelogs.rst
 
 .. toctree::
    :maxdepth: 1
    :glob:
-   :caption: examples
+   :caption: Examples
 
    examples/*
 

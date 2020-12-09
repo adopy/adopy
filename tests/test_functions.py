@@ -1,14 +1,28 @@
 import numpy as np
 import pytest
 
-from adopy.functions import inv_logit
-from adopy.functions import marginalize, expand_multiple_dims
+from adopy.functions import (
+    expand_multiple_dims, get_nearest_grid_index, marginalize,
+)
 
 
-def test_inv_logit():
-    assert inv_logit(-np.inf) == 0.0
-    assert inv_logit(0) == 0.5
-    assert inv_logit(np.inf) == 1.0
+def test_get_nearest_grid_index():
+    X = np.array([
+        [1, 2, 3, 4],
+        [2, 3, 4, 1],
+        [3, 4, 1, 2],
+        [4, 1, 2, 3],
+    ])
+
+    x0 = X[0].reshape(1, -1)
+    x1 = X[1].reshape(1, -1)
+    x2 = X[2].reshape(1, -1)
+    x3 = X[3].reshape(1, -1)
+
+    assert get_nearest_grid_index(x0, X) == 0
+    assert get_nearest_grid_index(x1, X) == 1
+    assert get_nearest_grid_index(x2, X) == 2
+    assert get_nearest_grid_index(x3, X) == 3
 
 
 def test_expand_multiple_dims():

@@ -18,9 +18,10 @@ testing for delay discounting tasks. *Behavior Research Methods, 48*,
 1608–1620.
 """
 import numpy as np
+from scipy.stats import bernoulli
 
 from adopy.base import Engine, Task, Model
-from adopy.functions import inv_logit, const_positive, const_01
+from scipy.special import expit as inv_logit
 
 __all__ = [
     'TaskDD',
@@ -45,7 +46,7 @@ class TaskDD(Task):
         - ``r_ll`` (:math:`R_{LL}`) - amount of reward of a LL option
 
     Responses
-        0 (choosing a SS option) or 1 (choosing a LL option)
+        - ``choice`` - 0 (choosing a SS option) or 1 (choosing a LL option)
 
     Examples
     --------
@@ -54,14 +55,14 @@ class TaskDD(Task):
     >>> task.designs
     ['t_ss', 't_ll', 'r_ss', 'r_ll']
     >>> task.responses
-    [0, 1]
+    ['choice']
     """
 
     def __init__(self):
         super(TaskDD, self).__init__(
             name='Delay discounting task',
             designs=['t_ss', 't_ll', 'r_ss', 'r_ll'],
-            responses=[0, 1]  # Binary response
+            responses=['choice']  # Binary response
         )
 
 
@@ -101,14 +102,10 @@ class ModelExp(Model):
         args = dict(
             name='Exponential model for the DD task',
             task=TaskDD(),
-            params=['r', 'tau'],
-            constraint={
-                'r': const_positive,
-                'tau': const_positive,
-            })
+            params=['r', 'tau'])
         super(ModelExp, self).__init__(**args)
 
-    def compute(self, t_ss, t_ll, r_ss, r_ll, r, tau):
+    def compute(self, choice, t_ss, t_ll, r_ss, r_ll, r, tau):
         def discount(delay):
             return np.exp(-delay * r)
 
@@ -117,7 +114,7 @@ class ModelExp(Model):
 
         # Probability to choose an option with late and large rewards.
         p_obs = inv_logit(tau * (v_ll - v_ss))
-        return p_obs
+        return bernoulli.logpmf(choice, p_obs)
 
 
 class ModelHyp(Model):
@@ -156,14 +153,10 @@ class ModelHyp(Model):
         args = dict(
             name='Hyperbolic model for the DD task',
             task=TaskDD(),
-            params=['k', 'tau'],
-            constraint={
-                'k': const_positive,
-                'tau': const_positive,
-            })
+            params=['k', 'tau'])
         super(ModelHyp, self).__init__(**args)
 
-    def compute(self, t_ss, t_ll, r_ss, r_ll, k, tau):
+    def compute(self, choice, t_ss, t_ll, r_ss, r_ll, k, tau):
         def discount(delay):
             return np.divide(1, 1 + k * delay)
 
@@ -172,7 +165,7 @@ class ModelHyp(Model):
 
         # Probability to choose an option with late and large rewards.
         p_obs = inv_logit(tau * (v_ll - v_ss))
-        return p_obs
+        return bernoulli.logpmf(choice, p_obs)
 
 
 class ModelHPB(Model):
@@ -213,15 +206,10 @@ class ModelHPB(Model):
         args = dict(
             name='Hyperboloid model for the DD task',
             task=TaskDD(),
-            params=['k', 's', 'tau'],
-            constraint={
-                'k': const_positive,
-                's': const_positive,
-                'tau': const_positive,
-            })
+            params=['k', 's', 'tau'])
         super(ModelHPB, self).__init__(**args)
 
-    def compute(self, t_ss, t_ll, r_ss, r_ll, k, s, tau):
+    def compute(self, choice, t_ss, t_ll, r_ss, r_ll, k, s, tau):
         def discount(delay):
             return np.divide(1, np.power(1 + k * delay, s))
 
@@ -230,7 +218,7 @@ class ModelHPB(Model):
 
         # Probability to choose an option with late and large rewards.
         p_obs = inv_logit(tau * (v_ll - v_ss))
-        return p_obs
+        return bernoulli.logpmf(choice, p_obs)
 
 
 class ModelCOS(Model):
@@ -271,15 +259,10 @@ class ModelCOS(Model):
         args = dict(
             name='Constant Sensitivity model for the DD task',
             task=TaskDD(),
-            params=['r', 's', 'tau'],
-            constraint={
-                'r': const_positive,
-                's': const_positive,
-                'tau': const_positive,
-            })
+            params=['r', 's', 'tau'])
         super(ModelCOS, self).__init__(**args)
 
-    def compute(self, t_ss, t_ll, r_ss, r_ll, r, s, tau):
+    def compute(self, choice, t_ss, t_ll, r_ss, r_ll, r, s, tau):
         def discount(delay):
             return np.exp(-np.power(delay * r, s))
 
@@ -288,7 +271,7 @@ class ModelCOS(Model):
 
         # Probability to choose an option with late and large rewards.
         p_obs = inv_logit(tau * (v_ll - v_ss))
-        return p_obs
+        return bernoulli.logpmf(choice, p_obs)
 
 
 class ModelQH(Model):
@@ -332,15 +315,10 @@ class ModelQH(Model):
         args = dict(
             name='Quasi-Hyperbolic model for the DD task',
             task=TaskDD(),
-            params=['beta', 'delta', 'tau'],
-            constraint={
-                'beta': const_01,
-                'delta': const_01,
-                'tau': const_positive,
-            })
+            params=['beta', 'delta', 'tau'])
         super(ModelQH, self).__init__(**args)
 
-    def compute(self, t_ss, t_ll, r_ss, r_ll, beta, delta, tau):
+    def compute(self, choice, t_ss, t_ll, r_ss, r_ll, beta, delta, tau):
         def discount(delay):
             return np.where(delay == 0,
                             np.ones_like(beta * delta * delay),
@@ -351,7 +329,7 @@ class ModelQH(Model):
 
         # Probability to choose an option with late and large rewards.
         p_obs = inv_logit(tau * (v_ll - v_ss))
-        return p_obs
+        return bernoulli.logpmf(choice, p_obs)
 
 
 class ModelDE(Model):
@@ -393,16 +371,10 @@ class ModelDE(Model):
         args = dict(
             name='Double Exponential model for the DD task',
             task=TaskDD(),
-            params=['omega', 'r', 's', 'tau'],
-            constraint={
-                'omega': const_01,
-                'r': const_positive,
-                's': const_positive,
-                'tau': const_positive,
-            })
+            params=['omega', 'r', 's', 'tau'])
         super(ModelDE, self).__init__(**args)
 
-    def compute(self, t_ss, t_ll, r_ss, r_ll, omega, r, s, tau):
+    def compute(self, choice, t_ss, t_ll, r_ss, r_ll, omega, r, s, tau):
         def discount(delay):
             return omega * np.exp(-delay * r) + \
                 (1 - omega) * np.exp(-delay * s)
@@ -412,7 +384,7 @@ class ModelDE(Model):
 
         # Probability to choose an option with late and large rewards.
         p_obs = inv_logit(tau * (v_ll - v_ss))
-        return p_obs
+        return bernoulli.logpmf(choice, p_obs)
 
 
 class EngineDD(Engine):
@@ -421,19 +393,18 @@ class EngineDD(Engine):
     It can be only used for :py:class:`TaskDD`.
     """
 
-    def __init__(self, model, grid_design, grid_param):
-        assert type(model) in [
-            type(ModelExp()),
-            type(ModelHyp()),
-            type(ModelQH()),
-            type(ModelHPB()),
-            type(ModelDE()),
-            type(ModelCOS()),
-        ]
+    def __init__(self, model, grid_design, grid_param, **kwargs):
+        if not isinstance(model.task, TaskDD):
+            raise RuntimeError(
+                'The model should be implemented for the DD task.')
+
+        grid_response = {'choice': [0, 1]}
 
         super(EngineDD, self).__init__(
-            task=TaskDD(),
+            task=model.task,
             model=model,
             grid_design=grid_design,
-            grid_param=grid_param
+            grid_param=grid_param,
+            grid_response=grid_response,
+            **kwargs
         )
