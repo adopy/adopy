@@ -16,6 +16,7 @@ classifiers = [
   "Programming Language :: Python :: 3.6",
   "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3 :: Only"
 ]
 
@@ -25,6 +26,7 @@ importlib_metadata = { version = "*", python = "<3.8" }
 pandas = "*"
 scipy = ">=1.0.0"
 numpy = "*"
+jax = "*"
 
 # Extra packages for testing
 pytest = { version = "*", optional = true }
