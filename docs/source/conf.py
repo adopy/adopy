@@ -14,9 +14,10 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
 
 import adopy  # noqa: E402
+
+sys.path.insert(0, os.path.abspath('..'))
 
 
 # -- Project information -----------------------------------------------------
@@ -46,6 +47,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
     'recommonmark',
+    'sphinx_issues',
+    'nbsphinx',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -88,13 +91,16 @@ html_theme = 'sphinx_rtd_theme'
 html_theme_options = {
     # 'logo_only': True,
     'analytics_id': 'UA-71789812-2',
-    'navigation_depth': 2,
+    'navigation_depth': 3,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+html_css_files = [
+    'css/custom.css',
+]
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -198,3 +204,15 @@ napoleon_use_rtype = False
 def setup(app):
     app.add_stylesheet('css/custom.css')
     app.add_javascript('js/custom.js')
+
+
+# Sphinx-issues settings
+issues_github_path = "adopy/adopy"
+issues_uri = "https://github.com/adopy/adopy/issues/{issue}"
+issues_pr_uri = "https://github.com/adopy/adopy/pull/{pr}"
+issues_commit_uri = "https://github.com/adopy/adopy/commit/{commit}"
+
+# nbsphinx settings
+suppress_warnings = [
+    'nbsphinx',
+]

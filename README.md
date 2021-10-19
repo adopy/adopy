@@ -44,11 +44,15 @@ It greatly encourages contributors to continue supporting ADOpy.
 
 > Yang, J., Pitt, M. A., Ahn, W., & Myung, J. I. (2020).
 > ADOpy: A Python Package for Adaptive Design Optimization.
-> _Behavior Research Methods_, 1--24.
+> _Behavior Research Methods_, 1-24.
 > https://doi.org/10.3758/s13428-020-01386-4
 
+## Acknowledgement
+
+The research was supported by National Institute of Health Grant R01-MH093838 to Mark A. Pitt and Jay I. Myung, the Basic Science Research Program through the National Research Foundation (NRF) of Korea funded by the Ministry of Science, ICT, & Future Planning (NRF-2018R1C1B3007313 and NRF-2018R1A4A1025891), the Institute for Information & Communications Technology Planning & Evaluation (IITP) grant funded by the Korea government (MSIT) (No. 2019-0-01367, BabyMind), and the Creative-Pioneering Researchers Program through Seoul National University to Woo-Young Ahn.
+
 ## References
+
 - Myung, J. I., Cavagnaro, D. R., and Pitt, M. A. (2013).
   A tutorial on adaptive design optimization.
-  *Journal of Mathematical Psychology, 57*, 53–67.
-
+  _Journal of Mathematical Psychology, 57_, 53–67.

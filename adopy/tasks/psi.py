@@ -7,10 +7,12 @@ parameters: *guess rate* :math:`\gamma`, *lapse rate* :math:`\delta`,
 """
 import numpy as np
 from scipy.stats import bernoulli, gumbel_l, norm
+from scipy.special import expit as inv_logit
 
 from adopy.base import Engine, Model, Task
-from adopy.functions import (const_01, const_positive, get_nearest_grid_index,
-                             get_random_design_index, inv_logit)
+from adopy.functions import (
+    const_01, const_positive, get_nearest_grid_index,
+)
 from adopy.types import integer_like
 
 __all__ = [
@@ -210,7 +212,7 @@ class EnginePsi(Engine):
             **kwargs
         )
 
-        self.idx_opt = get_random_design_index(self.grid_design)
+        self.idx_opt = np.random.randint(self.n_d)
         self.y_obs_prev = 1
         self.d_step = d_step
 
@@ -273,8 +275,8 @@ class EnginePsi(Engine):
             ret = self.grid_design.iloc[np.int(idx)]
 
         elif kind == 'random':
-            ret = self.grid_design.iloc[get_random_design_index(
-                self.grid_design)]
+            idx = np.random.randint(self.n_d)
+            ret = self.grid_design.iloc[idx]
 
         else:
             raise RuntimeError('An invalid kind of design: "{}".'.format(type))

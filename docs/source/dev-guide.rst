@@ -12,17 +12,17 @@ First, you should clone the GitHub repository and checkout the develop branch.
     cd adopy
     git checkout develop
 
-To manage a virtual environment for development, we uses `Pipenv`_. Pipfile on
+To manage a virtual environment for development, we uses `poetry`_. Pipfile on
 the repository describes which packages to install for a virtual environment.
 You can create a virtual environment by running the command below:
 
-.. _Pipenv:
-   https://docs.pipenv.org/en/latest/
+.. _poetry:
+   https://github.com/python-poetry/poetry
 
 .. code:: bash
 
-    # Install default and develop packages while skipping Pipfile.lock
-    pipenv install --dev --skip-lock
+    # Install the virtual environment defined in the pyproject.toml
+    poetry install
 
 Now you can activate the installed virtual environment. Code blocks on later
 sections assume this environment activated.
@@ -30,7 +30,7 @@ sections assume this environment activated.
 .. code:: bash
 
     # Activate the virtual environment
-    pipenv shell
+    poetry shell
 
 Writing documentation
 ---------------------
