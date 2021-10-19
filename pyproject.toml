@@ -26,7 +26,7 @@ importlib_metadata = { version = "*", python = "<3.8" }
 pandas = "*"
 scipy = ">=1.0.0"
 numpy = "*"
-jax = "*"
+jax = "^0.2"
 
 # Extra packages for testing
 pytest = { version = "*", optional = true }
