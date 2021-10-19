@@ -1,10 +1,10 @@
 from functools import reduce
-from typing import Any, Callable, Dict, Iterable, Optional, List, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 import numpy as np
 
-from adopy.types import data_like
 from adopy.functions import extract_vars_from_data
+from adopy.types import data_like
 
 from ._task import Task
 
@@ -53,10 +53,11 @@ class Model(object):
     """
 
     def __init__(self,
+                 *,
+                 name: Optional[str] = None,
                  task: Task,
                  params: Iterable[str],
                  func: Optional[Callable] = None,
-                 name: Optional[str] = None,
                  ):
         self._name = name  # type: Optional[str]
         self._task = task  # type: Task

@@ -4,18 +4,13 @@ import numpy as np
 import pandas as pd
 from scipy.stats import bernoulli
 
-from adopy.functions import (
-    get_random_design_index,
-    get_nearest_grid_index,
-    make_grid_matrix,
-    marginalize,
-    make_vector_shape,
-    logsumexp,
-)
-from adopy.types import array_like, vector_like, matrix_like
+from adopy.functions import (get_nearest_grid_index, get_random_design_index,
+                             logsumexp, make_grid_matrix, make_vector_shape,
+                             marginalize)
+from adopy.types import array_like, matrix_like, vector_like
 
-from ._task import Task
 from ._model import Model
+from ._task import Task
 
 __all__ = ['Engine']
 
@@ -26,6 +21,7 @@ class Engine(object):
     """
 
     def __init__(self,
+                 *,
                  task: Task,
                  model: Model,
                  grid_design: Dict[str, Any],

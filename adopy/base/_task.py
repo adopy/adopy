@@ -1,18 +1,19 @@
-from typing import Any, Dict, Iterable, Optional, List, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 import numpy as np
 
-from adopy.types import number_like, data_like, vector_like
 from adopy.functions import extract_vars_from_data
+from adopy.types import data_like, number_like, vector_like
 
 __all__ = ['Task']
 
 
 class Task(object):
     def __init__(self,
+                 *,
+                 name: Optional[str] = None,
                  designs: Iterable[str],
                  responses: Iterable[str],
-                 name: Optional[str] = None,
                  ):
         """
         A task object stores information for a specific experimental task,
