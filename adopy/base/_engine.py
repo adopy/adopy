@@ -192,7 +192,7 @@ class Engine(object):
 
     @property
     def marg_log_lik(self) -> array_like:
-        """
+        r"""
         Marginal log likelihood :math:`\log p(y | d)` for all discretized values
         for :math:`y` and :math:`d`.
         """
