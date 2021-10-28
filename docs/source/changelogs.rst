@@ -1,6 +1,11 @@
 Changelogs
 ==========
 
+0.4.1
+-----
+
+* A minor fix on retrieving version informationg with importlib-metadata.
+
 0.4.0
 -----
 

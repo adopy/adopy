@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adopy"
-version = "0.4.1-alpha.0"
+version = "0.4.2-dev"
 description = "Adaptive Design Optimization on Experimental Tasks"
 authors = ["Jaeyeong Yang <jaeyeong.yang1125@gmail.com>"]
 license = "GPL-3.0+"
@@ -36,11 +36,11 @@ sphinx = { version = "*", optional = true }
 sphinx_rtd_theme = { version = "*", optional = true }
 sphinx-autobuild = { version = "*", optional = true }
 recommonmark = { version = "*", optional = true }
-sphinx-issues = { version = "^1.2.0", optional = true }
-ipykernel = { version = "^5.3.4", optional = true }
-nbsphinx = { version = "^0.8.0", optional = true }
-matplotlib = { version = "^3.3.3", optional = true }
-jupyterlab = { version = "^2.2.9", optional = true }
+sphinx-issues = { version = "*", optional = true }
+ipykernel = { version = "*", optional = true }
+nbsphinx = { version = "*", optional = true }
+matplotlib = { version = "*", optional = true }
+jupyterlab = { version = "*", optional = true }
 
 [tool.poetry.dev-dependencies]
 autopep8 = "*"
