@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-from functools import reduce
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 import numpy as np
+from jax import numpy as jnp
+import pandas as pd
 
-from adopy.functions import extract_vars_from_data
+from adopy.functions import extract_vars_from_data, make_grid_matrix
 from adopy.types import data_like
 
-from ._task import Task
+from ._task import Task, TaskV2
 
-__all__ = ['Model']
+__all__ = ['Model', 'ModelV2']
 
 
 class Model(object):
@@ -186,3 +187,176 @@ class Model(object):
             strs += '{}, '.format(repr(self.name))
         strs += 'params={})'.format(repr(self.params))
         return ''.join(strs)
+
+
+class ModelV2(object):
+    r"""
+    A base class for a model in the ADOpy package.
+
+    Its initialization requires up to 4 arguments: :code:`task`,
+    :code:`params`, :code:`func` (optional), and :code:`name` (optional).
+
+    :code:`task` is an instance of a :py:mod:`adopy.base.Task` class that this
+    model is for. :code:`params` is a list of model parameters, given as a
+    list of their labels, e.g., :code:`['alpha', 'beta']`. :code:`name` is the
+    name of this model, which is optional for its functioning.
+
+    The most important argument is :code:`func`, which calculates the log
+    likelihood given with design values, parameter values, and response values
+    as its input. The arguments of the function should include design variables
+    and response variables (defined in the :code:`task`: instance) and model
+    parameters (given as :code:`params`). The order of arguments does not
+    matter. If :code:`func` is not given, the model provides the log likelihood
+    of a random noise. An simple example is given as follows:
+
+    .. code-block:: python
+
+        def compute_log_lik(design1, design2,
+                            param1, param2, param3,
+                            response1, response2):
+            # ... calculating the log likelihood ...
+            return log_lik
+
+    .. warning::
+
+        Since the version 0.4.0, the :code:`func` argument should be defined to
+        compute the log likelihood, instead of the probability of a binary
+        response variable. Also, it should include the response variables as
+        arguments. These changes might break existing codes using the previous
+        versions of ADOpy.
+
+    .. versionchanged:: 0.4.0
+
+        The :code:`func` argument is changed to the log likelihood function,
+        instead of the probability function of a single binary response.
+
+    Parameters
+    ----------
+    name : Optional[str]
+        Name of the task (optional).
+    task : Task
+        Task object that this model object is for.
+    params :
+        Labels of model parameters in the model.
+    func : function, optional
+        A function to compute the log likelihood given a model, denoted as
+        :math:`L(\mathbf{x} | \mathbf{d}, \mathbf{\theta})`,
+        where :math:`\mathbf{x}` is a response vector,
+        :math:`\mathbf{d}` is a design vector, and
+        :math:`\mathbf{\theta}` is a parameter vector.
+        Note that the function arguments should include all design, parameter,
+        and response variables.
+
+    Examples
+    --------
+
+    >>> task = Task(name='Task A', designs=['x1', 'x2'], responses=['y'])
+    >>> def calculate_log_lik(y, x1, x2, b0, b1, b2):
+    ...     import numpy as np
+    ...     from scipy.stats import bernoulli
+    ...     logit = b0 + b1 * x1 + b2 * x2
+    ...     p = np.divide(1, 1 + np.exp(-logit))
+    ...     return bernoulli.logpmf(y, p)
+    >>> model = Model(name='Model X', task=task, params=['b0', 'b1', 'b2'],
+    ...               func=calculate_log_lik)
+    >>> model.name
+    'Model X'
+    >>> model.task
+    Task('Task A', designs=['x1', 'x2'], responses=['y'])
+    >>> model.params
+    ['b0', 'b1', 'b2']
+    >>> model.compute(y=1, x1=1, x2=-1, b0=1, b1=0.5, b2=0.25)
+    -0.251929081345373
+    >>> compute_log_lik(y=1, x1=1, x2=-1, b0=1, b1=0.5, b2=0.25)
+    -0.251929081345373
+    """
+
+    def __init__(self,
+                 *,
+                 name: Optional[str] = None,
+                 task: TaskV2,
+                 params: Iterable[str],
+                 func: Callable,
+                 grid_param: Dict[str, Any],
+                 dtype: Optional[Any] = jnp.float32,
+                 ):
+        self._name = name  # type: Optional[str]
+        self._task = task  # type: Task
+        self._params = tuple(params)  # type: Tuple[str, ...]
+        self._func = func  # type: Callable
+        self._dtype = dtype
+
+        self._g_p = jnp.array(
+            make_grid_matrix(grid_param)[self.params].values,
+            dtype=self.dtype)
+
+    @property
+    def name(self) -> Optional[str]:
+        """
+        Name of the model. If it has no name, returns ``None``.
+        """
+        return self._name
+
+    @property
+    def task(self) -> TaskV2:
+        """Task instance for the model."""
+        return self._task
+
+    @property
+    def params(self) -> Tuple[str]:
+        """Labels for model parameters of the model."""
+        return self._params
+
+    @property
+    def grid_param(self) -> pd.DataFrame:
+        """
+        Grid space for design variables, generated from the grid definition,
+        given as :code:`grid_design` with initialization.
+        """
+        return pd.DataFrame(self._g_p, columns=self.params)
+
+    @property
+    def dtype(self):
+        """
+        The desired data-type for the internal vectors and matrixes, e.g.,
+        :code:`jax.numpy.float32`. Default is :code:`jax.numpy.float32`.
+
+        TODO: revise the docstring
+
+        .. versionadded:: 0.5.0
+        """
+        return self._dtype
+
+    def get_grid_param_jax(self):
+        """
+        TODO: write the docstring
+        """
+        return self._g_p
+
+    def compute(self, *args, **kwargs):
+        """
+        Compute log likelihood of obtaining responses with given designs and
+        model parameters. The function provide the same result as the argument
+        :code:`func` given in the initialization.
+
+        .. warning::
+
+            Since the version 0.4.0, :code:`compute()` function should compute
+            the log likelihood, instead of the probability of a binary response
+            variable. Also, it should include the response variables as
+            arguments. These changes might break existing codes using the
+            previous versions of ADOpy.
+
+        .. versionchanged:: 0.4.0
+
+            Provide the log likelihood instead of the probability of a binary
+            response.
+        """
+        return self._func(*args, **kwargs)
+
+    def __repr__(self) -> str:
+        return ''.join([
+            'Model(',
+            '{}, '.format(repr(self.name)) if self.name else '',
+            'params={})'.format(repr(self.params))
+        ])

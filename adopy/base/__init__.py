@@ -12,13 +12,14 @@ These classes provide built-in functions for the Adaptive Design Optimization.
    :py:class:`adopy.Engine`.
 
    .. code-block:: python
-      
+
       from adopy import Task, Model, Engine
       # works the same as
       from adopy.base import Task, Model, Engine
 """
-from ._task import Task
-from ._model import Model
+from ._task import Task, TaskV2
+from ._model import Model, ModelV2
 from ._engine import Engine
+from ._engine_jax import JaxEngineV1
 
-__all__ = ['Task', 'Model', 'Engine']
+__all__ = ['Task', 'TaskV2', 'Model', 'ModelV2', 'Engine', 'JaxEngineV1']
