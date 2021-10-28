@@ -20,7 +20,10 @@ __all__ = [
 ]
 
 # Load version from the metadata
-__version__ = importlib_metadata.version(__name__)
+try:
+    __version__ = importlib_metadata.version(__name__)
+except PackageNotFoundError:  # For frozen app support
+    __version__ = '0.4.1'
 
 # Ignore overflow and underflow floating-point errors
 np.seterr(over='ignore', under='ignore')
