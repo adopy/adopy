@@ -8,6 +8,11 @@ develop
   and :py:mod:`adopy.base.Engine` receive keyword-only arguments only from now
   on. You should state explicitly to which argument you want to pass values.
 
+0.4.1
+-----
+
+* A minor fix on retrieving version informationg with importlib-metadata.
+
 0.4.0
 -----
 
