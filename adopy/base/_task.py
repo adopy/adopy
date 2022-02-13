@@ -6,7 +6,7 @@ from jax import numpy as jnp
 from adopy.functions import extract_vars_from_data, make_grid_matrix
 from adopy.types import data_like
 
-__all__ = ['Task', 'TaskV2']
+__all__ = ["Task", "TaskV2"]
 
 
 class Task(object):
@@ -44,12 +44,13 @@ class Task(object):
     ['choice']
     """
 
-    def __init__(self,
-                 *,
-                 name: Optional[str] = None,
-                 designs: Iterable[str],
-                 responses: Iterable[str],
-                 ):
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        designs: Iterable[str],
+        responses: Iterable[str],
+    ):
         self._name = name
         self._designs = tuple(designs)  # type: Tuple[str, ...]
         self._responses = tuple(responses)  # type: Tuple[str, ...]
@@ -107,18 +108,20 @@ class Task(object):
 
     def __repr__(self) -> str:
         strs = []
-        strs += 'Task('
+        strs += "Task("
         if self.name:
-            strs += '{}, '.format(repr(self.name))
-        strs += 'designs={}, '.format(repr(self.designs))
-        strs += 'responses={})'.format(repr(self.responses))
-        return ''.join(strs)
+            strs += "{}, ".format(repr(self.name))
+        strs += "designs={}, ".format(repr(self.designs))
+        strs += "responses={})".format(repr(self.responses))
+        return "".join(strs)
 
     def __eq__(self, other) -> bool:
-        return isinstance(other, Task) and \
-            self.name == other.name and \
-            self.designs == other.designs and \
-            self.responses == other.responses
+        return (
+            isinstance(other, Task)
+            and self.name == other.name
+            and self.designs == other.designs
+            and self.responses == other.responses
+        )
 
 
 class TaskV2(object):
@@ -155,26 +158,28 @@ class TaskV2(object):
     >>> task.responses
     ['choice']
     """
-    def __init__(self,
-                 *,
-                 name: Optional[str] = None,
-                 designs: Iterable[str],
-                 responses: Iterable[str],
-                 grid_design: Dict[str, Any],
-                 grid_response: Dict[str, Any],
-                 dtype: Optional[Any] = jnp.float32,
-                 ):
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        designs: Iterable[str],
+        responses: Iterable[str],
+        grid_design: Dict[str, Any],
+        grid_response: Dict[str, Any],
+        dtype: Optional[Any] = jnp.float32,
+    ):
         self._name = name
         self._designs = tuple(designs)  # type: Tuple[str, ...]
         self._responses = tuple(responses)  # type: Tuple[str, ...]
         self._dtype = dtype
 
         self._g_d = jnp.array(
-            make_grid_matrix(grid_design)[self.designs].values,
-            dtype=self.dtype)
+            make_grid_matrix(grid_design)[self.designs].values, dtype=self.dtype
+        )
         self._g_y = jnp.array(
-            make_grid_matrix(grid_response)[self.responses].values,
-            dtype=self.dtype)
+            make_grid_matrix(grid_response)[self.responses].values, dtype=self.dtype
+        )
 
     @property
     def name(self) -> Optional[str]:
@@ -234,15 +239,19 @@ class TaskV2(object):
         return self._g_y
 
     def __repr__(self) -> str:
-        return ''.join([
-            'Task(',
-            '{}, '.format(repr(self.name)) if self.name else '',
-            'designs={}, '.format(repr(self.designs)),
-            'responses={})'.format(repr(self.responses))
-        ])
+        return "".join(
+            [
+                "Task(",
+                "{}, ".format(repr(self.name)) if self.name else "",
+                "designs={}, ".format(repr(self.designs)),
+                "responses={})".format(repr(self.responses)),
+            ]
+        )
 
     def __eq__(self, other) -> bool:
-        return isinstance(other, Task) and \
-               self.name == other.name and \
-               self.designs == other.designs and \
-               self.responses == other.responses
+        return (
+            isinstance(other, Task)
+            and self.name == other.name
+            and self.designs == other.designs
+            and self.responses == other.responses
+        )

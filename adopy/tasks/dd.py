@@ -24,14 +24,14 @@ from adopy.base import Engine, Task, Model
 from scipy.special import expit as inv_logit
 
 __all__ = [
-    'TaskDD',
-    'ModelExp',
-    'ModelHyp',
-    'ModelHPB',
-    'ModelCOS',
-    'ModelQH',
-    'ModelDE',
-    'EngineDD'
+    "TaskDD",
+    "ModelExp",
+    "ModelHyp",
+    "ModelHPB",
+    "ModelCOS",
+    "ModelQH",
+    "ModelDE",
+    "EngineDD",
 ]
 
 
@@ -60,9 +60,9 @@ class TaskDD(Task):
 
     def __init__(self):
         super(TaskDD, self).__init__(
-            name='Delay discounting task',
-            designs=['t_ss', 't_ll', 'r_ss', 'r_ll'],
-            responses=['choice']  # Binary response
+            name="Delay discounting task",
+            designs=["t_ss", "t_ll", "r_ss", "r_ll"],
+            responses=["choice"],  # Binary response
         )
 
 
@@ -100,9 +100,8 @@ class ModelExp(Model):
 
     def __init__(self):
         args = dict(
-            name='Exponential model for the DD task',
-            task=TaskDD(),
-            params=['r', 'tau'])
+            name="Exponential model for the DD task", task=TaskDD(), params=["r", "tau"]
+        )
         super(ModelExp, self).__init__(**args)
 
     def compute(self, choice, t_ss, t_ll, r_ss, r_ll, r, tau):
@@ -151,9 +150,8 @@ class ModelHyp(Model):
 
     def __init__(self):
         args = dict(
-            name='Hyperbolic model for the DD task',
-            task=TaskDD(),
-            params=['k', 'tau'])
+            name="Hyperbolic model for the DD task", task=TaskDD(), params=["k", "tau"]
+        )
         super(ModelHyp, self).__init__(**args)
 
     def compute(self, choice, t_ss, t_ll, r_ss, r_ll, k, tau):
@@ -204,9 +202,10 @@ class ModelHPB(Model):
 
     def __init__(self):
         args = dict(
-            name='Hyperboloid model for the DD task',
+            name="Hyperboloid model for the DD task",
             task=TaskDD(),
-            params=['k', 's', 'tau'])
+            params=["k", "s", "tau"],
+        )
         super(ModelHPB, self).__init__(**args)
 
     def compute(self, choice, t_ss, t_ll, r_ss, r_ll, k, s, tau):
@@ -257,9 +256,10 @@ class ModelCOS(Model):
 
     def __init__(self):
         args = dict(
-            name='Constant Sensitivity model for the DD task',
+            name="Constant Sensitivity model for the DD task",
             task=TaskDD(),
-            params=['r', 's', 'tau'])
+            params=["r", "s", "tau"],
+        )
         super(ModelCOS, self).__init__(**args)
 
     def compute(self, choice, t_ss, t_ll, r_ss, r_ll, r, s, tau):
@@ -313,16 +313,19 @@ class ModelQH(Model):
 
     def __init__(self):
         args = dict(
-            name='Quasi-Hyperbolic model for the DD task',
+            name="Quasi-Hyperbolic model for the DD task",
             task=TaskDD(),
-            params=['beta', 'delta', 'tau'])
+            params=["beta", "delta", "tau"],
+        )
         super(ModelQH, self).__init__(**args)
 
     def compute(self, choice, t_ss, t_ll, r_ss, r_ll, beta, delta, tau):
         def discount(delay):
-            return np.where(delay == 0,
-                            np.ones_like(beta * delta * delay),
-                            beta * np.power(delta, delay))
+            return np.where(
+                delay == 0,
+                np.ones_like(beta * delta * delay),
+                beta * np.power(delta, delay),
+            )
 
         v_ss = r_ss * discount(t_ss)
         v_ll = r_ll * discount(t_ll)
@@ -369,15 +372,15 @@ class ModelDE(Model):
 
     def __init__(self):
         args = dict(
-            name='Double Exponential model for the DD task',
+            name="Double Exponential model for the DD task",
             task=TaskDD(),
-            params=['omega', 'r', 's', 'tau'])
+            params=["omega", "r", "s", "tau"],
+        )
         super(ModelDE, self).__init__(**args)
 
     def compute(self, choice, t_ss, t_ll, r_ss, r_ll, omega, r, s, tau):
         def discount(delay):
-            return omega * np.exp(-delay * r) + \
-                (1 - omega) * np.exp(-delay * s)
+            return omega * np.exp(-delay * r) + (1 - omega) * np.exp(-delay * s)
 
         v_ss = r_ss * discount(t_ss)
         v_ll = r_ll * discount(t_ll)
@@ -395,10 +398,9 @@ class EngineDD(Engine):
 
     def __init__(self, model, grid_design, grid_param, **kwargs):
         if not isinstance(model.task, TaskDD):
-            raise RuntimeError(
-                'The model should be implemented for the DD task.')
+            raise RuntimeError("The model should be implemented for the DD task.")
 
-        grid_response = {'choice': [0, 1]}
+        grid_response = {"choice": [0, 1]}
 
         super(EngineDD, self).__init__(
             task=model.task,

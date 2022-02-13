@@ -5,14 +5,18 @@ import numpy as np
 import pandas as pd
 from scipy.special import logsumexp
 
-from adopy.functions import (get_nearest_grid_index, make_grid_matrix,
-                             make_vector_shape, marginalize)
+from adopy.functions import (
+    get_nearest_grid_index,
+    make_grid_matrix,
+    make_vector_shape,
+    marginalize,
+)
 from adopy.types import array_like, matrix_like, vector_like
 
 from ._model import Model
 from ._task import Task
 
-__all__ = ['Engine']
+__all__ = ["Engine"]
 
 
 class Engine(object):
@@ -20,19 +24,21 @@ class Engine(object):
     A base class for an ADO engine to compute optimal designs.
     """
 
-    def __init__(self,
-                 *,
-                 task: Task,
-                 model: Model,
-                 grid_design: Dict[str, Any],
-                 grid_param: Dict[str, Any],
-                 grid_response: Dict[str, Any],
-                 noise_ratio: float = 1e-7,
-                 dtype: Optional[Any] = np.float32):
+    def __init__(
+        self,
+        *,
+        task: Task,
+        model: Model,
+        grid_design: Dict[str, Any],
+        grid_param: Dict[str, Any],
+        grid_response: Dict[str, Any],
+        noise_ratio: float = 1e-7,
+        dtype: Optional[Any] = np.float32
+    ):
         super(Engine, self).__init__()
 
         if model.task != task:
-            raise ValueError('Given task and model are not matched.')
+            raise ValueError("Given task and model are not matched.")
 
         self._task = task
         self._model = model
@@ -112,9 +118,7 @@ class Engine(object):
     @log_prior.deleter
     def log_prior(self):
         del self._log_prior
-        self._log_prior = (
-            np.log(np.ones(self.n_p) / self.n_p, dtype=self.dtype)
-        )
+        self._log_prior = np.log(np.ones(self.n_p) / self.n_p, dtype=self.dtype)
 
     @property
     def log_post(self) -> vector_like:
@@ -169,18 +173,24 @@ class Engine(object):
             shape_response = make_vector_shape(3, 2)
 
             args = {}
-            args.update({
-                k: v.reshape(shape_design)
-                for k, v in self.task.extract_designs(self.grid_design).items()
-            })
-            args.update({
-                k: v.reshape(shape_param)
-                for k, v in self.model.extract_params(self.grid_param).items()
-            })
-            args.update({
-                k: v.reshape(shape_response)
-                for k, v in self.task.extract_responses(self.grid_response).items()
-            })
+            args.update(
+                {
+                    k: v.reshape(shape_design)
+                    for k, v in self.task.extract_designs(self.grid_design).items()
+                }
+            )
+            args.update(
+                {
+                    k: v.reshape(shape_param)
+                    for k, v in self.model.extract_params(self.grid_param).items()
+                }
+            )
+            args.update(
+                {
+                    k: v.reshape(shape_response)
+                    for k, v in self.task.extract_responses(self.grid_response).items()
+                }
+            )
 
             l_model = np.exp(self.model.compute(**args))
 
@@ -198,7 +208,8 @@ class Engine(object):
         """
         if self._marg_log_lik is None:
             self._marg_log_lik = logsumexp(
-                self.log_lik + self.log_post.reshape(1, -1, 1), axis=1)
+                self.log_lik + self.log_post.reshape(1, -1, 1), axis=1
+            )
         return self._marg_log_lik
 
     @property
@@ -209,7 +220,7 @@ class Engine(object):
         """
         if self._ent is None:
             self._ent = -1 * np.einsum(
-                'dpy,dpy->dp', np.exp(self.log_lik), self.log_lik
+                "dpy,dpy->dp", np.exp(self.log_lik), self.log_lik
             )
 
         return self._ent
@@ -223,7 +234,7 @@ class Engine(object):
         """
         if self._ent_marg is None:
             self._ent_marg = -1 * np.einsum(
-                'dy,dy->d', np.exp(self.marg_log_lik), self.marg_log_lik
+                "dy,dy->d", np.exp(self.marg_log_lik), self.marg_log_lik
             )
         return self._ent_marg
 
@@ -235,7 +246,7 @@ class Engine(object):
         where :math:`p(\theta)` indicates the posterior distribution for model parameters.
         """
         if self._ent_cond is None:
-            self._ent_cond = np.einsum('p,dp->d', self.post, self.ent)
+            self._ent_cond = np.einsum("p,dp->d", self.post, self.ent)
             # self._ent_cond = (self.ent * self.post).sum(-1)
         return self._ent_cond
 
@@ -256,9 +267,11 @@ class Engine(object):
         A vector of estimated means for the posterior distribution.
         Its length is ``num_params``.
         """
-        return pd.Series(np.dot(self.post, self.grid_param),
-                         index=self.model.params,
-                         name='Posterior mean')
+        return pd.Series(
+            np.dot(self.post, self.grid_param),
+            index=self.model.params,
+            name="Posterior mean",
+        )
 
     @property
     def post_cov(self) -> np.ndarray:
@@ -276,9 +289,11 @@ class Engine(object):
         A vector of estimated standard deviations for the posterior
         distribution. Its length is ``num_params``.
         """
-        return pd.Series(np.sqrt(np.diag(self.post_cov)),
-                         index=self.model.params,
-                         name='Posterior SD')
+        return pd.Series(
+            np.sqrt(np.diag(self.post_cov)),
+            index=self.model.params,
+            name="Posterior SD",
+        )
 
     @property
     def dtype(self):
@@ -317,7 +332,7 @@ class Engine(object):
         self.log_post = np.copy(self.log_prior)
         self._update_mutual_info()
 
-    def get_design(self, kind='optimal') -> Optional[Dict[str, Any]]:
+    def get_design(self, kind="optimal") -> Optional[Dict[str, Any]]:
         r"""
         Choose a design with given one of following types:
 
@@ -339,15 +354,14 @@ class Engine(object):
         if len(self.task.designs) == 0:
             return None
 
-        if kind == 'optimal':
+        if kind == "optimal":
             idx_design = np.argmax(self.mutual_info)
 
-        elif kind == 'random':
+        elif kind == "random":
             idx_design = np.random.randint(self.n_d)
 
         else:
-            raise ValueError(
-                'The argument kind should be "optimal" or "random".')
+            raise ValueError('The argument kind should be "optimal" or "random".')
 
         return self.grid_design.iloc[idx_design].to_dict()
 
@@ -397,17 +411,18 @@ class Engine(object):
         """
         if isinstance(design, list) != isinstance(response, list):
             raise ValueError(
-                'The number of observations (pairs of design and response) '
-                'should be matched in the design and response arguments.')
+                "The number of observations (pairs of design and response) "
+                "should be matched in the design and response arguments."
+            )
 
         if isinstance(design, list) and isinstance(response, list):
             if len(design) != len(response):
                 raise ValueError(
-                    'The length of designs and responses should be the same.')
+                    "The length of designs and responses should be the same."
+                )
 
             _designs = [
-                pd.Series(d, index=self.task.designs, dtype=self.dtype)
-                for d in design
+                pd.Series(d, index=self.task.designs, dtype=self.dtype) for d in design
             ]
 
             _responses = [
@@ -416,13 +431,10 @@ class Engine(object):
             ]
 
         else:
-            _designs = [
-                pd.Series(design, index=self.task.designs, dtype=self.dtype)
-            ]
+            _designs = [pd.Series(design, index=self.task.designs, dtype=self.dtype)]
 
             _responses = [
-                pd.Series(response, index=self.task.responses,
-                          dtype=self.dtype)
+                pd.Series(response, index=self.task.responses, dtype=self.dtype)
             ]
 
         for d, r in zip(_designs, _responses):

@@ -33,7 +33,7 @@ from scipy.stats import bernoulli
 from adopy.base import Engine, Task, Model
 from scipy.special import expit as inv_logit
 
-__all__ = ['TaskCRA', 'ModelLinear', 'ModelExp', 'EngineCRA']
+__all__ = ["TaskCRA", "ModelLinear", "ModelExp", "EngineCRA"]
 
 
 class TaskCRA(Task):
@@ -63,9 +63,9 @@ class TaskCRA(Task):
 
     def __init__(self):
         super(TaskCRA, self).__init__(
-            name='Choice under risk and ambiguity task',
-            designs=['p_var', 'a_var', 'r_var', 'r_fix'],
-            responses=['choice']  # binary response
+            name="Choice under risk and ambiguity task",
+            designs=["p_var", "a_var", "r_var", "r_fix"],
+            responses=["choice"],  # binary response
         )
 
 
@@ -104,15 +104,15 @@ class ModelLinear(Model):
 
     def __init__(self):
         super(ModelLinear, self).__init__(
-            name='Linear model for the CRA task',
+            name="Linear model for the CRA task",
             task=TaskCRA(),
-            params=['alpha', 'beta', 'gamma']
+            params=["alpha", "beta", "gamma"],
         )
 
     def compute(self, choice, p_var, a_var, r_var, r_fix, alpha, beta, gamma):
         sv_var = np.power(r_var, alpha)
         sv_var = (p_var - beta * np.divide(a_var, 2)) * sv_var
-        sv_fix = .5 * np.power(r_fix, alpha)
+        sv_fix = 0.5 * np.power(r_fix, alpha)
         p_obs = inv_logit(gamma * (sv_var - sv_fix))
         return bernoulli.logpmf(choice, p_obs)
 
@@ -153,15 +153,15 @@ class ModelExp(Model):
 
     def __init__(self):
         super(ModelExp, self).__init__(
-            name='Exponential model for the CRA task',
+            name="Exponential model for the CRA task",
             task=TaskCRA(),
-            params=['alpha', 'beta', 'gamma']
+            params=["alpha", "beta", "gamma"],
         )
 
     def compute(self, choice, p_var, a_var, r_var, r_fix, alpha, beta, gamma):
         sv_var = np.power(r_var, alpha)
         sv_var = np.power(p_var, 1 + beta * a_var) * sv_var
-        sv_fix = .5 * np.power(r_fix, alpha)
+        sv_fix = 0.5 * np.power(r_fix, alpha)
         p_obs = inv_logit(gamma * (sv_var - sv_fix))
         return bernoulli.logpmf(choice, p_obs)
 
@@ -173,10 +173,9 @@ class EngineCRA(Engine):
 
     def __init__(self, model, grid_design, grid_param, **kwargs):
         if not isinstance(model.task, TaskCRA):
-            raise RuntimeError(
-                'The model should be implemented for the CRA task.')
+            raise RuntimeError("The model should be implemented for the CRA task.")
 
-        grid_response = {'choice': [0, 1]}
+        grid_response = {"choice": [0, 1]}
 
         super(EngineCRA, self).__init__(
             task=model.task,

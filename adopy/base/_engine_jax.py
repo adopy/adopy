@@ -13,7 +13,7 @@ from adopy.types import array_like, matrix_like, vector_like
 from ._model import ModelV2
 from ._task import TaskV2
 
-__all__ = ['JaxEngineV1', 'JaxEngineV2']
+__all__ = ["JaxEngineV1", "JaxEngineV2"]
 
 
 @jax.jit
@@ -23,17 +23,17 @@ def get_marg_log_lik(ll, lp):
 
 @jax.jit
 def get_ent(ll):
-    return -1 * jnp.einsum('dpy,dpy->dp', jnp.exp(ll), ll)
+    return -1 * jnp.einsum("dpy,dpy->dp", jnp.exp(ll), ll)
 
 
 @jax.jit
 def get_ent_marg(mll):
-    return -1 * jnp.einsum('dy,dy->d', jnp.exp(mll), mll)
+    return -1 * jnp.einsum("dy,dy->d", jnp.exp(mll), mll)
 
 
 @jax.jit
 def get_ent_cond(post, ent):
-    return jnp.einsum('p,dp->d', post, ent)
+    return jnp.einsum("p,dp->d", post, ent)
 
 
 @jax.jit
@@ -142,18 +142,24 @@ class JaxEngineV1(object):
             shape_response = (1, 1, -1)
 
             args = {}
-            args.update({
-                k: self._g_d[:, i].reshape(shape_design)
-                for i, k in enumerate(self.designs)
-            })
-            args.update({
-                k: self._g_p[:, i].reshape(shape_param)
-                for i, k in enumerate(self.parameters)
-            })
-            args.update({
-                k: self._g_y[:, i].reshape(shape_response)
-                for i, k in enumerate(self.responses)
-            })
+            args.update(
+                {
+                    k: self._g_d[:, i].reshape(shape_design)
+                    for i, k in enumerate(self.designs)
+                }
+            )
+            args.update(
+                {
+                    k: self._g_p[:, i].reshape(shape_param)
+                    for i, k in enumerate(self.parameters)
+                }
+            )
+            args.update(
+                {
+                    k: self._g_y[:, i].reshape(shape_response)
+                    for i, k in enumerate(self.responses)
+                }
+            )
 
             l_model = jnp.exp(self.model_func(**args))
 
@@ -171,7 +177,8 @@ class JaxEngineV1(object):
         """
         if self._marg_log_lik is None:
             self._marg_log_lik = logsumexp(
-                self.log_lik + self.log_post.reshape(1, -1, 1), axis=1)
+                self.log_lik + self.log_post.reshape(1, -1, 1), axis=1
+            )
         return self._marg_log_lik
 
     @property
@@ -182,7 +189,7 @@ class JaxEngineV1(object):
         """
         if self._ent is None:
             self._ent = -1 * jnp.einsum(
-                'dpy,dpy->dp', jnp.exp(self.log_lik), self.log_lik
+                "dpy,dpy->dp", jnp.exp(self.log_lik), self.log_lik
             )
 
         return self._ent
@@ -196,7 +203,7 @@ class JaxEngineV1(object):
         """
         if self._ent_marg is None:
             self._ent_marg = -1 * jnp.einsum(
-                'dy,dy->d', jnp.exp(self.marg_log_lik), self.marg_log_lik
+                "dy,dy->d", jnp.exp(self.marg_log_lik), self.marg_log_lik
             )
         return self._ent_marg
 
@@ -208,7 +215,7 @@ class JaxEngineV1(object):
         where :math:`p(\theta)` indicates the posterior distribution for model parameters.
         """
         if self._ent_cond is None:
-            self._ent_cond = jnp.einsum('p,dp->d', self.post, self.ent)
+            self._ent_cond = jnp.einsum("p,dp->d", self.post, self.ent)
         return self._ent_cond
 
     @property
@@ -246,7 +253,7 @@ class JaxEngineV1(object):
 
         self._update_mutual_info()
 
-    def get_design(self, kind='optimal') -> Optional[Dict[str, Any]]:
+    def get_design(self, kind="optimal") -> Optional[Dict[str, Any]]:
         r"""
         Choose a design with given one of following types:
 
@@ -268,15 +275,14 @@ class JaxEngineV1(object):
         if len(self.designs) == 0:
             return None
 
-        if kind == 'optimal':
+        if kind == "optimal":
             idx_design = jnp.argmax(self.mutual_info)
 
-        elif kind == 'random':
+        elif kind == "random":
             idx_design = np.random.randint(self.n_d)
 
         else:
-            raise ValueError(
-                'The argument kind should be "optimal" or "random".')
+            raise ValueError('The argument kind should be "optimal" or "random".')
 
         return self._g_d[idx_design, :]
 
@@ -344,16 +350,18 @@ class JaxEngineV2(object):
     A base class for an ADO engine to compute optimal designs.
     """
 
-    def __init__(self,
-                 *,
-                 task: TaskV2,
-                 model: ModelV2,
-                 noise_ratio: float = 1e-7,
-                 dtype: Optional[Any] = np.float32):
+    def __init__(
+        self,
+        *,
+        task: TaskV2,
+        model: ModelV2,
+        noise_ratio: float = 1e-7,
+        dtype: Optional[Any] = np.float32
+    ):
         super(JaxEngineV2, self).__init__()
 
         if model.task != task:
-            raise ValueError('Given task and model are not matched.')
+            raise ValueError("Given task and model are not matched.")
 
         self._task = task
         self._model = model
@@ -434,9 +442,7 @@ class JaxEngineV2(object):
     @log_prior.deleter
     def log_prior(self):
         del self._log_prior
-        self._log_prior = (
-            np.log(np.ones(self.n_p) / self.n_p, dtype=self.dtype)
-        )
+        self._log_prior = np.log(np.ones(self.n_p) / self.n_p, dtype=self.dtype)
 
     @property
     def log_post(self) -> vector_like:
@@ -492,18 +498,24 @@ class JaxEngineV2(object):
             shape_response = (1, 1, -1)
 
             args = {}
-            args.update({
-                k: self._g_d[:, i].reshape(shape_design)
-                for i, k in enumerate(self.task.designs)
-            })
-            args.update({
-                k: self._g_p[:, i].reshape(shape_param)
-                for i, k in enumerate(self.model.params)
-            })
-            args.update({
-                k: self._g_y[:, i].reshape(shape_response)
-                for i, k in enumerate(self.task.responses)
-            })
+            args.update(
+                {
+                    k: self._g_d[:, i].reshape(shape_design)
+                    for i, k in enumerate(self.task.designs)
+                }
+            )
+            args.update(
+                {
+                    k: self._g_p[:, i].reshape(shape_param)
+                    for i, k in enumerate(self.model.params)
+                }
+            )
+            args.update(
+                {
+                    k: self._g_y[:, i].reshape(shape_response)
+                    for i, k in enumerate(self.task.responses)
+                }
+            )
 
             l_model = jnp.exp(self.model.compute(**args))
 
@@ -572,9 +584,11 @@ class JaxEngineV2(object):
         A vector of estimated means for the posterior distribution.
         Its length is ``num_params``.
         """
-        return pd.Series(np.dot(self.post, self.grid_param),
-                         index=self.model.params,
-                         name='Posterior mean')
+        return pd.Series(
+            np.dot(self.post, self.grid_param),
+            index=self.model.params,
+            name="Posterior mean",
+        )
 
     @property
     def post_cov(self) -> np.ndarray:
@@ -592,9 +606,11 @@ class JaxEngineV2(object):
         A vector of estimated standard deviations for the posterior
         distribution. Its length is ``num_params``.
         """
-        return pd.Series(np.sqrt(np.diag(self.post_cov)),
-                         index=self.model.params,
-                         name='Posterior SD')
+        return pd.Series(
+            np.sqrt(np.diag(self.post_cov)),
+            index=self.model.params,
+            name="Posterior SD",
+        )
 
     @property
     def dtype(self):
@@ -634,7 +650,7 @@ class JaxEngineV2(object):
 
         self._update_mutual_info()
 
-    def get_design(self, kind='optimal') -> Optional[Dict[str, Any]]:
+    def get_design(self, kind="optimal") -> Optional[Dict[str, Any]]:
         r"""
         Choose a design with given one of following types:
 
@@ -656,15 +672,14 @@ class JaxEngineV2(object):
         if len(self.task.designs) == 0:
             return None
 
-        if kind == 'optimal':
+        if kind == "optimal":
             idx_design = np.argmax(self.mutual_info)
 
-        elif kind == 'random':
+        elif kind == "random":
             idx_design = np.random.randint(self.n_d)
 
         else:
-            raise ValueError(
-                'The argument kind should be "optimal" or "random".')
+            raise ValueError('The argument kind should be "optimal" or "random".')
 
         return self.grid_design.iloc[idx_design].to_dict()
 

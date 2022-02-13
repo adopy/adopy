@@ -10,7 +10,7 @@ from adopy.types import data_like
 
 from ._task import Task, TaskV2
 
-__all__ = ['Model', 'ModelV2']
+__all__ = ["Model", "ModelV2"]
 
 
 class Model(object):
@@ -95,13 +95,14 @@ class Model(object):
     -0.251929081345373
     """
 
-    def __init__(self,
-                 *,
-                 name: Optional[str] = None,
-                 task: Task,
-                 params: Iterable[str],
-                 func: Optional[Callable] = None,
-                 ):
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        task: Task,
+        params: Iterable[str],
+        func: Optional[Callable] = None,
+    ):
         self._name = name  # type: Optional[str]
         self._task = task  # type: Task
         self._params = tuple(params)  # type: Tuple[str, ...]
@@ -110,12 +111,15 @@ class Model(object):
             func_args = func.__code__.co_varnames
 
             # Check if the function arguments are valid.
-            if not (all([x in func_args for x in task.responses])
-                    and all([d in func_args for d in task.designs])
-                    and all([p in func_args for p in params])):
+            if not (
+                all([x in func_args for x in task.responses])
+                and all([d in func_args for d in task.designs])
+                and all([p in func_args for p in params])
+            ):
                 raise RuntimeError(
-                    'Argument names of the likelihood function should contain '
-                    'those of design, parameter, response variables.')
+                    "Argument names of the likelihood function should contain "
+                    "those of design, parameter, response variables."
+                )
 
         self._func = func  # type: Optional[Callable]
 
@@ -182,11 +186,11 @@ class Model(object):
 
     def __repr__(self) -> str:
         strs: List[str] = []
-        strs += 'Model('
+        strs += "Model("
         if self.name:
-            strs += '{}, '.format(repr(self.name))
-        strs += 'params={})'.format(repr(self.params))
-        return ''.join(strs)
+            strs += "{}, ".format(repr(self.name))
+        strs += "params={})".format(repr(self.params))
+        return "".join(strs)
 
 
 class ModelV2(object):
@@ -271,15 +275,16 @@ class ModelV2(object):
     -0.251929081345373
     """
 
-    def __init__(self,
-                 *,
-                 name: Optional[str] = None,
-                 task: TaskV2,
-                 params: Iterable[str],
-                 func: Callable,
-                 grid_param: Dict[str, Any],
-                 dtype: Optional[Any] = jnp.float32,
-                 ):
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        task: TaskV2,
+        params: Iterable[str],
+        func: Callable,
+        grid_param: Dict[str, Any],
+        dtype: Optional[Any] = jnp.float32,
+    ):
         self._name = name  # type: Optional[str]
         self._task = task  # type: Task
         self._params = tuple(params)  # type: Tuple[str, ...]
@@ -287,8 +292,8 @@ class ModelV2(object):
         self._dtype = dtype
 
         self._g_p = jnp.array(
-            make_grid_matrix(grid_param)[self.params].values,
-            dtype=self.dtype)
+            make_grid_matrix(grid_param)[self.params].values, dtype=self.dtype
+        )
 
     @property
     def name(self) -> Optional[str]:
@@ -355,8 +360,10 @@ class ModelV2(object):
         return self._func(*args, **kwargs)
 
     def __repr__(self) -> str:
-        return ''.join([
-            'Model(',
-            '{}, '.format(repr(self.name)) if self.name else '',
-            'params={})'.format(repr(self.params))
-        ])
+        return "".join(
+            [
+                "Model(",
+                "{}, ".format(repr(self.name)) if self.name else "",
+                "params={})".format(repr(self.params)),
+            ]
+        )

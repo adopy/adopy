@@ -11,13 +11,13 @@ from scipy.special import expit as inv_logit
 
 from adopy.base import Engine, Model, Task
 from adopy.functions import (
-    const_01, const_positive, get_nearest_grid_index,
+    const_01,
+    const_positive,
+    get_nearest_grid_index,
 )
 from adopy.types import integer_like
 
-__all__ = [
-    'Task2AFC', 'ModelLogistic', 'ModelWeibull', 'ModelProbit', 'EnginePsi'
-]
+__all__ = ["Task2AFC", "ModelLogistic", "ModelWeibull", "ModelProbit", "EnginePsi"]
 
 
 class Task2AFC(Task):
@@ -43,9 +43,9 @@ class Task2AFC(Task):
 
     def __init__(self):
         super(Task2AFC, self).__init__(
-            name='2-alternative forced choice task',
-            designs=['stimulus'],
-            responses=['choice']
+            name="2-alternative forced choice task",
+            designs=["stimulus"],
+            responses=["choice"],
         )
 
 
@@ -54,7 +54,7 @@ class _ModelPsi(Model):
         super(_ModelPsi, self).__init__(
             name=name,
             task=Task2AFC(),
-            params=['threshold', 'slope', 'guess_rate', 'lapse_rate'],
+            params=["threshold", "slope", "guess_rate", "lapse_rate"],
         )
 
     def _compute_prob(self, func, st, th, sl, gr, lr):
@@ -94,12 +94,12 @@ class ModelLogistic(_ModelPsi):
     """
 
     def __init__(self):
-        super(ModelLogistic, self).__init__(
-            name='Logistic model for 2AFC tasks')
+        super(ModelLogistic, self).__init__(name="Logistic model for 2AFC tasks")
 
     def compute(self, choice, stimulus, guess_rate, lapse_rate, threshold, slope):
         p_obs = self._compute_prob(
-            inv_logit, stimulus, threshold, slope, guess_rate, lapse_rate)
+            inv_logit, stimulus, threshold, slope, guess_rate, lapse_rate
+        )
         return bernoulli.logpmf(choice, p_obs)
 
 
@@ -137,12 +137,12 @@ class ModelWeibull(_ModelPsi):
     """
 
     def __init__(self):
-        super(ModelWeibull, self).__init__(
-            name='Weibull model for 2AFC tasks')
+        super(ModelWeibull, self).__init__(name="Weibull model for 2AFC tasks")
 
     def compute(self, choice, stimulus, guess_rate, lapse_rate, threshold, slope):
         p_obs = self._compute_prob(
-            gumbel_l.cdf, stimulus, threshold, slope, guess_rate, lapse_rate)
+            gumbel_l.cdf, stimulus, threshold, slope, guess_rate, lapse_rate
+        )
         return bernoulli.logpmf(choice, p_obs)
 
 
@@ -181,12 +181,12 @@ class ModelProbit(_ModelPsi):
     """
 
     def __init__(self):
-        super(ModelProbit, self).__init__(
-            name='Probit model for 2AFC tasks')
+        super(ModelProbit, self).__init__(name="Probit model for 2AFC tasks")
 
     def compute(self, choice, stimulus, guess_rate, lapse_rate, threshold, slope):
         p_obs = self._compute_prob(
-            norm.cdf, stimulus, threshold, slope, guess_rate, lapse_rate)
+            norm.cdf, stimulus, threshold, slope, guess_rate, lapse_rate
+        )
         return bernoulli.logpmf(choice, p_obs)
 
 
@@ -198,10 +198,9 @@ class EnginePsi(Engine):
 
     def __init__(self, model, grid_design, grid_param, d_step: int = 1, **kwargs):
         if not isinstance(model.task, Task2AFC):
-            raise RuntimeError(
-                'The model should be implemented for the CRA task.')
+            raise RuntimeError("The model should be implemented for the CRA task.")
 
-        grid_response = {'choice': [0, 1]}
+        grid_response = {"choice": [0, 1]}
 
         super(EnginePsi, self).__init__(
             task=model.task,
@@ -226,10 +225,10 @@ class EnginePsi(Engine):
     @d_step.setter
     def d_step(self, value: integer_like):
         if not isinstance(value, (int, np.int)) or value <= 0:
-            raise ValueError('d_step should be an positive integer.')
+            raise ValueError("d_step should be an positive integer.")
         self._d_step = int(value)
 
-    def get_design(self, kind='optimal'):
+    def get_design(self, kind="optimal"):
         r"""Choose a design with a given type.
 
         - :code:`optimal`: an optimal design :math:`d^*` that maximizes
@@ -258,31 +257,29 @@ class EnginePsi(Engine):
         design
             A chosen design vector
         """
-        assert kind in {'optimal', 'staircase', 'random'}
+        assert kind in {"optimal", "staircase", "random"}
 
         self._update_mutual_info()
 
-        if kind == 'optimal':
+        if kind == "optimal":
             ret = self.grid_design.iloc[np.argmax(self.mutual_info)]
 
-        elif kind == 'staircase':
+        elif kind == "staircase":
             if self.y_obs_prev == 1:
                 idx = max(0, self.idx_opt - self.d_step)
             else:
-                idx = min(len(self.grid_design) - 1,
-                          self.idx_opt + (self.d_step * 2))
+                idx = min(len(self.grid_design) - 1, self.idx_opt + (self.d_step * 2))
 
             ret = self.grid_design.iloc[np.int(idx)]
 
-        elif kind == 'random':
+        elif kind == "random":
             idx = np.random.randint(self.n_d)
             ret = self.grid_design.iloc[idx]
 
         else:
             raise RuntimeError('An invalid kind of design: "{}".'.format(type))
 
-        self.idx_opt = get_nearest_grid_index(
-            ret.values, self.grid_design.values)
+        self.idx_opt = get_nearest_grid_index(ret.values, self.grid_design.values)
 
         return ret
 

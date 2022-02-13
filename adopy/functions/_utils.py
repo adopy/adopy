@@ -7,14 +7,15 @@ import pandas as pd
 from adopy.types import data_like
 
 __all__ = [
-    'extract_vars_from_data',
-    'expand_multiple_dims',
-    'make_vector_shape',
+    "extract_vars_from_data",
+    "expand_multiple_dims",
+    "make_vector_shape",
 ]
 
 
-def extract_vars_from_data(data: data_like,
-                           keys: Iterable[str]) -> 'OrderedDict[str, Any]':
+def extract_vars_from_data(
+    data: data_like, keys: Iterable[str]
+) -> "OrderedDict[str, Any]":
     """
     Extract variables corresponding to given keys from the data. The data can
     be a dictionary, an ``OrderedDict``, or a pandas.DataFrame.
