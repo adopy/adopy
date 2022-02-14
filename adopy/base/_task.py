@@ -3,8 +3,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 import pandas as pd
 from jax import numpy as jnp
 
-from adopy.functions import extract_vars_from_data, make_grid_matrix
-from adopy.types import data_like
+from adopy.functions import make_grid_matrix
 
 __all__ = ["Task", "TaskV2"]
 
@@ -71,40 +70,6 @@ class Task(object):
     def responses(self) -> List[str]:
         """Labels of response variables in the task."""
         return list(self._responses)
-
-    def extract_designs(self, data: data_like) -> Dict[str, Any]:
-        """
-        Extract design grids from the given data.
-
-        Parameters
-        ----------
-        data
-            A data object that contains key-value pairs or columns
-            corresponding to design variables.
-
-        Returns
-        -------
-        ret
-            An ordered dictionary of grids for design variables.
-        """
-        return extract_vars_from_data(data, self.designs)
-
-    def extract_responses(self, data: data_like) -> Dict[str, Any]:
-        """
-        Extract response grids from the given data.
-
-        Parameters
-        ----------
-        data
-            A data object that contains key-value pairs or columns
-            corresponding to design variables.
-
-        Returns
-        -------
-        ret
-            An ordered dictionary of grids for response variables.
-        """
-        return extract_vars_from_data(data, self.responses)
 
     def __repr__(self) -> str:
         strs = []

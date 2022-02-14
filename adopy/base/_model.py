@@ -5,8 +5,7 @@ import numpy as np
 from jax import numpy as jnp
 import pandas as pd
 
-from adopy.functions import extract_vars_from_data, make_grid_matrix
-from adopy.types import data_like
+from adopy.functions import make_grid_matrix
 
 from ._task import Task, TaskV2
 
@@ -139,23 +138,6 @@ class Model(object):
     def params(self) -> List[str]:
         """Labels for model parameters of the model."""
         return list(self._params)
-
-    def extract_params(self, data: data_like) -> Dict[str, Any]:
-        """
-        Extract parameter grids from the given data.
-
-        Parameters
-        ----------
-        data
-            A data object that contains key-value pairs or columns
-            corresponding to design variables.
-
-        Returns
-        -------
-        ret
-            An ordered dictionary of grids for model parameters.
-        """
-        return extract_vars_from_data(data, self.params)
 
     def compute(self, *args, **kargs):
         """
