@@ -1,14 +1,23 @@
 Changelogs
 ==========
 
-develop
--------
+0.5.0
+-----
 
+The version 0.5.0 has full of breaking changes that won't work with codes for
+the previous versions.
+
+* **(breaking change)** Support Python 3.7.1 or higher, due to the `end-of-life
+  schedule<https://endoflife.date/python>`_ and `increased minimum version of
+  latest Pandas<https://pandas.pydata.org/pandas-docs/stable/whatsnew/v1.2.0.html#increased-minimum-version-for-python>`_.
+* **(breaking change)** Increased minimum dependencies: NumPy 1.20.0 or higher,
+  SciPy 1.7.0 or higher, and Pandas 1.2.0 or higher.
 * **(breaking change)** :py:mod:`adopy.base.Task`, :py:mod:`adopy.base.Model`,
   and :py:mod:`adopy.base.Engine` receive keyword-only arguments only from now
   on. You should state explicitly to which argument you want to pass values.
-* Drop the support for Python 3.6 due to the end-of-life.
-* **(breaking change)**
+* **(breaking change)** `extract_designs` and `extract_responses` in
+  :py:mod:`adopy.base.Task`, `extract_params` in :py:mod:`adopy.base.Model`
+  were dropped.
 
 0.4.1
 -----
