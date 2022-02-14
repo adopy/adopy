@@ -10,11 +10,7 @@ from scipy.stats import bernoulli, gumbel_l, norm
 from scipy.special import expit as inv_logit
 
 from adopy.base import Engine, Model, Task
-from adopy.functions import (
-    const_01,
-    const_positive,
-    get_nearest_grid_index,
-)
+from adopy.functions import get_nearest_grid_index
 from adopy.types import integer_like
 
 __all__ = ["Task2AFC", "ModelLogistic", "ModelWeibull", "ModelProbit", "EnginePsi"]
