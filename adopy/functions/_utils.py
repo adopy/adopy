@@ -3,6 +3,7 @@ from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
+from jax import numpy as jnp
 
 from adopy.types import data_like
 
@@ -62,7 +63,5 @@ def expand_multiple_dims(x: np.ndarray, pre: int, post: int) -> np.ndarray:
     return ret
 
 
-def make_vector_shape(n: int, axis: int = 0) -> np.ndarray:
-    ret = np.ones(n)
-    ret[axis] = -1
-    return ret.astype(np.int)
+def make_vector_shape(n: int, axis: int = 0) -> jnp.ndarray:
+    return jnp.ones(n, dtype=int).at[axis].set(-1)
