@@ -7,6 +7,8 @@ develop
 * **(breaking change)** :py:mod:`adopy.base.Task`, :py:mod:`adopy.base.Model`,
   and :py:mod:`adopy.base.Engine` receive keyword-only arguments only from now
   on. You should state explicitly to which argument you want to pass values.
+* Drop the support for Python 3.6 due to the end-of-life.
+* **(breaking change)**
 
 0.4.1
 -----

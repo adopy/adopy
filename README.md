@@ -7,7 +7,7 @@
 
 **ADOpy** is a Python implementation of Adaptive Design Optimization (ADO; Myung, Cavagnaro, & Pitt, 2013), which computes optimal designs dynamically in an experiment. Its modular structure permit easy integration into existing experimentation code.
 
-ADOpy supports Python 3.6 or above and relies on NumPy, SciPy, and Pandas.
+ADOpy supports Python 3.7 or above and relies on NumPy, SciPy, and Pandas.
 
 ### Features
 
