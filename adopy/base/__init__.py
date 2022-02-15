@@ -17,8 +17,15 @@ These classes provide built-in functions for the Adaptive Design Optimization.
       # works the same as
       from adopy.base import Task, Model, Engine
 """
-from ._task import Task, TaskV2
-from ._model import Model, ModelV2
+from ._grid import GridSpace
+from ._task import AbstractTask, Task
+from ._model import Model
 from ._engine import Engine
 
-__all__ = ["Task", "TaskV2", "Model", "ModelV2", "Engine"]
+__all__ = [
+    "GridSpace",
+    "AbstractTask",
+    "Task",
+    "Model",
+    "Engine",
+]
