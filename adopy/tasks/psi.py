@@ -11,7 +11,6 @@ from scipy.special import expit as inv_logit
 
 from adopy.base import Engine, Model, Task
 from adopy.functions import get_nearest_grid_index
-from adopy.types import integer_like
 
 __all__ = ["Task2AFC", "ModelLogistic", "ModelWeibull", "ModelProbit", "EnginePsi"]
 
@@ -219,7 +218,7 @@ class EnginePsi(Engine):
         return self._d_step
 
     @d_step.setter
-    def d_step(self, value: integer_like):
+    def d_step(self, value):
         if not isinstance(value, (int, np.int)) or value <= 0:
             raise ValueError("d_step should be an positive integer.")
         self._d_step = int(value)
