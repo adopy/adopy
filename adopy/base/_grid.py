@@ -7,7 +7,7 @@ from jax import numpy as jnp
 __all__ = ["GridSpace"]
 
 
-K = TypeVar("K", str, Tuple[str])
+K = TypeVar("K", str, Tuple[str, ...])
 V = TypeVar("V", Iterable, np.ndarray, jnp.ndarray)
 
 
