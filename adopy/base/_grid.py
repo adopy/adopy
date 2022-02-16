@@ -114,7 +114,10 @@ class GridSpace(object):
         self._value = self._value.astype(value)
 
     def __len__(self):
-        return len(self.value)
+        try:
+            return len(self._value)
+        except TypeError:
+            return 0
 
     def __getitem__(self, key) -> Dict[str, float]:
         # return self.value[key]

@@ -10,7 +10,7 @@ except ModuleNotFoundError:
 import numpy as np
 
 from adopy import base, functions, tasks
-from adopy.base import Engine, Model, Task
+from adopy.base import GridSpace, Engine, Model, Task
 
 __all__ = [
     # Submodules
@@ -18,6 +18,7 @@ __all__ = [
     "functions",
     "tasks",
     # Base classes
+    "GridSpace",
     "Task",
     "Model",
     "Engine",
