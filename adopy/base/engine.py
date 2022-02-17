@@ -356,7 +356,7 @@ class Engine(object):
 
         self._update_mutual_info()
 
-    def get_design(self, kind="optimal") -> Dict[str, float] | None:
+    def get_design(self, kind="optimal") -> Optional[Dict[str, float]]:
         r"""
         Choose a design with given one of following types:
 
