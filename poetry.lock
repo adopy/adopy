@@ -308,7 +308,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "docutils"
-version = "0.17.1"
+version = "0.18.1"
 description = "Docutils -- Python Documentation Utilities"
 category = "main"
 optional = true
@@ -1389,17 +1389,17 @@ python-versions = "*"
 
 [[package]]
 name = "sphinx"
-version = "4.3.2"
+version = "3.5.3"
 description = "Python documentation generator"
 category = "main"
 optional = true
-python-versions = ">=3.6"
+python-versions = ">=3.5"
 
 [package.dependencies]
 alabaster = ">=0.7,<0.8"
 babel = ">=1.3"
 colorama = {version = ">=0.3.5", markers = "sys_platform == \"win32\""}
-docutils = ">=0.14,<0.18"
+docutils = ">=0.12"
 imagesize = "*"
 Jinja2 = ">=2.3"
 packaging = "*"
@@ -1408,14 +1408,14 @@ requests = ">=2.5.0"
 snowballstemmer = ">=1.1"
 sphinxcontrib-applehelp = "*"
 sphinxcontrib-devhelp = "*"
-sphinxcontrib-htmlhelp = ">=2.0.0"
+sphinxcontrib-htmlhelp = "*"
 sphinxcontrib-jsmath = "*"
 sphinxcontrib-qthelp = "*"
-sphinxcontrib-serializinghtml = ">=1.1.5"
+sphinxcontrib-serializinghtml = "*"
 
 [package.extras]
 docs = ["sphinxcontrib-websupport"]
-lint = ["flake8 (>=3.5.0)", "isort", "mypy (>=0.920)", "docutils-stubs", "types-typed-ast", "types-pkg-resources", "types-requests"]
+lint = ["flake8 (>=3.5.0)", "isort", "mypy (>=0.800)", "docutils-stubs"]
 test = ["pytest", "pytest-cov", "html5lib", "cython", "typed-ast"]
 
 [[package]]
@@ -1452,15 +1452,14 @@ tests = ["pytest (>=6.2.0)"]
 
 [[package]]
 name = "sphinx-rtd-theme"
-version = "1.0.0"
+version = "0.5.1"
 description = "Read the Docs theme for Sphinx"
 category = "main"
 optional = true
-python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
+python-versions = "*"
 
 [package.dependencies]
-docutils = "<0.18"
-sphinx = ">=1.6"
+sphinx = "*"
 
 [package.extras]
 dev = ["transifex-client", "sphinxcontrib-httpdomain", "bump2version"]
@@ -1938,8 +1937,8 @@ defusedxml = [
     {file = "defusedxml-0.7.1.tar.gz", hash = "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69"},
 ]
 docutils = [
-    {file = "docutils-0.17.1-py2.py3-none-any.whl", hash = "sha256:cf316c8370a737a022b72b56874f6602acf974a37a9fba42ec2876387549fc61"},
-    {file = "docutils-0.17.1.tar.gz", hash = "sha256:686577d2e4c32380bb50cbb22f575ed742d58168cee37e99117a854bcd88f125"},
+    {file = "docutils-0.18.1-py2.py3-none-any.whl", hash = "sha256:23010f129180089fbcd3bc08cfefccb3b890b0050e1ca00c867036e9d161b98c"},
+    {file = "docutils-0.18.1.tar.gz", hash = "sha256:679987caf361a7539d76e584cbeddc311e3aee937877c87346f31debc63e9d06"},
 ]
 entrypoints = [
     {file = "entrypoints-0.4-py3-none-any.whl", hash = "sha256:f174b5ff827504fd3cd97cc3f8649f3693f51538c7e4bdf3ef002c8429d42f9f"},
@@ -2657,8 +2656,8 @@ snowballstemmer = [
     {file = "snowballstemmer-2.2.0.tar.gz", hash = "sha256:09b16deb8547d3412ad7b590689584cd0fe25ec8db3be37788be3810cbf19cb1"},
 ]
 sphinx = [
-    {file = "Sphinx-4.3.2-py3-none-any.whl", hash = "sha256:6a11ea5dd0bdb197f9c2abc2e0ce73e01340464feaece525e64036546d24c851"},
-    {file = "Sphinx-4.3.2.tar.gz", hash = "sha256:0a8836751a68306b3fe97ecbe44db786f8479c3bf4b80e3a7f5c838657b4698c"},
+    {file = "Sphinx-3.5.3-py3-none-any.whl", hash = "sha256:3f01732296465648da43dec8fb40dc451ba79eb3e2cc5c6d79005fd98197107d"},
+    {file = "Sphinx-3.5.3.tar.gz", hash = "sha256:ce9c228456131bab09a3d7d10ae58474de562a6f79abb3dc811ae401cf8c1abc"},
 ]
 sphinx-autobuild = [
     {file = "sphinx-autobuild-2021.3.14.tar.gz", hash = "sha256:de1ca3b66e271d2b5b5140c35034c89e47f263f2cd5db302c9217065f7443f05"},
@@ -2669,8 +2668,8 @@ sphinx-issues = [
     {file = "sphinx_issues-3.0.1-py3-none-any.whl", hash = "sha256:8b25dc0301159375468f563b3699af7a63720fd84caf81c1442036fcd418b20c"},
 ]
 sphinx-rtd-theme = [
-    {file = "sphinx_rtd_theme-1.0.0-py2.py3-none-any.whl", hash = "sha256:4d35a56f4508cfee4c4fb604373ede6feae2a306731d533f409ef5c3496fdbd8"},
-    {file = "sphinx_rtd_theme-1.0.0.tar.gz", hash = "sha256:eec6d497e4c2195fa0e8b2016b337532b8a699a68bcb22a512870e16925c6a5c"},
+    {file = "sphinx_rtd_theme-0.5.1-py2.py3-none-any.whl", hash = "sha256:fa6bebd5ab9a73da8e102509a86f3fcc36dec04a0b52ea80e5a033b2aba00113"},
+    {file = "sphinx_rtd_theme-0.5.1.tar.gz", hash = "sha256:eda689eda0c7301a80cf122dad28b1861e5605cbf455558f3775e1e8200e83a5"},
 ]
 sphinxcontrib-applehelp = [
     {file = "sphinxcontrib-applehelp-1.0.2.tar.gz", hash = "sha256:a072735ec80e7675e3f432fcae8610ecf509c5f1869d17e2eecff44389cdbc58"},
