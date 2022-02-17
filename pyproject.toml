@@ -35,7 +35,7 @@ pytest-cov = { version = "*", optional = true }
 codecov = { version = "*", optional = true }
 
 # Extra packages for documentation
-sphinx = { version = "*", optional = true }
+sphinx = { version = ">=4.0", optional = true }
 sphinx_rtd_theme = { version = "*", optional = true }
 sphinx-autobuild = { version = "*", optional = true }
 recommonmark = { version = "*", optional = true }
@@ -50,7 +50,7 @@ black = "*"
 flake8 = "*"
 pylint = "*"
 mypy = "*"
-build = "^0.7.0"
+build = ">=0.7.0"
 
 [tool.poetry.extras]
 test = [
