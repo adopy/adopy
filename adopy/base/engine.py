@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Dict, List, Optional, Mapping, Tuple, TypeVar, Union
+from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
 
 import jax
 import numpy as np
@@ -356,7 +356,7 @@ class Engine(object):
 
         self._update_mutual_info()
 
-    def get_design(self, kind="optimal") -> Mapping | None:
+    def get_design(self, kind="optimal") -> Dict[str, float] | None:
         r"""
         Choose a design with given one of following types:
 
