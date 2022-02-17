@@ -9,13 +9,12 @@ except ModuleNotFoundError:
 
 import numpy as np
 
-from adopy import base, functions, tasks
+from adopy import base, tasks
 from adopy.base import GridSpace, Engine, Model, Task
 
 __all__ = [
     # Submodules
     "base",
-    "functions",
     "tasks",
     # Base classes
     "GridSpace",
@@ -28,7 +27,7 @@ __all__ = [
 try:
     __version__ = importlib_metadata.version(__name__)
 except importlib_metadata.PackageNotFoundError:  # For frozen app support
-    __version__ = "0.4.1"
+    __version__ = "0.5.0-dev"
 
 # Ignore overflow and underflow floating-point errors
 np.seterr(over="ignore", under="ignore")

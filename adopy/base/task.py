@@ -3,7 +3,7 @@ import abc
 
 from jax import numpy as jnp
 
-from ._grid import GridSpace
+from .grid import GridSpace
 
 __all__ = ["AbstractTask", "Task"]
 
@@ -31,9 +31,9 @@ class AbstractTask(object, metaclass=abc.ABCMeta):
     >>> abt.name
     'Task A'
     >>> abt.designs
-    ['d1', 'd2']
+    ('d1', 'd2')
     >>> abt.responses
-    ['y']
+    ('y',)
     """
 
     __name__ = "AbstractTask"

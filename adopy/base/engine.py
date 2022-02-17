@@ -1,16 +1,33 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Dict, Optional, Mapping
+from typing import Any, Dict, List, Optional, Mapping, Tuple, TypeVar, Union
 
 import jax
 import numpy as np
 from jax import numpy as jnp
 from jax.scipy.special import logsumexp
 
-from ._grid import GridSpace
-from ._model import Model
-from ._task import Task
+from .grid import GridSpace
+from .model import Model
+from .task import Task
 
 __all__ = ["Engine"]
+
+MK = TypeVar("MK", float, Tuple[float])
+
+
+def marginalize(
+    post: jnp.ndarray, grid: jnp.ndarray, axis: Union[int, List[int]]
+) -> Dict[MK, float]:
+    """Return marginal distributions from grid-shaped posteriors"""
+    assert len(post) == len(grid)
+
+    ret = {}
+    for v, p in zip(grid[:, axis], post):
+        vv = v.tolist()
+        k = vv if jnp.isscalar(vv) else tuple(vv)
+        ret[k] = ret.get(k, 0) + p.tolist()
+
+    return dict(sorted(ret.items(), key=lambda x: x[0]))
 
 
 @jax.jit
@@ -173,13 +190,13 @@ class Engine(object):
         """
         return jnp.exp(self._log_post)
 
-    # @property
-    # def marg_post(self) -> Dict[str, vector_like]:
-    #     """Marginal posterior distributions for each parameter"""
-    #     return {
-    #         param: marginalize(self.post, self.grid_param, i)
-    #         for i, param in enumerate(self.model.params)
-    #     }
+    @property
+    def marg_post(self) -> Dict[str, jnp.array]:
+        """Marginal posterior distributions for each parameter"""
+        return {
+            param: marginalize(self.post, self.grid_param.value, i)
+            for i, param in enumerate(self.model.params)
+        }
 
     @property
     def log_lik(self) -> jnp.ndarray:

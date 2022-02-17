@@ -17,10 +17,10 @@ These classes provide built-in functions for the Adaptive Design Optimization.
       # works the same as
       from adopy.base import Task, Model, Engine
 """
-from ._grid import GridSpace
-from ._task import AbstractTask, Task
-from ._model import Model
-from ._engine import Engine
+from .grid import GridSpace
+from .task import AbstractTask, Task
+from .model import Model
+from .engine import Engine
 
 __all__ = [
     "GridSpace",

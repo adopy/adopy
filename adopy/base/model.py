@@ -3,8 +3,8 @@ import abc
 
 from jax import numpy as jnp
 
-from ._grid import GridSpace
-from ._task import Task
+from .grid import GridSpace
+from .task import Task
 
 __all__ = ["Model"]
 
