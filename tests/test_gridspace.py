@@ -1,6 +1,5 @@
-import pytest
-from adopy import GridSpace
 from jax import numpy as jnp
+from adopy import GridSpace
 
 
 def test_space_empty():
@@ -47,7 +46,3 @@ def test_space_2d_joint():
     assert len(gs.labels) == 2, "The number of labels should be 2."
 
     assert gs.value.shape == (10, 2), "The grid array should be shaped as (10, 2)."
-
-
-if __name__ == "__main__":
-    pytest.main(__file__)
