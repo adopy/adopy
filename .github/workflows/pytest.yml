@@ -23,6 +23,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Set up with poetry
         uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.13
       - name: Configure poetry
         run: |
           poetry config virtualenvs.create true
