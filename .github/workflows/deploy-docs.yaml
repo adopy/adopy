@@ -1,0 +1,45 @@
+name: Deploy Documentation website
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+    paths:
+      - 'docs/source/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.12'
+
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        export PATH="$HOME/.poetry/bin:$PATH"
+        poetry config virtualenvs.create false
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get install pandoc
+        poetry install --extras "docs"
+
+    - name: Build the documentation
+      run: |
+        cd docs
+        make html
+
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: docs
+        folder: docs/build/html
+        token: ${{ secrets.GITHUB_TOKEN }}
