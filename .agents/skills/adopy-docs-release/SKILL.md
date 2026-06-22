@@ -5,23 +5,14 @@ description: Use when changing ADOpy README, Sphinx docs, examples, changelog, v
 
 # ADOpy Docs and Release Surface
 
-Use this skill before editing:
+Use this skill before editing documentation, release, or packaging surfaces such as:
 
 - `README.md`
-- `docs/source/**`
-- `pyproject.toml`
-- `setup.cfg`
-- `MANIFEST.in`
-- `.readthedocs.yml`
-- `.travis.yml` or replacement CI files
-- version or changelog surfaces
+- Sphinx docs and examples
+- package metadata and manifests
+- CI, Read the Docs, changelog, version, or release instructions
 
-## Current surfaces
-
-Sphinx docs live under `docs/source/`, API pages mirror package modules, and
-Read the Docs uses `docs/source/conf.py`. Before docs or release work, check
-`TODOS.md` for known documentation/release drift that should be fixed rather
-than copied into new guidance.
+Inspect the repository for the current filenames before editing. This skill should capture durable documentation/release rules, not a live inventory of every page, config file, or temporary drift item.
 
 ## Documentation rules
 

@@ -5,15 +5,12 @@ description: Use when changing ADOpy core Task/Model/Engine behavior, grid utili
 
 # ADOpy Core Numerics
 
-Use this skill before editing:
+Use this skill before editing core design-selection or numerical surfaces:
 
-- `adopy/base/_task.py`
-- `adopy/base/_model.py`
-- `adopy/base/_engine.py`
-- `adopy/functions/_grid.py`
-- `adopy/functions/_utils.py`
-- `adopy/functions/_const.py`
-- `adopy/types.py`
+- task, model, and engine classes under `adopy/base/`
+- grid, utility, constant, and type helpers under `adopy/functions/` and `adopy/types.py`
+
+Inspect the package tree for the current file inventory. Keep this skill focused on durable invariants rather than a complete list of filenames.
 
 ## Contract to preserve
 
