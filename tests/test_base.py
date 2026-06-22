@@ -1,3 +1,5 @@
+import importlib
+
 from collections import OrderedDict
 
 import numpy as np
@@ -7,6 +9,20 @@ from scipy.special import expit as inv_logit
 from scipy.stats import bernoulli
 
 from adopy import Engine, Model, Task
+
+
+def test_import_types_without_removed_numpy_scalar_aliases(monkeypatch):
+    # Regression for GH-31: importing ADOpy must not require np.int/np.float.
+    monkeypatch.delattr(np, 'int', raising=False)
+    monkeypatch.delattr(np, 'float', raising=False)
+
+    import adopy.types as adopy_types
+
+    reloaded_types = importlib.reload(adopy_types)
+
+    assert reloaded_types.integer_like.__constraints__ == (int, np.integer)
+    assert reloaded_types.number_like.__constraints__ == (
+        float, int, np.floating, np.integer)
 
 
 @pytest.fixture()
