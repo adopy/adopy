@@ -272,7 +272,7 @@ class EnginePsi(Engine):
                 idx = min(len(self.grid_design) - 1,
                           self.idx_opt + (self.d_step * 2))
 
-            ret = self.grid_design.iloc[np.integer(idx)]
+            ret = self.grid_design.iloc[int(idx)]
 
         elif kind == 'random':
             idx = np.random.randint(self.n_d)
