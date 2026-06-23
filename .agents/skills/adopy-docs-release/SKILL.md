@@ -16,7 +16,7 @@ Inspect the repository for the current filenames before editing. This skill shou
 
 ## Documentation rules
 
-- Use current post-0.4.0 API names: `responses`, `params`, `grid_design`, `grid_param`, and `grid_response`.
+- Use the current API names: `responses`, `params`, `grid_design`, `grid_param`, and `grid_response`.
 - Avoid deprecated example arguments such as `designs=`, `params=`, `param=`, `design=`, or `y_obs=` unless documenting migration history.
 - Verify module names against source before documenting imports.
 - Keep citations and package-version guidance visible for scientific changes.

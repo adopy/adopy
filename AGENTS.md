@@ -33,12 +33,12 @@ Project-local reusable skills live under `.agents/skills/`:
 
 Use the relevant skill before changing its target area.
 
-## Post-0.4 API traps
+## API contract
 
 Preserve Python `>=3.6` compatibility unless the task explicitly authorizes
 modernization.
 
-Respect the post-0.4.0 API contract:
+Key non-obvious behavior to preserve:
 
 - `Task.responses` stores response-variable labels, not possible response
   values.
