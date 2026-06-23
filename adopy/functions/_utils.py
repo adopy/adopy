@@ -64,4 +64,4 @@ def expand_multiple_dims(x: np.ndarray, pre: int, post: int) -> np.ndarray:
 def make_vector_shape(n: int, axis: int = 0) -> np.ndarray:
     ret = np.ones(n)
     ret[axis] = -1
-    return ret.astype(np.integer)
+    return ret.astype(int)

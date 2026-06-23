@@ -2,7 +2,8 @@ import numpy as np
 import pytest
 
 from adopy.functions import (
-    expand_multiple_dims, get_nearest_grid_index, marginalize,
+    expand_multiple_dims, get_nearest_grid_index, make_vector_shape,
+    marginalize,
 )
 
 
@@ -35,6 +36,12 @@ def test_expand_multiple_dims():
 
     assert expand_multiple_dims(y, 3, 2).shape == (1, 1, 1, 3, 4, 1, 1)
 
+
+def test_make_vector_shape_uses_integer_dtype():
+    shape = make_vector_shape(3, 1)
+
+    assert shape.tolist() == [1, -1, 1]
+    assert np.issubdtype(shape.dtype, np.integer)
 
 if __name__ == '__main__':
     pytest.main()
