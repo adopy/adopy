@@ -94,10 +94,10 @@ class ModelLinear(Model):
 
     Examples
     --------
-    >>> from adopy.tasks.cra import ModelExp
-    >>> model = ModelExp()
-    >>> model.task
-    Task('CRA', designs=['p_var', 'a_var', 'r_var', 'r_fix'], responses=[0, 1])
+    >>> from adopy.tasks.cra import ModelLinear
+    >>> model = ModelLinear()
+    >>> model.task.responses
+    ['choice']
     >>> model.params
     ['alpha', 'beta', 'gamma']
     """
@@ -143,10 +143,10 @@ class ModelExp(Model):
 
     Examples
     --------
-    >>> from adopy.tasks.cra import ModelLinear
-    >>> model = ModelLinear()
-    >>> model.task
-    Task('CRA', designs=['p_var', 'a_var', 'r_var', 'r_fix'], responses=[0, 1])
+    >>> from adopy.tasks.cra import ModelExp
+    >>> model = ModelExp()
+    >>> model.task.responses
+    ['choice']
     >>> model.params
     ['alpha', 'beta', 'gamma']
     """

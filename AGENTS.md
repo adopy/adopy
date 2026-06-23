@@ -29,7 +29,7 @@ Project-local skills live under `.agents/skills/`; use the relevant one before e
 
 ## API contract
 
-Preserve Python `>=3.6` compatibility unless the task explicitly authorizes
+Preserve Python `>=3.10` compatibility unless the task explicitly authorizes
 modernization.
 
 Key non-obvious behavior to preserve:
@@ -80,6 +80,19 @@ Use the project docs and papers as the conceptual anchor for scientific changes:
 
 For task-specific models, keep terminology, parameter names, equations, and
 citations aligned with module docstrings and docs.
+
+## Changelogs
+
+`docs/source/changelogs.rst` is written for people who use the package, not for
+maintainers. Summarize each release by what users observe: supported Python
+versions, bug fixes or behavior changes they would notice, and documentation or
+API changes that affect how they write code.
+
+Leave out library-internal development details that do not change how the
+package is used: build-backend or dependency-tooling migrations, CI
+configuration, the agent harness and maintenance skills, and refactors with no
+user-visible effect. Avoid tool and specification jargon (PEP numbers, SPDX,
+backend names); state the resulting behavior instead.
 
 ## Verification expectations
 

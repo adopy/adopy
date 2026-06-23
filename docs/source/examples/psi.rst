@@ -1,13 +1,6 @@
 Psychometric Function Estimation
 ================================
 
-.. warning::
-
-   This example includes deprecated functions and arguments.
-   We plan to update this page following the up-to-date usage.
-   Sorry for the inconvenience.
-
-
 Let’s start with psychometric functions as an example. The goal of the function
 is to figure out whether a subject can perceive a signal with varying levels
 of magnitude. The function has one design variable for the *intensity* of a
@@ -22,8 +15,7 @@ stimulus, :math:`x`; the model has four model parameters:
    A simple diagram for the Psychometric function.
 
 In this example, let’s use the **logistic function** for the model’s shape.
-Then, the model can compute the probability of a subject to perceive the
-given stimulus with the following equation:
+Then, the probability of a subject perceiving the stimulus is:
 
 .. math::
 
@@ -31,12 +23,11 @@ given stimulus with the following equation:
    = \gamma + (1 - \gamma - \delta) \; \sigma\big( \beta (x - \alpha) \big)
    \quad \text{where } \sigma(x) = \frac{1}{1 + e^{-x}}
 
-For this example, let's assume the true parameters as :math:`\gamma = 0.5`,
+For this example, assume the true parameters are :math:`\gamma = 0.5`,
 :math:`\delta = 0.04`, :math:`\alpha = 20`, and :math:`\beta = 1.5`.
 
 .. code:: python
 
-  # Define true parameters
   GR_TRUE = 0.5
   LR_TRUE = 0.04
   TH_TRUE = 20
@@ -45,21 +36,21 @@ For this example, let's assume the true parameters as :math:`\gamma = 0.5`,
 Preparing grids
 ---------------
 
-To make grids for designs and parameters, you should define two dictionaries
-that contain singles grids for all designs and all parameters, respectively.
-In this example, we will fix the ``guess_rate`` to 0.5 and ``lapse_rate`` to 0.04.
+ADOpy uses grid-based design optimization. Define one grid for the stimulus
+design and one grid for the model parameters. In this example, ``guess_rate``
+and ``lapse_rate`` are fixed to single values.
 
 .. code:: python
 
   import numpy as np
 
-  designs = {
+  grid_design = {
       'stimulus': np.linspace(20 * np.log10(.05), 20 * np.log10(400), 120)
   }
 
-  params = {
-      'guess_rate': [0.5],
-      'lapse_rate': [0.04],
+  grid_param = {
+      'guess_rate': [GR_TRUE],
+      'lapse_rate': [LR_TRUE],
       'threshold': np.linspace(20 * np.log10(.1), 20 * np.log10(200), 200),
       'slope': np.linspace(0, 10, 200)
   }
@@ -67,100 +58,89 @@ In this example, we will fix the ``guess_rate`` to 0.5 and ``lapse_rate`` to 0.0
 Using pre-defined classes
 -------------------------
 
-To use the predefined classes for specific task and models, you can use it
-with `adopy.tasks.<task_name>`, e.g., ``adopy.tasks.psi``.
+The :mod:`adopy.tasks.psi` module provides pre-defined classes for 2AFC
+psychometric function estimation.
 
 .. code:: python
 
-  from adopy.tasks.psi import ModelLogistic, EnginePsi
-
-  model = ModelLogistic()
-  engine = EnginePsi(model=model, designs=designs, params=params)
-
-Using `compute()` method of the model instance, you can compute the probability
-for a subject to succeed to perceive a signal.
-
-.. code:: python
-
-  model.compute(stimulus=10, guess_rate=0.5, lapse_rate=0.04,
-                threshold=10, slope=0.5)
-
-.. code:: python
-
+  from scipy.special import expit
   from scipy.stats import bernoulli
 
-  p_obs = model.compute(stimulus=d_opt['stimulus'],
-                        guess_rate=gr_true, lapse_rate=lr_true,
-                        threshold=th_true, slope=sl_true)
-  y_obs = bernoulli.rvs(p_obs)
+  from adopy.tasks.psi import EnginePsi, ModelLogistic
+
+  model = ModelLogistic()
+  engine = EnginePsi(
+      model=model,
+      grid_design=grid_design,
+      grid_param=grid_param,
+  )
+
+  design = engine.get_design('optimal')
+
+  p_obs = GR_TRUE + (1 - GR_TRUE - LR_TRUE) * expit(
+      SL_TRUE * (design['stimulus'] - TH_TRUE)
+  )
+  response = {'choice': bernoulli.rvs(p_obs)}
+
+  engine.update(design, response)
+
+``ModelLogistic.compute()`` returns the log likelihood for an observed
+``choice`` value. For example:
 
 .. code:: python
 
-  d_opt = e.get_design()
+  log_lik = model.compute(
+      choice=1,
+      stimulus=design['stimulus'],
+      guess_rate=GR_TRUE,
+      lapse_rate=LR_TRUE,
+      threshold=TH_TRUE,
+      slope=SL_TRUE,
+  )
 
 Using self-defined classes
 --------------------------
 
-Instead of using pre-defined classes, they can be implemented as ``Task`` and ``Model`` objects by the
-codes below:
+Instead of using pre-defined classes, you can define a task and model directly
+with :class:`adopy.Task`, :class:`adopy.Model`, and :class:`adopy.Engine`.
 
 .. code:: python
 
-  import numpy as np
-  from adopy import Task, Model
-
-  task_psi = Task(name='Psi', key='psi', design=['stimulus'])
-
-
-  def inv_logit(x):
-      return np.divide(1, 1 + np.exp(-x))
-
-  def func_logistic(stimulus, guess_rate, lapse_rate, threshold, slope):
-      return guess_rate + (1 - guess_rate - lapse_rate) * inv_logit(slope * (stimulus - threshold))
-
-
-  model_log = Model(name='Logistic', task=task_psi,
-                    param=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
-                    func=func_logistic)
-
-Then, you can compute the probability using ``compute`` method in the
-model object.
-
-.. code:: python
-
-  print(model_log.compute(stimulus=10, guess_rate=0.5, lapse_rate=0.04, threshold=10, slope=0.5))
-  print(model_log.compute(stimulus=15, guess_rate=0.5, lapse_rate=0.04, threshold=10, slope=0.5))
-  print(model_log.compute(stimulus=5, guess_rate=0.5, lapse_rate=0.04, threshold=10, slope=0.5))
-
-Now, if you want to use an ADO engine for the task and the model,
-
-.. code:: python
-
-  from adopy import Engine
-
-  engine_psi = Engine(task=task_psi, model=model_log,
-                      designs=designs, params=params, y_obs=[0, 1])
-
-With the ``Engine`` instance, you can get the optimal design:
-
-.. code:: python
-
-  d_opt = engine_psi.get_design()
-
-Assuming :math:`\gamma = 0.5`, :math:`\delta = 0.04`, :math:`\alpha = 20` and :math:`\beta = 1.5`,
-you can get the probability of perceiving the stimulus with `model_log.compute`.
-
-.. code:: python
-
+  from scipy.special import expit
   from scipy.stats import bernoulli
 
-  p_obs = model_log.compute(stimulus=d_opt['stimulus'], guess_rate=gr_true, lapse_rate=lr_true,
-                            threshold=th_true, slope=sl_true)
-  y_obs = bernoulli.rvs(p_obs)
+  from adopy import Engine, Model, Task
 
-Lastly, using the optimal design and the corresponding response, the `Engine` instance can update
-its posterior distributions on parameters.
+  task_psi = Task(
+      name='Psi',
+      designs=['stimulus'],
+      responses=['choice'],
+  )
 
-.. code:: python
+  def logistic_loglik(stimulus, guess_rate, lapse_rate,
+                      threshold, slope, choice):
+      p_obs = guess_rate + (1 - guess_rate - lapse_rate) * expit(
+          slope * (stimulus - threshold)
+      )
+      return bernoulli.logpmf(choice, p_obs)
 
-  engine_psi.update(d_opt, y_obs)
+  model_log = Model(
+      name='Logistic',
+      task=task_psi,
+      params=['guess_rate', 'lapse_rate', 'threshold', 'slope'],
+      func=logistic_loglik,
+  )
+
+  grid_response = {'choice': [0, 1]}
+
+  engine_psi = Engine(
+      task=task_psi,
+      model=model_log,
+      grid_design=grid_design,
+      grid_param=grid_param,
+      grid_response=grid_response,
+  )
+
+  design = engine_psi.get_design('optimal')
+  response = {'choice': 1}
+  engine_psi.update(design, response)

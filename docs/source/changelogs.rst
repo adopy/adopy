@@ -1,6 +1,18 @@
 Changelogs
 ==========
 
+0.5.0
+-----
+
+* Require Python 3.10 or later; older, end-of-life Python versions are no
+  longer supported.
+* Fix errors with recent NumPy releases so design grids and the Psi staircase
+  run correctly.
+* Update the documentation to match the current API, including the corrected
+  ``adopy.tasks.dd`` module name and refreshed psychometric-function examples.
+* Modernize the build and packaging setup, and publish releases to PyPI
+  automatically.
+
 0.4.1
 -----
 
