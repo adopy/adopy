@@ -38,7 +38,7 @@ class Task2AFC(Task):
     >>> task.designs
     ['stimulus']
     >>> task.responses
-    [0, 1]
+    ['choice']
     """
 
     def __init__(self):
@@ -87,8 +87,8 @@ class ModelLogistic(_ModelPsi):
     --------
     >>> from adopy.tasks.psi import ModelLogistic
     >>> model = ModelLogistic()
-    >>> model.task
-    Task('2AFC', designs=['stimulus'], responses=[0, 1])
+    >>> model.task.responses
+    ['choice']
     >>> model.params
     ['threshold', 'slope', 'guess_rate', 'lapse_rate']
     """
@@ -128,10 +128,10 @@ class ModelWeibull(_ModelPsi):
 
     Examples
     --------
-    >>> from adopy.tasks.psi import ModelLogistic
-    >>> model = ModelLogistic()
-    >>> model.task
-    Task('2AFC', designs=['stimulus'], responses=[0, 1])
+    >>> from adopy.tasks.psi import ModelWeibull
+    >>> model = ModelWeibull()
+    >>> model.task.responses
+    ['choice']
     >>> model.params
     ['threshold', 'slope', 'guess_rate', 'lapse_rate']
     """
@@ -174,8 +174,8 @@ class ModelProbit(_ModelPsi):
     --------
     >>> from adopy.tasks.psi import ModelProbit
     >>> model = ModelProbit()
-    >>> model.task
-    Task('2AFC', designs=['stimulus'], responses=[0, 1])
+    >>> model.task.responses
+    ['choice']
     >>> model.params
     ['threshold', 'slope', 'guess_rate', 'lapse_rate']
     """
@@ -199,7 +199,7 @@ class EnginePsi(Engine):
     def __init__(self, model, grid_design, grid_param, d_step: int = 1, **kwargs):
         if not isinstance(model.task, Task2AFC):
             raise RuntimeError(
-                'The model should be implemented for the CRA task.')
+                'The model should be implemented for the Psi task.')
 
         grid_response = {'choice': [0, 1]}
 

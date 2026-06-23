@@ -3,7 +3,7 @@ name = "adopy"
 version = "0.5.0"
 description = "Adaptive Design Optimization on Experimental Tasks"
 readme = "README.md"
-requires-python = ">=3.6"
+requires-python = ">=3.10"
 license = "GPL-3.0-or-later"
 authors = [
   { name = "Jaeyeong Yang", email = "jaeyeong.yang1125@gmail.com" },
@@ -12,16 +12,17 @@ classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.6",
-  "Programming Language :: Python :: 3.7",
-  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies = [
-  "importlib-metadata; python_version < '3.8'",
   "numpy",
   "pandas",
-  "scipy>=1.0.0",
+  "scipy",
 ]
 
 [project.urls]
@@ -31,9 +32,7 @@ Documentation = "https://adopy.org"
 
 [project.optional-dependencies]
 test = [
-  "pytest>=6.0",
-  "pytest-cov",
-  "codecov",
+  "pytest",
 ]
 docs = [
   "sphinx",
@@ -55,6 +54,12 @@ dev = [
   "pylint",
   "mypy",
 ]
+
+[tool.pytest.ini_options]
+# Run package doctests alongside the test suite so docstring examples stay in
+# sync with the API.
+addopts = "--doctest-modules"
+testpaths = ["tests", "adopy"]
 
 [tool.uv]
 default-groups = ["dev"]

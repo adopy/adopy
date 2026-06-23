@@ -22,8 +22,8 @@ def extract_vars_from_data(data: data_like,
     Examples
     --------
     >>> data = {'x': [1, 2, 3], 'y': [4, 5, 6], 'z': [7, 8, 9]}
-    >>> extract_vars_from_data(data, ['x', 'y'])
-    OrderedDict([('x', [1, 2, 3]), ('y', [4, 5, 6])])
+    >>> list(extract_vars_from_data(data, ['x', 'y']).items())
+    [('x', [1, 2, 3]), ('y', [4, 5, 6])]
     >>> extract_vars_from_data(data, ['a'])
     Traceback (most recent call last):
         ...

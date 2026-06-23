@@ -68,7 +68,7 @@ likelihood of a certain choice based on design variables and model parameters:
 
     def calculate_loglik(x1, x2, b0, b1, b2, choice):
         """A function to compute the probability of a positive response."""
-        logit = b0 + x1 * b1 + x1 * b2
+        logit = b0 + x1 * b1 + x2 * b2
         p_obs = 1. / (1 + np.exp(-logit))
         return bernoulli.logpmf(choice, p_obs)
 
@@ -80,6 +80,7 @@ Using the information and the function, the model can be defined with
     from adopy import Model
 
     model = Model(name='My Logistic Model',   # Name of the model (optional)
+                  task=task,                  # Task object from Step 1
                   params=['b0', 'b1', 'b2'],  # Labels of model parameters
                   func=calculate_loglik)      # A log likelihood function
 
@@ -97,7 +98,7 @@ the corresponding grid points should be set as its values.
 
     import numpy as np
 
-    grid_designs = {
+    grid_design = {
         'x1': np.linspace(0, 50, 100),    # 100 grid points within [0, 50]
         'x2': np.linspace(-20, 30, 100),  # 100 grid points within [-20, 30]
     }
