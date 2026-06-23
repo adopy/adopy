@@ -19,18 +19,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
       - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
         with:
           enable-cache: true
           cache-dependency-glob: uv.lock
+          python-version: ${{ matrix.python-version }}
 
       - name: Sync dependencies
-        run: >
-          uv sync --locked --all-extras
-          --python ${{ matrix.python-version }}
+        run: uv sync --locked --all-extras
 
       - name: Run tests
         run: uv run --extra test pytest
@@ -41,17 +37,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/setup-python@v5
-        with:
-          # Latest supported stable release.
-          python-version: "3.14"
       - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
         with:
           enable-cache: true
           cache-dependency-glob: uv.lock
+          # Latest supported stable release.
+          python-version: "3.14"
 
       - name: Sync dependencies
-        run: uv sync --locked --all-extras --python 3.14
+        run: uv sync --locked --all-extras
 
       - name: Install pandoc
         run: sudo apt-get update && sudo apt-get install -y pandoc
