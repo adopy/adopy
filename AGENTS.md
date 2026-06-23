@@ -25,13 +25,7 @@ The intended experiment loop is:
 
 ## Local harness
 
-Project-local reusable skills live under `.agents/skills/`:
-
-- `.agents/skills/adopy-core-numerics/SKILL.md`
-- `.agents/skills/adopy-task-model/SKILL.md`
-- `.agents/skills/adopy-docs-release/SKILL.md`
-
-Use the relevant skill before changing its target area.
+Project-local skills live under `.agents/skills/`; use the relevant one before editing its target area.
 
 ## API contract
 
