@@ -4,8 +4,13 @@ on:
   push:
     branches:
       - develop
-      - release/**
   pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Cancel superseded runs only for PRs; develop pushes run to completion as a
+  # post-merge safety net.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   tests:
