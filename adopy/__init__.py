@@ -2,10 +2,7 @@
 ADOpy: Adaptive Design Optimization on Experimental Tasks
 """
 
-try:
-    import importlib.metadata as importlib_metadata
-except ModuleNotFoundError:
-    import importlib_metadata
+import importlib.metadata as importlib_metadata
 
 import numpy as np
 
@@ -23,7 +20,7 @@ __all__ = [
 try:
     __version__ = importlib_metadata.version(__name__)
 except importlib_metadata.PackageNotFoundError:  # For frozen app support
-    __version__ = '0.4.1'
+    __version__ = '0.5.0'
 
 # Ignore overflow and underflow floating-point errors
 np.seterr(over='ignore', under='ignore')

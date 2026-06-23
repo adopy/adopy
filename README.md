@@ -2,12 +2,11 @@
 
 [![PyPI](https://img.shields.io/pypi/v/adopy.svg?color=green)](https://pypi.org/project/adopy/)
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Travis CI](https://travis-ci.org/adopy/adopy.svg?branch=develop)](https://travis-ci.org/adopy/adopy)
-[![CodeCov](https://codecov.io/gh/adopy/adopy/branch/develop/graph/badge.svg?token=jFnJgnVV1k)](https://codecov.io/gh/adopy/adopy)
+[![CI](https://github.com/adopy/adopy/actions/workflows/ci.yml/badge.svg)](https://github.com/adopy/adopy/actions/workflows/ci.yml)
 
 **ADOpy** is a Python implementation of Adaptive Design Optimization (ADO; Myung, Cavagnaro, & Pitt, 2013), which computes optimal designs dynamically in an experiment. Its modular structure permit easy integration into existing experimentation code.
 
-ADOpy supports Python 3.6 or above and relies on NumPy, SciPy, and Pandas.
+ADOpy supports Python 3.10 or above and relies on NumPy, SciPy, and Pandas.
 
 ### Features
 
@@ -15,11 +14,11 @@ ADOpy supports Python 3.6 or above and relies on NumPy, SciPy, and Pandas.
 - **Easily customizable for your own tasks and models**
 - **Pre-implemented Task and Model classes including**:
   - Psychometric function estimation for 2AFC tasks (`adopy.tasks.psi`)
-  - Delay discounting task (`adopy.tasks.ddt`)
+  - Delay discounting task (`adopy.tasks.dd`)
   - Choice under risk and ambiguity task (`adopy.tasks.cra`)
 - **Example code for experiments using PsychoPy** ([link][example-code])
 
-[example-code]: https://github.com/adopy/adopy/tree/master/examples
+[example-code]: https://github.com/adopy/adopy/tree/HEAD/examples
 
 ### Installation
 

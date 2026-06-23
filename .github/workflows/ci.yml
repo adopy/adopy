@@ -1,0 +1,64 @@
+name: Tests, docs, and package
+
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Cancel superseded runs only for PRs; develop pushes run to completion as a
+  # post-merge safety net.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  tests:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Oldest supported (3.10) and latest stable (3.14) releases.
+        python-version: ["3.10", "3.14"]
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+          python-version: ${{ matrix.python-version }}
+
+      - name: Sync dependencies
+        run: uv sync --locked --all-extras
+
+      - name: Run tests
+        run: uv run --extra test pytest
+
+  docs-and-package:
+    name: Docs and package
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+          # Latest supported stable release.
+          python-version: "3.14"
+
+      - name: Sync dependencies
+        run: uv sync --locked --all-extras
+
+      - name: Install pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+
+      - name: Build docs
+        run: >
+          uv run --extra docs sphinx-build -b html
+          docs/source docs/build/html
+
+      - name: Build distributions
+        run: uv build

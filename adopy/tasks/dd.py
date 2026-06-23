@@ -50,7 +50,7 @@ class TaskDD(Task):
 
     Examples
     --------
-    >>> from adopy.tasks.ddt import TaskDD
+    >>> from adopy.tasks.dd import TaskDD
     >>> task = TaskDD()
     >>> task.designs
     ['t_ss', 't_ll', 'r_ss', 'r_ll']
@@ -90,10 +90,10 @@ class ModelExp(Model):
 
     Examples
     --------
-    >>> from adopy.tasks.ddt import ModelExp
+    >>> from adopy.tasks.dd import ModelExp
     >>> model = ModelExp()
-    >>> model.task
-    Task('DDT', designs=['t_ss', 't_ll', 'r_ss', 'r_ll'], responses=[0, 1])
+    >>> model.task.responses
+    ['choice']
     >>> model.params
     ['r', 'tau']
     """
@@ -141,10 +141,10 @@ class ModelHyp(Model):
 
     Examples
     --------
-    >>> from adopy.tasks.ddt import ModelHyp
+    >>> from adopy.tasks.dd import ModelHyp
     >>> model = ModelHyp()
-    >>> model.task
-    Task('DDT', designs=['t_ss', 't_ll', 'r_ss', 'r_ll'], responses=[0, 1])
+    >>> model.task.responses
+    ['choice']
     >>> model.params
     ['k', 'tau']
     """
@@ -194,10 +194,10 @@ class ModelHPB(Model):
 
     Examples
     --------
-    >>> from adopy.tasks.ddt import ModelHPB
+    >>> from adopy.tasks.dd import ModelHPB
     >>> model = ModelHPB()
-    >>> model.task
-    Task('DDT', designs=['t_ss', 't_ll', 'r_ss', 'r_ll'], responses=[0, 1])
+    >>> model.task.responses
+    ['choice']
     >>> model.params
     ['k', 's', 'tau']
     """
@@ -247,10 +247,10 @@ class ModelCOS(Model):
 
     Examples
     --------
-    >>> from adopy.tasks.ddt import ModelCOS
+    >>> from adopy.tasks.dd import ModelCOS
     >>> model = ModelCOS()
-    >>> model.task
-    Task('DDT', designs=['t_ss', 't_ll', 'r_ss', 'r_ll'], responses=[0, 1])
+    >>> model.task.responses
+    ['choice']
     >>> model.params
     ['r', 's', 'tau']
     """
@@ -303,10 +303,10 @@ class ModelQH(Model):
 
     Examples
     --------
-    >>> from adopy.tasks.ddt import ModelQH
+    >>> from adopy.tasks.dd import ModelQH
     >>> model = ModelQH()
-    >>> model.task
-    Task('DDT', designs=['t_ss', 't_ll', 'r_ss', 'r_ll'], responses=[0, 1])
+    >>> model.task.responses
+    ['choice']
     >>> model.params
     ['beta', 'delta', 'tau']
     """
@@ -359,10 +359,10 @@ class ModelDE(Model):
 
     Examples
     --------
-    >>> from adopy.tasks.ddt import ModelDE
+    >>> from adopy.tasks.dd import ModelDE
     >>> model = ModelDE()
-    >>> model.task
-    Task('DDT', designs=['t_ss', 't_ll', 'r_ss', 'r_ll'], responses=[0, 1])
+    >>> model.task.responses
+    ['choice']
     >>> model.params
     ['omega', 'r', 's', 'tau']
     """
