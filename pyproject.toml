@@ -55,6 +55,12 @@ dev = [
   "mypy",
 ]
 
+[tool.pytest.ini_options]
+# Run package doctests alongside the test suite so docstring examples stay in
+# sync with the API.
+addopts = "--doctest-modules"
+testpaths = ["tests", "adopy"]
+
 [tool.uv]
 default-groups = ["dev"]
 

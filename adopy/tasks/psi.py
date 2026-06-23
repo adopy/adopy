@@ -38,7 +38,7 @@ class Task2AFC(Task):
     >>> task.designs
     ['stimulus']
     >>> task.responses
-    [0, 1]
+    ['choice']
     """
 
     def __init__(self):

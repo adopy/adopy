@@ -88,9 +88,9 @@ class Model(object):
     Task('Task A', designs=['x1', 'x2'], responses=['y'])
     >>> model.params
     ['b0', 'b1', 'b2']
-    >>> model.compute(y=1, x1=1, x2=-1, b0=1, b1=0.5, b2=0.25)
+    >>> float(model.compute(y=1, x1=1, x2=-1, b0=1, b1=0.5, b2=0.25))
     -0.251929081345373
-    >>> compute_log_lik(y=1, x1=1, x2=-1, b0=1, b1=0.5, b2=0.25)
+    >>> float(calculate_log_lik(y=1, x1=1, x2=-1, b0=1, b1=0.5, b2=0.25))
     -0.251929081345373
     """
 
