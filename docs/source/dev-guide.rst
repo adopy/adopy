@@ -12,25 +12,23 @@ First, you should clone the GitHub repository and checkout the develop branch.
     cd adopy
     git checkout develop
 
-To manage a virtual environment for development, we uses `poetry`_. Pipfile on
-the repository describes which packages to install for a virtual environment.
-You can create a virtual environment by running the command below:
+To manage a virtual environment for development, we use `uv`_. The project
+metadata and dependency groups are defined in ``pyproject.toml`` and locked in
+``uv.lock``.
 
-.. _poetry:
-   https://github.com/python-poetry/poetry
-
-.. code:: bash
-
-    # Install the virtual environment defined in the pyproject.toml
-    poetry install
-
-Now you can activate the installed virtual environment. Code blocks on later
-sections assume this environment activated.
+.. _uv:
+   https://docs.astral.sh/uv/
 
 .. code:: bash
 
-    # Activate the virtual environment
-    poetry shell
+    # Install runtime dependencies, development tools, and optional docs/test extras
+    uv sync --all-extras
+
+Run project commands through the synchronized environment:
+
+.. code:: bash
+
+    uv run --extra test pytest
 
 Writing documentation
 ---------------------
